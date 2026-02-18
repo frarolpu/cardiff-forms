@@ -13,15 +13,20 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image, Tabl
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_JUSTIFY
 from PIL import Image as PILImage
-import psycopg2
-from psycopg2.extras import RealDictCursor
+
+# Try to import psycopg2 (optional, only needed with DATABASE_URL)
+try:
+    import psycopg2
+    from psycopg2.extras import RealDictCursor
+except ImportError:
+    psycopg2 = None
 
 # Get port from environment or use default
 PORT = int(os.environ.get('PORT', 8080))
 
 # Database configuration
 DATABASE_URL = os.environ.get('DATABASE_URL', None)
-DB_AVAILABLE = DATABASE_URL is not None
+DB_AVAILABLE = DATABASE_URL is not None and psycopg2 is not None
 
 # Set working directory (use current directory for flexibility)
 if not os.path.exists('forms'):
@@ -29,7 +34,7 @@ if not os.path.exists('forms'):
 
 def get_db_connection():
     """Create database connection"""
-    if not DB_AVAILABLE:
+    if not DB_AVAILABLE or psycopg2 is None:
         return None
     try:
         conn = psycopg2.connect(DATABASE_URL, sslmode='require')
