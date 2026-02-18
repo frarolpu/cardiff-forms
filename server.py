@@ -13,13 +13,55 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image, Tabl
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_JUSTIFY
 from PIL import Image as PILImage
+import psycopg2
+from psycopg2.extras import RealDictCursor
 
 # Get port from environment or use default
 PORT = int(os.environ.get('PORT', 8080))
 
+# Database configuration
+DATABASE_URL = os.environ.get('DATABASE_URL', None)
+DB_AVAILABLE = DATABASE_URL is not None
+
 # Set working directory (use current directory for flexibility)
 if not os.path.exists('forms'):
     os.makedirs('forms', exist_ok=True)
+
+def get_db_connection():
+    """Create database connection"""
+    if not DB_AVAILABLE:
+        return None
+    try:
+        conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+        return conn
+    except Exception as e:
+        print(f"⚠️ Database connection failed: {e}")
+        return None
+
+def init_db():
+    """Initialize database tables"""
+    if not DB_AVAILABLE:
+        return
+    try:
+        conn = get_db_connection()
+        if not conn:
+            return
+        cur = conn.cursor()
+        cur.execute('''
+            CREATE TABLE IF NOT EXISTS forms (
+                id SERIAL PRIMARY KEY,
+                section VARCHAR(50),
+                timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                form_data JSONB,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
+        conn.commit()
+        cur.close()
+        conn.close()
+        print("✅ Database initialized")
+    except Exception as e:
+        print(f"❌ Database initialization error: {e}")
 
 def generate_pdf(form_data):
     """Generate PDF from form data using ReportLab"""
@@ -413,8 +455,26 @@ class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                 form_data = json.loads(body.decode('utf-8'))
                 section = form_data.get('section', 'unknown').replace('.', '_')
                 today = datetime.now().strftime('%Y%m%d')
-                filename = f"{section}_{today}.json"
                 
+                # Save to database if available
+                if DB_AVAILABLE:
+                    try:
+                        conn = get_db_connection()
+                        if conn:
+                            cur = conn.cursor()
+                            cur.execute(
+                                'INSERT INTO forms (section, form_data) VALUES (%s, %s)',
+                                (form_data.get('section'), json.dumps(form_data))
+                            )
+                            conn.commit()
+                            cur.close()
+                            conn.close()
+                            print(f"✅ Form saved to database: {section}_{today}")
+                    except Exception as db_error:
+                        print(f"⚠️ Database save failed: {db_error}, falling back to JSON")
+                
+                # Also save to JSON as backup
+                filename = f"{section}_{today}.json"
                 os.makedirs('forms', exist_ok=True)
                 filepath = os.path.join('forms', filename)
                 with open(filepath, 'w', encoding='utf-8') as f:
@@ -439,12 +499,166 @@ class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             self.end_headers()
 
     def do_GET(self):
-        # Serve static files normally
-        super().do_GET()
+        # Handle forms viewer page
+        if self.path == '/forms-viewer':
+            html_content = '''
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Cardiff Forms - PDF Viewer</title>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <style>
+                    * { margin: 0; padding: 0; box-sizing: border-box; }
+                    body { font-family: Arial, sans-serif; background: #f5f5f5; }
+                    header { background: #0a2463; color: white; padding: 20px; text-align: center; }
+                    h1 { font-size: 24px; margin-bottom: 5px; }
+                    .subtitle { font-size: 14px; opacity: 0.9; }
+                    .container { max-width: 1000px; margin: 20px auto; padding: 0 20px; }
+                    .file-list { background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+                    .file-item { padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; transition: background 0.2s; }
+                    .file-item:hover { background: #f9f9f9; }
+                    .file-item:last-child { border-bottom: none; }
+                    .file-info { flex: 1; }
+                    .file-name { font-weight: bold; color: #0a2463; margin-bottom: 5px; }
+                    .file-size { font-size: 12px; color: #666; }
+                    .file-actions { display: flex; gap: 10px; }
+                    button { padding: 8px 16px; background: #0a2463; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; }
+                    button:hover { background: #052047; }
+                    .no-files { padding: 40px; text-align: center; color: #666; }
+                    .stats { margin-bottom: 20px; padding: 15px; background: white; border-radius: 8px; text-align: center; }
+                    .stats-number { font-size: 24px; font-weight: bold; color: #0a2463; }
+                </style>
+            </head>
+            <body>
+                <header>
+                    <h1>📋 Cardiff Maintenance Forms</h1>
+                    <p class="subtitle">Generated PDF Reports</p>
+                </header>
+                <div class="container">
+                    <div class="stats">
+                        <div>Total PDFs Generated: <span class="stats-number" id="count">0</span></div>
+                    </div>
+                    <div class="file-list" id="fileList">
+                        <div class="no-files">Loading...</div>
+                    </div>
+                </div>
+                <script>
+                    async function loadFiles() {
+                        try {
+                            const response = await fetch('/list-forms');
+                            const data = await response.json();
+                            const fileList = document.getElementById('fileList');
+                            const count = document.getElementById('count');
+                            
+                            count.textContent = data.count;
+                            
+                            if (data.files.length === 0) {
+                                fileList.innerHTML = '<div class="no-files">No PDF forms yet. Submit a form to generate one! 📝</div>';
+                                return;
+                            }
+                            
+                            fileList.innerHTML = data.files.map(file => `
+                                <div class="file-item">
+                                    <div class="file-info">
+                                        <div class="file-name">📄 ${file.name}</div>
+                                        <div class="file-size">${file.size}</div>
+                                    </div>
+                                    <div class="file-actions">
+                                        <button onclick="window.open('${file.path}', '_blank')">📥 Download</button>
+                                    </div>
+                                </div>
+                            `).join('');
+                        } catch (error) {
+                            document.getElementById('fileList').innerHTML = '<div class="no-files">Error loading files: ' + error.message + '</div>';
+                        }
+                    }
+                    loadFiles();
+                    // Refresh every 5 seconds
+                    setInterval(loadFiles, 5000);
+                </script>
+            </body>
+            </html>
+            '''
+            self.send_response(200)
+            self.send_header('Content-type', 'text/html')
+            self.end_headers()
+            self.wfile.write(html_content.encode('utf-8'))
+        
+        # Handle file listing API
+        elif self.path == '/list-forms':
+            try:
+                files = []
+                if os.path.exists('forms'):
+                    for filename in sorted(os.listdir('forms'), reverse=True):
+                        filepath = os.path.join('forms', filename)
+                        if os.path.isfile(filepath) and filename.endswith('.pdf'):
+                            size = os.path.getsize(filepath)
+                            files.append({
+                                'name': filename,
+                                'size': f"{size / 1024:.1f} KB",
+                                'path': f'/download-form/{filename}'
+                            })
+                
+                self.send_response(200)
+                self.send_header('Content-type', 'application/json')
+                self.end_headers()
+                response = {'status': 'success', 'count': len(files), 'files': files}
+                self.wfile.write(json.dumps(response, indent=2).encode('utf-8'))
+            except Exception as e:
+                self.send_response(500)
+                self.send_header('Content-type', 'application/json')
+                self.end_headers()
+                response = {'status': 'error', 'message': str(e)}
+                self.wfile.write(json.dumps(response).encode('utf-8'))
+        
+        # Handle PDF download
+        elif self.path.startswith('/download-form/'):
+            try:
+                filename = self.path.replace('/download-form/', '')
+                filename = filename.split('?')[0]  # Remove query params
+                filepath = os.path.join('forms', filename)
+                
+                if os.path.exists(filepath) and filename.endswith('.pdf'):
+                    with open(filepath, 'rb') as f:
+                        pdf_content = f.read()
+                    
+                    self.send_response(200)
+                    self.send_header('Content-type', 'application/pdf')
+                    self.send_header('Content-Disposition', f'attachment; filename="{filename}"')
+                    self.send_header('Content-Length', len(pdf_content))
+                    self.end_headers()
+                    self.wfile.write(pdf_content)
+                else:
+                    self.send_response(404)
+                    self.send_header('Content-type', 'application/json')
+                    self.end_headers()
+                    response = {'status': 'error', 'message': 'File not found'}
+                    self.wfile.write(json.dumps(response).encode('utf-8'))
+            except Exception as e:
+                self.send_response(500)
+                self.send_header('Content-type', 'application/json')
+                self.end_headers()
+                response = {'status': 'error', 'message': str(e)}
+                self.wfile.write(json.dumps(response).encode('utf-8'))
+        
+        else:
+            # Serve static files normally
+            super().do_GET()
+
+# Initialize database before starting server
+if DB_AVAILABLE:
+    print("🗄️ Initializing database...")
+    init_db()
+else:
+    print("⚠️ DATABASE_URL not set - using JSON file storage only")
 
 with socketserver.TCPServer(("", PORT), MyHTTPRequestHandler) as httpd:
     print(f"✅ Servidor iniciado en http://localhost:{PORT}")
     print(f"📋 Abre http://localhost:{PORT} en tu navegador")
-    print(f"📁 Los formularios completados se guardarán en: c:\\TempApp\\Cardiff Forms\\forms\\")
+    if DB_AVAILABLE:
+        print(f"💾 Forms stored in: PostgreSQL Database")
+    else:
+        print(f"📁 Los formularios completados se guardarán en: c:\\TempApp\\Cardiff Forms\\forms\\")
     print(f"⌨️ Presiona Ctrl+C para detener el servidor")
     httpd.serve_forever()
