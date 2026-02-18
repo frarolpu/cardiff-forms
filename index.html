@@ -1,0 +1,1344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maintenance Forms - Digitalized</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/signature_pad/5.0.3/signature_pad.umd.min.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        /* Allow text selection in input fields */
+        input, textarea, select {
+            -webkit-user-select: text;
+            user-select: text;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a2463 0%, #1a3a7d 100%);
+            overflow-x: hidden;
+        }
+
+        .wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 300px;
+            background: white;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+            padding: 20px;
+            position: fixed;
+            height: 100vh;
+            left: 0;
+            top: 0;
+        }
+
+        .sidebar h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.1em;
+            border-bottom: 2px solid #0a2463;
+            padding-bottom: 10px;
+        }
+
+        .sidebar-search {
+            margin-bottom: 20px;
+        }
+
+        .sidebar-search input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 0.9em;
+        }
+
+        .sidebar input::placeholder {
+            color: #999;
+        }
+
+        .form-list {
+            list-style: none;
+        }
+
+        .form-item {
+            padding: 12px;
+            margin-bottom: 8px;
+            background: #f8f9fa;
+            border-left: 3px solid #ddd;
+            cursor: pointer;
+            border-radius: 3px;
+            transition: all 0.3s;
+        }
+
+        .form-item:hover {
+            background: #e8f0ff;
+            border-left-color: #0a2463;
+        }
+
+        .form-item.active {
+            background: #0a2463;
+            color: white;
+            border-left-color: #1a3a7d;
+        }
+
+        .form-item-title {
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        .form-item-info {
+            font-size: 0.8em;
+            opacity: 0.7;
+            margin-top: 3px;
+        }
+
+        .form-item.active .form-item-info {
+            opacity: 0.9;
+        }
+
+        .main-content {
+            margin-left: 300px;
+            flex: 1;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: #f0f2f7;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: white;
+            color: #0a2463;
+            padding: 30px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .header-logos {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex: 0 0 auto;
+            position: absolute;
+            left: 30px;
+            top: 20px;
+        }
+
+        .header-logos img {
+            height: 60px;
+            object-fit: contain;
+            filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.1));
+        }
+
+        .header-title {
+            flex: 1;
+            min-width: 200px;
+            margin-left: 140px;
+        }
+
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+
+        .header .section-info {
+            font-size: 1.1em;
+            margin: 10px 0;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            border-left: 4px solid #0a2463;
+        }
+
+        .form-section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+            font-size: 0.95em;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+            font-family: inherit;
+            transition: border-color 0.3s;
+            min-height: 44px;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #0a2463;
+            box-shadow: 0 0 0 3px rgba(10, 36, 99, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .task-list {
+            background: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+
+        .task-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .task-item:last-child {
+            border-bottom: none;
+        }
+
+        .task-item input[type="checkbox"] {
+            margin-right: 12px;
+            margin-top: 4px;
+            cursor: pointer;
+            width: 20px;
+            height: 20px;
+        }
+
+        .task-text {
+            flex: 1;
+        }
+
+        .task-number {
+            font-weight: bold;
+            color: #0a2463;
+            margin-right: 10px;
+        }
+
+        .task-description {
+            color: #555;
+            line-height: 1.4;
+        }
+
+        .signature-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .signature-box {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            background: #fafafa;
+        }
+
+        .signature-box h3 {
+            font-size: 0.95em;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .signature-pad {
+            width: 100%;
+            height: 150px;
+            border: 2px dashed #0a2463;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 0.95em;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-clear {
+            background: #f0ad4e;
+            color: white;
+            flex: 1;
+        }
+
+        .btn-clear:hover {
+            background: #ec971f;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #0a2463 0%, #1a3a7d 100%);
+            color: white;
+            padding: 12px 30px;
+            font-size: 1em;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(10, 36, 99, 0.3);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #0a2463;
+            border: 2px solid #0a2463;
+        }
+
+        .btn-secondary:hover {
+            background: #0a2463;
+            color: white;
+        }
+
+        .photo-upload {
+            border: 2px dashed #0a2463;
+            border-radius: 5px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #f0f2f7;
+        }
+
+        .photo-upload:hover {
+            background: #e8eef5;
+            border-color: #1a3a7d;
+        }
+
+        .photo-upload input[type="file"] {
+            display: none;
+        }
+
+        .photo-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .photo-item {
+            position: relative;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .photo-item img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+
+        .photo-delete {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(255, 0, 0, 0.8);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .photo-delete:hover {
+            background: rgba(255, 0, 0, 1);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 20px;
+            margin-top: 40px;
+            justify-content: center;
+            flex-wrap: wrap;
+            padding: 30px;
+            background: linear-gradient(135deg, #e8eef5 0%, #f4f6fb 100%);
+            border-radius: 10px;
+        }
+
+        .form-actions button {
+            min-width: 140px;
+            padding: 14px 28px;
+            font-size: 1em;
+            font-weight: 600;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-actions .btn-primary {
+            background: linear-gradient(135deg, #0a2463 0%, #1a3a7d 100%);
+            color: white;
+        }
+
+        .form-actions .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(10, 36, 99, 0.4);
+        }
+
+        .form-actions .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .form-actions .btn-secondary {
+            background: white;
+            color: #0a2463;
+            border: 2px solid #0a2463;
+        }
+
+        .form-actions .btn-secondary:hover {
+            background: #0a2463;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(10, 36, 99, 0.3);
+        }
+
+        .form-actions .btn-secondary:active {
+            transform: translateY(0);
+        }
+
+        .success-message {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+            margin-bottom: 20px;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+            margin-bottom: 20px;
+        }
+
+        .info-badge {
+            display: inline-block;
+            background: #0a2463;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            margin: 2px;
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 250px;
+            }
+
+            .main-content {
+                margin-left: 250px;
+            }
+        }
+
+        /* Tablet landscape and small laptops */
+        @media (max-width: 900px) {
+            .sidebar {
+                width: 220px;
+            }
+
+            .main-content {
+                margin-left: 220px;
+                padding: 15px;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                padding: 20px;
+                position: relative;
+            }
+
+            .header h1 {
+                font-size: 1.5em;
+            }
+
+            .header-logos {
+                position: static;
+                justify-content: center;
+                width: 100%;
+                transform: none;
+            }
+
+            .header-title {
+                margin-left: 0;
+            }
+
+            .container {
+                border-radius: 5px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .signature-row {
+                grid-template-columns: 1fr;
+            }
+
+            .form-section {
+                padding: 15px;
+                margin-bottom: 20px;
+            }
+
+            .form-section h2 {
+                font-size: 1.1em;
+            }
+
+            .task-item {
+                padding: 10px;
+                margin-bottom: 8px;
+            }
+
+            .form-actions {
+                padding: 20px;
+                gap: 10px;
+            }
+
+            .form-actions button {
+                min-width: 110px;
+                padding: 12px 20px;
+                font-size: 0.95em;
+                flex: 1;
+            }
+        }
+
+        /* Tablet portrait and larger phones */
+        @media (max-width: 768px) {
+            .wrapper {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: static;
+                max-height: 220px;
+                border-bottom: 2px solid #ddd;
+                flex-shrink: 0;
+            }
+
+            .sidebar h2 {
+                margin-bottom: 10px;
+                font-size: 1em;
+            }
+
+            .sidebar-search input {
+                padding: 8px;
+                font-size: 0.95em;
+            }
+
+            .form-item {
+                padding: 10px;
+                margin-bottom: 6px;
+            }
+
+            .form-item-title {
+                font-size: 0.9em;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 12px;
+            }
+
+            .container {
+                border-radius: 5px;
+                box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 10px;
+                padding: 15px;
+                position: relative;
+            }
+
+            .header h1 {
+                font-size: 1.3em;
+                margin-bottom: 3px;
+            }
+
+            .header p {
+                font-size: 0.9em;
+            }
+
+            .header-logos {
+                position: static;
+                justify-content: center;
+                width: 100%;
+                transform: none;
+            }
+
+            .header-logos img {
+                height: 50px;
+            }
+
+            .header-title {
+                margin-left: 0;
+            }
+
+            .content {
+                padding: 12px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .signature-row {
+                grid-template-columns: 1fr;
+            }
+
+            .form-section {
+                padding: 12px;
+                margin-bottom: 15px;
+                border-left-width: 3px;
+            }
+
+            .form-section h2 {
+                font-size: 1em;
+                margin-bottom: 12px;
+            }
+
+            .form-group {
+                margin-bottom: 12px;
+            }
+
+            .form-group label {
+                font-size: 0.9em;
+                margin-bottom: 5px;
+            }
+
+            .form-group input,
+            .form-group select,
+            .form-group textarea {
+                font-size: 16px;
+                padding: 10px;
+                border-radius: 4px;
+            }
+
+            .task-item {
+                padding: 8px;
+                margin-bottom: 8px;
+                gap: 8px;
+            }
+
+            .task-checkbox {
+                min-width: 18px;
+                width: 18px;
+                height: 18px;
+            }
+
+            .task-number {
+                font-size: 0.9em;
+            }
+
+            .form-actions {
+                flex-direction: column;
+                padding: 15px;
+                gap: 12px;
+                margin-top: 20px;
+            }
+
+            .form-actions button {
+                width: 100%;
+                padding: 14px;
+                font-size: 1em;
+                min-width: auto;
+            }
+
+            .signature-box {
+                padding: 12px;
+            }
+
+            .signature-box h3 {
+                font-size: 0.95em;
+                margin-bottom: 8px;
+            }
+
+            .signature-pad {
+                height: 120px;
+            }
+
+            .photo-gallery {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                gap: 10px;
+            }
+
+            .photo-upload {
+                padding: 15px;
+            }
+
+            .info-badge {
+                font-size: 0.75em;
+                padding: 3px 8px;
+                margin: 1px;
+            }
+        }
+
+        /* Small tablets and large phones */
+        @media (max-width: 600px) {
+            .sidebar {
+                max-height: 180px;
+            }
+
+            .main-content {
+                padding: 8px;
+            }
+
+            .container {
+                max-width: 100%;
+            }
+
+            .header {
+                padding: 12px;
+                gap: 8px;
+            }
+
+            .header h1 {
+                font-size: 1.1em;
+            }
+
+            .header-logos img {
+                height: 45px;
+            }
+
+            .content {
+                padding: 10px;
+            }
+
+            .form-section {
+                padding: 10px;
+                margin-bottom: 12px;
+            }
+
+            .form-group input,
+            .form-group select,
+            .form-group textarea {
+                font-size: 16px;
+            }
+
+            .form-actions {
+                flex-direction: column;
+                padding: 12px;
+                gap: 10px;
+            }
+
+            .form-actions button {
+                padding: 12px;
+                font-size: 0.95em;
+            }
+
+            .signature-pad {
+                height: 100px;
+            }
+
+            .photo-gallery {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .no-form-selected {
+            text-align: center;
+            padding: 60px 30px;
+            color: #999;
+        }
+
+        .no-form-selected h2 {
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .field-required::after {
+            content: " *";
+            color: red;
+        }
+
+        .info-text {
+            font-size: 0.85em;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+
+            .wrapper {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 0;
+            }
+
+            .container {
+                box-shadow: none;
+                border-radius: 0;
+            }
+
+            .form-actions {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+            <h2>📋 Forms</h2>
+            <div class="sidebar-search">
+                <input type="text" id="searchForms" placeholder="Search section...">
+            </div>
+            <ul class="form-list" id="formList"></ul>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+            <div class="container">
+                <div id="noFormSelected" class="no-form-selected">
+                    <h2>👈 Select a form</h2>
+                    <p>Click on the left panel to get started</p>
+                </div>
+
+                <div id="formContainer" style="display: none;">
+                    <div class="header">
+                        <div class="header-logos">
+                            <img src="Cardiff_Council.svg" alt="Cardiff Council Logo">
+                            <img src="SICE-1024x452-1.png" alt="SICE Logo">
+                        </div>
+                        <div class="header-title">
+                            <h1>📋 <span id="formTitle"></span></h1>
+                            <p>Butetown Link Tunnel - Maintenance System</p>
+                            <div class="section-info" id="sectionInfo"></div>
+                        </div>
+                    </div>
+
+                    <div class="content">
+                        <div id="successMessage" class="success-message"></div>
+                        <div id="errorMessage" class="error-message"></div>
+
+                        <form id="maintenanceForm">
+                            <!-- GENERAL INFORMATION -->
+                            <div class="form-section">
+                                <h2>📍 General Information</h2>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="field-required">Inspection Date</label>
+                                        <input type="date" id="inspectionDate" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Inspector</label>
+                                        <input type="text" id="inspector" placeholder="Inspector name" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- TASKS -->
+                            <div class="form-section">
+                                <h2>✅ Tasks to Perform</h2>
+                                <div class="task-list" id="taskList"></div>
+                            </div>
+
+                            <!-- COMMENTS -->
+                            <div class="form-section">
+                                <h2>💬 Comments and Observations</h2>
+                                <div class="form-group">
+                                    <label>Comments</label>
+                                    <textarea id="comments" placeholder="Write any comments, issues or findings here..."></textarea>
+                                </div>
+                            </div>
+
+                            <!-- PHOTOS -->
+                            <div class="form-section">
+                                <h2>📷 Photos</h2>
+                                <div class="form-group">
+                                    <label>Add Photos</label>
+                                    <div class="photo-upload" onclick="document.getElementById('photoInput').click()">
+                                        <p style="font-size: 2em; margin-bottom: 10px;">📸</p>
+                                        <p><strong>Click to add photos</strong></p>
+                                        <p class="info-text">or drag images here</p>
+                                    </div>
+                                    <input type="file" id="photoInput" multiple accept="image/*">
+                                    <div class="photo-gallery" id="photoGallery"></div>
+                                </div>
+                            </div>
+
+                            <!-- DIGITAL SIGNATURES -->
+                            <div class="form-section">
+                                <h2>✍️ Digital Signatures</h2>
+                                <div class="signature-row">
+                                    <div class="signature-box">
+                                        <h3 class="field-required">Maintenance Engineer</h3>
+                                        <canvas id="signaturePad1" class="signature-pad"></canvas>
+                                        <div class="button-group">
+                                            <button type="button" class="btn btn-clear" onclick="clearSignature(1)">Clear</button>
+                                        </div>
+                                        <div class="form-group" style="margin-top: 10px;">
+                                            <label>Name</label>
+                                            <input type="text" id="engineerName" placeholder="Engineer name" required>
+                                        </div>
+                                        <div class="form-group" style="margin-top: 10px;">
+                                            <label>Date</label>
+                                            <input type="date" id="engineerDate" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="signature-box">
+                                        <h3 class="field-required">Contractor Supervisor</h3>
+                                        <canvas id="signaturePad2" class="signature-pad"></canvas>
+                                        <div class="button-group">
+                                            <button type="button" class="btn btn-clear" onclick="clearSignature(2)">Clear</button>
+                                        </div>
+                                        <div class="form-group" style="margin-top: 10px;">
+                                            <label>Name</label>
+                                            <input type="text" id="supervisorName" placeholder="Supervisor name" required>
+                                        </div>
+                                        <div class="form-group" style="margin-top: 10px;">
+                                            <label>Date</label>
+                                            <input type="date" id="supervisorDate" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ACTIONS -->
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-secondary" onclick="resetForm()">🔄 Clear</button>
+                                <button type="submit" class="btn btn-primary">💾 Save</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let allForms = [];
+        let currentFormIndex = -1;
+        let signaturePads = {};
+        let photos = [];
+
+        // Load form data
+        async function loadForms() {
+            try {
+                const response = await fetch('forms_final.json');
+                allForms = await response.json();
+                populateFormList();
+            } catch (error) {
+                console.error('Error loading forms:', error);
+                showError('Error loading forms');
+            }
+        }
+
+        function populateFormList() {
+            const formList = document.getElementById('formList');
+            const cleanedForms = allForms.filter(f => f.tasks.length > 0);
+            
+            formList.innerHTML = '';
+            cleanedForms.forEach((form, index) => {
+                const li = document.createElement('li');
+                li.className = 'form-item';
+                li.innerHTML = `
+                    <div class="form-item-title">Sección ${form.section}</div>
+                    <div class="form-item-info">${form.tasks.length} tasks</div>
+                `;
+                li.onclick = () => selectForm(index);
+                formList.appendChild(li);
+            });
+        }
+
+        function selectForm(index) {
+            const cleanedForms = allForms.filter(f => f.tasks.length > 0);
+            currentFormIndex = index;
+            const form = cleanedForms[index];
+
+            // Actualizar UI
+            document.querySelectorAll('.form-item').forEach((item, i) => {
+                item.classList.toggle('active', i === index);
+            });
+
+            document.getElementById('noFormSelected').style.display = 'none';
+            document.getElementById('formContainer').style.display = 'block';
+
+            // Load form
+            loadFormData(form);
+        }
+
+        function loadFormData(form) {
+            document.getElementById('formTitle').textContent = `Section ${form.section}`;
+            
+            let infoHTML = `<strong>Section:</strong> ${form.section}`;
+            
+            if (form.locations && form.locations.length > 0) {
+                infoHTML += ` | <strong>Locations:</strong> `;
+                form.locations.forEach(loc => {
+                    if (loc && loc !== 'TASK') {
+                        infoHTML += `<span class="info-badge">${loc}</span>`;
+                    }
+                });
+            }
+
+            if (form.frequencies && form.frequencies.length > 0) {
+                infoHTML += ` | <strong>Frequencies:</strong> `;
+                form.frequencies.forEach(freq => {
+                    if (freq && freq !== 'TASK') {
+                        infoHTML += `<span class="info-badge">${freq}</span>`;
+                    }
+                });
+            }
+
+            if (form.drawing_ref && form.drawing_ref.length > 0) {
+                infoHTML += ` | <strong>Drawing Reference:</strong> <span class="info-badge">${form.drawing_ref}</span>`;
+            }
+
+            document.getElementById('sectionInfo').innerHTML = infoHTML;
+
+            // Load tasks
+            loadTasks(form.tasks);
+
+            // Set current dates
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('inspectionDate').value = today;
+            document.getElementById('engineerDate').value = today;
+            document.getElementById('supervisorDate').value = today;
+
+            // Reinitialize signatures
+            setTimeout(() => {
+                initializeSignaturePads();
+            }, 0);
+        }
+
+        function loadTasks(tasks) {
+            const taskList = document.getElementById('taskList');
+            taskList.innerHTML = '';
+
+            tasks.forEach(task => {
+                const taskItem = document.createElement('div');
+                taskItem.className = 'task-item';
+                taskItem.innerHTML = `
+                    <input type="checkbox" class="task-checkbox" data-step="${task.step}">
+                    <div class="task-text">
+                        <span class="task-number">${task.step}.</span>
+                        <span class="task-description">${task.description}</span>
+                    </div>
+                `;
+                taskList.appendChild(taskItem);
+            });
+        }
+
+        function initializeSignaturePads() {
+            const canvas1 = document.getElementById('signaturePad1');
+            const canvas2 = document.getElementById('signaturePad2');
+
+            const resizeCanvases = () => {
+                [canvas1, canvas2].forEach((canvas, index) => {
+                    const rect = canvas.parentElement.getBoundingClientRect();
+                    canvas.width = rect.width - 4;
+                    canvas.height = 150;
+                });
+            };
+
+            resizeCanvases();
+            signaturePads[1] = new SignaturePad(canvas1);
+            signaturePads[2] = new SignaturePad(canvas2);
+        }
+
+        function clearSignature(padNumber) {
+            signaturePads[padNumber].clear();
+        }
+
+        // SEARCH
+        document.getElementById('searchForms').addEventListener('input', function(e) {
+            const query = e.target.value.toLowerCase();
+            const items = document.querySelectorAll('.form-item');
+            items.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                item.style.display = text.includes(query) ? 'block' : 'none';
+            });
+        });
+
+        // PHOTOS
+        document.getElementById('photoInput').addEventListener('change', function(e) {
+            Array.from(e.target.files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (evt) => {
+                    photos.push(evt.target.result);
+                    displayPhotos();
+                };
+                reader.readAsDataURL(file);
+            });
+        });
+
+        document.querySelector('.photo-upload').addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.currentTarget.style.background = '#e8f0fe';
+        });
+
+        document.querySelector('.photo-upload').addEventListener('dragleave', (e) => {
+            e.currentTarget.style.background = '#f8f9fa';
+        });
+
+        document.querySelector('.photo-upload').addEventListener('drop', (e) => {
+            e.preventDefault();
+            e.currentTarget.style.background = '#f8f9fa';
+            const files = e.dataTransfer.files;
+            document.getElementById('photoInput').files = files;
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (evt) => {
+                    photos.push(evt.target.result);
+                    displayPhotos();
+                };
+                reader.readAsDataURL(file);
+            });
+        });
+
+        function displayPhotos() {
+            const gallery = document.getElementById('photoGallery');
+            gallery.innerHTML = '';
+            photos.forEach((photo, index) => {
+                const photoItem = document.createElement('div');
+                photoItem.className = 'photo-item';
+                photoItem.innerHTML = `
+                    <img src="${photo}" alt="Photo ${index + 1}">
+                    <button type="button" class="photo-delete" onclick="deletePhoto(${index})">×</button>
+                `;
+                gallery.appendChild(photoItem);
+            });
+        }
+
+        function deletePhoto(index) {
+            photos.splice(index, 1);
+            displayPhotos();
+        }
+
+        // FORM
+        document.getElementById('maintenanceForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            if (signaturePads[1].isEmpty()) {
+                showError('Por favor, firma como Ingeniero');
+                return;
+            }
+
+            if (signaturePads[2].isEmpty()) {
+                showError('Por favor, firma como Supervisor');
+                return;
+            }
+
+            const cleanedForms = allForms.filter(f => f.tasks.length > 0);
+            const form = cleanedForms[currentFormIndex];
+
+            const formData = {
+                timestamp: new Date().toISOString(),
+                section: form.section,
+                inspectionDate: document.getElementById('inspectionDate').value,
+                inspector: document.getElementById('inspector').value,
+                tasks: getCompletedTasks(),
+                comments: document.getElementById('comments').value,
+                engineerName: document.getElementById('engineerName').value,
+                engineerDate: document.getElementById('engineerDate').value,
+                supervisorName: document.getElementById('supervisorName').value,
+                supervisorDate: document.getElementById('supervisorDate').value,
+                signature1: signaturePads[1].toDataURL(),
+                signature2: signaturePads[2].toDataURL(),
+                photos: photos
+            };
+
+            // Generate PDF on server
+            fetch('/generate-pdf', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            }).then(response => response.json())
+              .then(data => {
+                  if (data.status === 'success') {
+                      showSuccess(`PDF saved successfully as: ${data.filename}`);
+                      resetForm();
+                  } else {
+                      showError(`Error: ${data.message}`);
+                  }
+              })
+              .catch(error => {
+                  console.error('Error:', error);
+                  showError('Error generating PDF');
+              });
+        });
+
+        function getCompletedTasks() {
+            const tasks = [];
+            document.querySelectorAll('.task-checkbox').forEach(checkbox => {
+                const taskItem = checkbox.closest('.task-item');
+                const description = taskItem.querySelector('.task-description').textContent;
+                const step = parseInt(checkbox.dataset.step);
+                const completed = checkbox.checked;
+                tasks.push({
+                    step: step,
+                    description: description,
+                    completed: completed
+                });
+            });
+            return tasks;
+        }
+
+        function resetForm() {
+            document.getElementById('maintenanceForm').reset();
+            photos = [];
+            displayPhotos();
+            clearSignature(1);
+            clearSignature(2);
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('inspectionDate').value = today;
+            document.getElementById('engineerDate').value = today;
+            document.getElementById('supervisorDate').value = today;
+        }
+
+        function resetForm() {
+            // Clear signature pads
+            signaturePads[1].clear();
+            signaturePads[2].clear();
+            
+            // Clear photos
+            photos = [];
+            displayPhotos();
+            
+            // Clear form fields
+            document.getElementById('maintenanceForm').reset();
+            
+            // Set today's date again
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('inspectionDate').value = today;
+            document.getElementById('engineerDate').value = today;
+            document.getElementById('supervisorDate').value = today;
+            
+            // Reset to first form
+            currentFormIndex = 0;
+            loadFormData(allForms[0]);
+        }
+
+        function downloadJSON(data) {
+            const dataStr = JSON.stringify(data, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `maintenance_section_${data.section}_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        function showSuccess(message) {
+            const msgDiv = document.getElementById('successMessage');
+            msgDiv.textContent = message;
+            msgDiv.style.display = 'block';
+            setTimeout(() => {
+                msgDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        function showError(message) {
+            const msgDiv = document.getElementById('errorMessage');
+            msgDiv.textContent = message;
+            msgDiv.style.display = 'block';
+            setTimeout(() => {
+                msgDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', loadForms);
+    </script>
+</body>
+</html>

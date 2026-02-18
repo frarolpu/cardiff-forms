@@ -1,0 +1,6341 @@
+[
+  {
+    "section": "2.1.3",
+    "equipment": "",
+    "drawing_ref": "B8/1 to B8/6",
+    "locations": [
+      "SERVICE BUILDING"
+    ],
+    "frequencies": [
+      "6 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Inspect switchgear for cleanliness"
+      },
+      {
+        "step": "2",
+        "description": "Check all indicating lamps and meters are operational - rectify any failures"
+      },
+      {
+        "step": "3",
+        "description": "Check all front compartment connections are tight with no signs of overheating"
+      },
+      {
+        "step": "4",
+        "description": "Visually inspect contactors and relays for correct operation and any signs of overheating"
+      },
+      {
+        "step": "5",
+        "description": "Ensure protective devices are set correctly and/or rated (fuses, overloads, etc.,)"
+      },
+      {
+        "step": "6",
+        "description": "Ensure that anti-condensation heaters are operational"
+      },
+      {
+        "step": "7",
+        "description": "Check switch room ventilation inlets / outlets are unobstructed and permitting airflow"
+      },
+      {
+        "step": "8",
+        "description": "Implement a thorough check of wiring connections and terminations for overheating and damage"
+      },
+      {
+        "step": "9",
+        "description": "Check effectiveness of ACB switching operations"
+      }
+    ]
+  },
+  {
+    "section": "2.1.4",
+    "equipment": "",
+    "drawing_ref": "B8/1 to B8/6",
+    "locations": [
+      "SERVICE BUILDING",
+      "FIRE PUMPING STATION"
+    ],
+    "frequencies": [
+      "6 MONTHLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Inspect switchgear for cleanliness"
+      },
+      {
+        "step": "2",
+        "description": "Check all indicating lamps and meters are operational - rectify any failures"
+      },
+      {
+        "step": "3",
+        "description": "Check all front compartment connections are tight with no signs of overheating"
+      },
+      {
+        "step": "4",
+        "description": "Visually inspect contactors and relays for correct operation and any signs of overheating. Renew as necessary."
+      },
+      {
+        "step": "5",
+        "description": "Ensure protective devices are set correctly and/or rated (fuses, overloads, etc.,)."
+      },
+      {
+        "step": "6",
+        "description": "Carry out secondary current injection tests to confirm operation of overcurrent and\nearth fault protection of switchboard."
+      },
+      {
+        "step": "7",
+        "description": "Ensure that anti-condensation heaters are operational"
+      },
+      {
+        "step": "8",
+        "description": "Check switch room ventilation inlets / outlets are unobstructed and permitting airflow"
+      },
+      {
+        "step": "9",
+        "description": "Implement a thorough check of wiring connections and terminations for signs over \noverheating and damage"
+      },
+      {
+        "step": "10",
+        "description": "Check effectiveness of ACB switching operations by simulating incoming supply failures one at a time and observing through coupling of the busbars via the bus coupler."
+      },
+      {
+        "step": "11",
+        "description": "Services ACB's in accordance with the manufacturer’s instructions - Volume 2"
+      }
+    ]
+  },
+  {
+    "section": "2.2.1",
+    "equipment": "",
+    "drawing_ref": "B7/1 to B7/2",
+    "locations": [
+      "COUNTY HALL",
+      "SERVICE BUILDING"
+    ],
+    "frequencies": [
+      "3 MONTHLY",
+      "6 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Inspect externally for signs of paint damage or corrosion, rectify as necessary"
+      },
+      {
+        "step": "2",
+        "description": "Check silicon level for signs of leakage"
+      },
+      {
+        "step": "3",
+        "description": "Check transformer temperatures and operation of relay"
+      },
+      {
+        "step": "4",
+        "description": "Check transformer temperature is normal for ambient conditions"
+      },
+      {
+        "step": "5",
+        "description": "covers and clean housing"
+      },
+      {
+        "step": "6",
+        "description": "Check transformer room ventilation louvers are free from obstruction."
+      }
+    ]
+  },
+  {
+    "section": "2.2.2",
+    "equipment": "",
+    "drawing_ref": "B7/1 to 7/2",
+    "locations": [
+      "FIRE PUMPING STATION"
+    ],
+    "frequencies": [
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Inspect externally for signs of paint damage or corrosion, rectify as necessary"
+      },
+      {
+        "step": "2",
+        "description": "Check silicon level for signs of leakage"
+      },
+      {
+        "step": "3",
+        "description": "Check transformer temperatures and operation of relay"
+      },
+      {
+        "step": "4",
+        "description": "Check transformer temperature is normal for ambient conditions"
+      },
+      {
+        "step": "5",
+        "description": "covers and clean housing"
+      },
+      {
+        "step": "6",
+        "description": "Check transformer room ventilation louvers are free from obstruction"
+      },
+      {
+        "step": "7",
+        "description": "Check all electrical connections are free from overheating"
+      },
+      {
+        "step": "8",
+        "description": "Clean Room Thoroughly"
+      }
+    ]
+  },
+  {
+    "section": "2.3.1",
+    "equipment": "",
+    "drawing_ref": "B7/1 to B7/2",
+    "locations": [
+      "COUNTY HALL",
+      "SERVICE BUILDING"
+    ],
+    "frequencies": [
+      "3 MONTHLY",
+      "6 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Inspect externally for signs of paint damage or corrosion, rectify as necessary"
+      },
+      {
+        "step": "2",
+        "description": "Check silicon level for signs of leakage"
+      },
+      {
+        "step": "3",
+        "description": "Check transformer temperatures and operation of relay"
+      },
+      {
+        "step": "4",
+        "description": "Check transformer temperature is normal for ambient conditions"
+      },
+      {
+        "step": "5",
+        "description": "covers and clean housing"
+      },
+      {
+        "step": "6",
+        "description": "Check transformer room ventilation louvers are free from obstruction."
+      }
+    ]
+  },
+  {
+    "section": "2.3.2",
+    "equipment": "",
+    "drawing_ref": "B7/1 to 7/2",
+    "locations": [
+      "FIRE PUMPING STATION"
+    ],
+    "frequencies": [
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Inspect externally for signs of paint damage or corrosion, rectify as necessary"
+      },
+      {
+        "step": "2",
+        "description": "Check silicon level for signs of leakage"
+      },
+      {
+        "step": "3",
+        "description": "Check transformer temperatures and operation of relay"
+      },
+      {
+        "step": "4",
+        "description": "Check transformer temperature is normal for ambient conditions"
+      },
+      {
+        "step": "5",
+        "description": "covers and clean housing"
+      },
+      {
+        "step": "6",
+        "description": "Check transformer room ventilation louvers are free from obstruction"
+      },
+      {
+        "step": "7",
+        "description": "Check all electrical connections are free from overheating"
+      },
+      {
+        "step": "8",
+        "description": "Clean Room Thoroughly"
+      }
+    ]
+  },
+  {
+    "section": "2.4.3",
+    "equipment": "",
+    "drawing_ref": "B1/39",
+    "locations": [
+      "SERVICE BUILDING",
+      "FIRE PUMPING STATION"
+    ],
+    "frequencies": [
+      "6 MONTHLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Isolate Fan unit"
+      },
+      {
+        "step": "2",
+        "description": "Clean all impellers and Grilles associated with each fan and check for damage"
+      },
+      {
+        "step": "3",
+        "description": "Externally check the condition of the bearings and check for free rotation of the impeller"
+      },
+      {
+        "step": "4",
+        "description": "Check the security of the fan blades"
+      },
+      {
+        "step": "5",
+        "description": "Check for the correct direction of rotation"
+      },
+      {
+        "step": "6",
+        "description": "Check belt tension and adjust where necessary"
+      },
+      {
+        "step": "7",
+        "description": "Check alignment of pulleys and adjust where necessary"
+      },
+      {
+        "step": "8",
+        "description": "Check all electrical connections for security and signs of burning"
+      },
+      {
+        "step": "9",
+        "description": "Record the running current Fan     EF5…………. Amps"
+      }
+    ]
+  },
+  {
+    "section": "2.4.4",
+    "equipment": "",
+    "drawing_ref": "B1/39",
+    "locations": [
+      "SERVICE BUILDING",
+      "FIRE PUMPING STATION"
+    ],
+    "frequencies": [
+      "6 MONTHLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Isolate Fan unit"
+      },
+      {
+        "step": "2",
+        "description": "Clean all impellers and Grilles associated with each fan and check for damage"
+      },
+      {
+        "step": "3",
+        "description": "Externally check the condition of the bearings and check for free rotation of the impeller"
+      },
+      {
+        "step": "4",
+        "description": "Check the security of the fan blades"
+      },
+      {
+        "step": "5",
+        "description": "Check for the correct direction of rotation"
+      },
+      {
+        "step": "6",
+        "description": "Check belt tension and adjust where necessary"
+      },
+      {
+        "step": "7",
+        "description": "Check alignment of pulleys and adjust where necessary"
+      },
+      {
+        "step": "8",
+        "description": "Check all electrical connections for security and signs of burning"
+      },
+      {
+        "step": "9",
+        "description": "Record the running current Fan     EF1…………. Amps        EF2……………Amps"
+      }
+    ]
+  },
+  {
+    "section": "2.5.1",
+    "equipment": "",
+    "drawing_ref": "B15/1 - 15/3 & 15/8",
+    "locations": [
+      "EASTBOUND BORE",
+      "COUNTY HALL"
+    ],
+    "frequencies": [
+      "MONTHLY",
+      "3 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Check distribution panel to ensure that it is free from obvious faults"
+      },
+      {
+        "step": "2",
+        "description": "Check all electrical connections including earth bonding and test the latter to ensure that a good earth path exists"
+      },
+      {
+        "step": "3",
+        "description": "Clean interiors and check for signs of overheating and condensation within panel"
+      },
+      {
+        "step": "4",
+        "description": "Check the heater/thermostat is operational 15oC"
+      },
+      {
+        "step": "5",
+        "description": "Check the operation and lubricate interlocks along with hinges."
+      },
+      {
+        "step": "6",
+        "description": "Check that earth connections are secure and tight"
+      },
+      {
+        "step": "7",
+        "description": "Check operation of RCD socket outlet"
+      },
+      {
+        "step": "8",
+        "description": "Check condition of EPDM tape and door seals on all EDP doors and replace where necessary."
+      }
+    ]
+  },
+  {
+    "section": "2.5.2",
+    "equipment": "",
+    "drawing_ref": "B15/1 - 15/3 & 15/8",
+    "locations": [
+      "EASTBOUND BORE"
+    ],
+    "frequencies": [
+      "MONTHLY",
+      "6 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Check distribution panel to ensure that it is free from obvious faults"
+      },
+      {
+        "step": "2",
+        "description": "Check all electrical connections including earth bonding and test the latter to ensure that a good earth path exists"
+      },
+      {
+        "step": "3",
+        "description": "Clean interiors and check for signs of overheating and condensation within panel"
+      },
+      {
+        "step": "4",
+        "description": "Check the heater/thermostat is operational 15oC"
+      },
+      {
+        "step": "5",
+        "description": "Check the operation and lubricate interlocks along with hinges."
+      },
+      {
+        "step": "6",
+        "description": "Check that earth connections are secure and tight"
+      },
+      {
+        "step": "7",
+        "description": "Check operation of RCD socket outlet"
+      },
+      {
+        "step": "8",
+        "description": "Check that UPS emergency lighting phase failure monitoring relay operates on loss of supply in DP 1 and 14"
+      }
+    ]
+  },
+  {
+    "section": "2.5.3",
+    "equipment": "",
+    "drawing_ref": "B15/1 - 15/3 & 15/8",
+    "locations": [
+      "EASTBOUND BORE",
+      "FIRE PUMPING STATION"
+    ],
+    "frequencies": [
+      "MONTHLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Check distribution panel to ensure that it is free from obvious faults"
+      },
+      {
+        "step": "2",
+        "description": "Check all electrical connections including earth bonding and test the latter to ensure that a good earth path exists"
+      },
+      {
+        "step": "3",
+        "description": "Clean interiors and check for signs of overheating and condensation within panel"
+      },
+      {
+        "step": "4",
+        "description": "Check the heater/thermostat is operational 15oC"
+      },
+      {
+        "step": "5",
+        "description": "Check the operation and lubricate interlocks along with hinges"
+      },
+      {
+        "step": "6",
+        "description": "Check that tunnel low temperature thermostats above DP 1 and 14 function correctly, by setting lighting level to stage 1 and operating thermostat - lighting should ramp up to stage 3 and generate an alarm on the EPCMS"
+      },
+      {
+        "step": "7",
+        "description": "Check that earth connections are secure and tight"
+      },
+      {
+        "step": "8",
+        "description": "Carry out functional tests on RCD units using proprietary testing equipment"
+      }
+    ]
+  },
+  {
+    "section": "2.5.3",
+    "equipment": "",
+    "drawing_ref": "B15/1 - 15/3 & 15/8",
+    "locations": [
+      "EASTBOUND BORE",
+      "FIRE PUMPING STATION"
+    ],
+    "frequencies": [
+      "MONTHLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "10",
+        "description": "Check cable glands for signs of water ingress."
+      },
+      {
+        "step": "11",
+        "description": "Check all cable markers are in place and legible"
+      },
+      {
+        "step": "13",
+        "description": "Operate panel circuit breakers/switches in turn to ensure correct operation."
+      },
+      {
+        "step": "14",
+        "description": "Isolate supplies in conjunction with CCC and implement a thorough check on security of terminations"
+      },
+      {
+        "step": "15",
+        "description": "Clean panel exterior with proprietary stainless steel cleaning agent."
+      }
+    ]
+  },
+  {
+    "section": "2.5.4",
+    "equipment": "",
+    "drawing_ref": "B15/1 - 15/3 & 15/8",
+    "locations": [
+      "WESTBOUND BORE",
+      "COUNTY HALL"
+    ],
+    "frequencies": [
+      "WEEKLY",
+      "3 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Check distribution panel to ensure that it is free from obvious faults"
+      },
+      {
+        "step": "2",
+        "description": "Check all electrical connections including earth bonding and test the latter to ensure that a good earth path exists"
+      },
+      {
+        "step": "3",
+        "description": "Clean interiors and check for signs of overheating and condensation within panel"
+      },
+      {
+        "step": "4",
+        "description": "Check the heater/thermostat is operational 15oC"
+      },
+      {
+        "step": "5",
+        "description": "Check the operation and lubricate interlocks along with hinges."
+      },
+      {
+        "step": "6",
+        "description": "Check that earth connections are secure and tight"
+      },
+      {
+        "step": "7",
+        "description": "Check operation of RCD socket outlet"
+      },
+      {
+        "step": "8",
+        "description": "Check condition of EPDM tape and door seals on all EDP doors and replace where necessary."
+      }
+    ]
+  },
+  {
+    "section": "2.5.5",
+    "equipment": "",
+    "drawing_ref": "B15/1 - 15/3 & 15/8",
+    "locations": [
+      "WESTBOUND BORE"
+    ],
+    "frequencies": [
+      "WEEKLY",
+      "6 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Check distribution panel to ensure that it is free from obvious faults"
+      },
+      {
+        "step": "2",
+        "description": "Check all electrical connections including earth bonding and test the latter to ensure that a good earth path exists"
+      },
+      {
+        "step": "3",
+        "description": "Clean interiors and check for signs of overheating and condensation within panel"
+      },
+      {
+        "step": "4",
+        "description": "Check the heater/thermostat is operational 15oC"
+      },
+      {
+        "step": "5",
+        "description": "Check the operation and lubricate interlocks along with hinges."
+      },
+      {
+        "step": "6",
+        "description": "Check that earth connections are secure and tight"
+      },
+      {
+        "step": "7",
+        "description": "Check operation of RCD socket outlet"
+      },
+      {
+        "step": "8",
+        "description": "Check that UPS emergency lighting phase failure monitoring relay operates on loss of supply. Relay located in DP1 and DP14"
+      }
+    ]
+  },
+  {
+    "section": "2.5.6",
+    "equipment": "",
+    "drawing_ref": "B15/1 - 15/3 & 15/8",
+    "locations": [
+      "WESTBOUND BORE",
+      "FIRE PUMPING STATION"
+    ],
+    "frequencies": [
+      "WEEKLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Check distribution panel to ensure that it is free from obvious faults"
+      },
+      {
+        "step": "2",
+        "description": "Check all electrical connections including earth bonding and test the latter to ensure that a good earth path exists"
+      },
+      {
+        "step": "3",
+        "description": "Clean interiors and check for signs of overheating and condensation within panel"
+      },
+      {
+        "step": "4",
+        "description": "Check the heater/thermostat is operational 15oC"
+      },
+      {
+        "step": "5",
+        "description": "Check the operation and lubricate interlocks along with hinges"
+      },
+      {
+        "step": "6",
+        "description": "Check that tunnel low temperature thermostats above DP 1 and 14 function correctly."
+      },
+      {
+        "step": "7",
+        "description": "Check that earth connections are secure and tight"
+      },
+      {
+        "step": "8",
+        "description": "Carry out functional tests on RCD units using proprietary testing equipment"
+      }
+    ]
+  },
+  {
+    "section": "2.5.6",
+    "equipment": "",
+    "drawing_ref": "B15/1 - 15/3 & 15/8",
+    "locations": [
+      "WESTBOUND BORE",
+      "FIRE PUMPING STATION"
+    ],
+    "frequencies": [
+      "WEEKLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "10",
+        "description": "Check cable glands for signs of water ingress."
+      },
+      {
+        "step": "11",
+        "description": "Check all cable markers are in place and legible"
+      },
+      {
+        "step": "13",
+        "description": "Operate panel circuit breakers/switches in turn to ensure correct operation."
+      },
+      {
+        "step": "14",
+        "description": "Isolate supplies in conjunction with CCC and implement a thorough check on security of terminations"
+      },
+      {
+        "step": "15",
+        "description": "Clean panel exterior with proprietary stainless steel cleaning agent."
+      }
+    ]
+  },
+  {
+    "section": "2.6.1",
+    "equipment": "",
+    "drawing_ref": "B15/1 -15/3 &15/8",
+    "locations": [
+      "EASTBOUND BORE",
+      "COUNTY HALL"
+    ],
+    "frequencies": [
+      "MONTHLY",
+      "3 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Check operation of fireman’s socket outlets"
+      },
+      {
+        "step": "2",
+        "description": "Check if any of the extinguishers have been discharged, replace as necessary"
+      },
+      {
+        "step": "3",
+        "description": "Visually inspect check condition of extinguishers for damage/corrosion, condition of discharge hose and legibility of labels"
+      },
+      {
+        "step": "4",
+        "description": "Record date of last service"
+      },
+      {
+        "step": "5",
+        "description": "Check extinguisher compartment doors for correct spring closure operation"
+      },
+      {
+        "step": "6",
+        "description": "Check operation of door / extinguisher limit switches"
+      },
+      {
+        "step": "7",
+        "description": "Clean extinguisher / hydrant compartment"
+      },
+      {
+        "step": "8",
+        "description": "Check power compartment for overheating etc."
+      },
+      {
+        "step": "9",
+        "description": "Check trace heating and thermostat settings (50oC)"
+      }
+    ]
+  },
+  {
+    "section": "2.6.1",
+    "equipment": "",
+    "drawing_ref": "B15/1 -15/3 &15/8",
+    "locations": [
+      "EASTBOUND BORE",
+      "COUNTY HALL"
+    ],
+    "frequencies": [
+      "MONTHLY",
+      "3 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "11",
+        "description": "Check the operation of all fasteners and renew as necessary."
+      },
+      {
+        "step": "12",
+        "description": "Change any failed panel lamps"
+      },
+      {
+        "step": "13",
+        "description": "Check all electrical connections/fuses including earth bonding."
+      }
+    ]
+  },
+  {
+    "section": "2.6.2",
+    "equipment": "",
+    "drawing_ref": "B15/1 -15/3 &15/8",
+    "locations": [
+      "EASTBOUND BORE",
+      "FIRE PUMPING STATION"
+    ],
+    "frequencies": [
+      "MONTHLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Check operation of fireman’s socket outlets"
+      },
+      {
+        "step": "2",
+        "description": "Check if any of the extinguishers have been discharged, replace as necessary"
+      },
+      {
+        "step": "3",
+        "description": "Visually inspect check condition of extinguishers for damage/corrosion, condition of discharge hose and legibility of labels"
+      },
+      {
+        "step": "4",
+        "description": "Record date of last service"
+      },
+      {
+        "step": "5",
+        "description": "Check extinguisher compartment doors for correct spring closure operation"
+      },
+      {
+        "step": "6",
+        "description": "Check operation of door / extinguisher limit switches"
+      },
+      {
+        "step": "7",
+        "description": "Clean extinguisher / hydrant compartment"
+      },
+      {
+        "step": "8",
+        "description": "Check power compartment for overheating etc."
+      },
+      {
+        "step": "9",
+        "description": "Check trace heating and thermostat settings (50oC)"
+      }
+    ]
+  },
+  {
+    "section": "2.6.2",
+    "equipment": "",
+    "drawing_ref": "B15/1 -15/3 &15/8",
+    "locations": [
+      "EASTBOUND BORE",
+      "FIRE PUMPING STATION"
+    ],
+    "frequencies": [
+      "MONTHLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "11",
+        "description": "Check the operation of all fasteners and renew as necessary."
+      },
+      {
+        "step": "12",
+        "description": "Renew any failed panel lamps"
+      },
+      {
+        "step": "13",
+        "description": "Check all electrical connections/fuses including earth bonding."
+      },
+      {
+        "step": "14",
+        "description": "Check all cable markers are in place and legible"
+      },
+      {
+        "step": "15",
+        "description": "Clean panel exterior with proprietary stainless steel cleaning agent."
+      }
+    ]
+  },
+  {
+    "section": "2.6.3",
+    "equipment": "",
+    "drawing_ref": "B15/1 -15/3 &15/8",
+    "locations": [
+      "WESTBOUND BORE",
+      "COUNTY HALL"
+    ],
+    "frequencies": [
+      "WEEKLY",
+      "3 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Check operation of fireman’s socket outlets"
+      },
+      {
+        "step": "2",
+        "description": "Check if any of the extinguishers have been discharged, replace as necessary"
+      },
+      {
+        "step": "3",
+        "description": "Visually inspect check condition of extinguishers for damage/corrosion, condition of discharge hose and legibility of labels"
+      },
+      {
+        "step": "4",
+        "description": "Record date of last service"
+      },
+      {
+        "step": "5",
+        "description": "Check extinguisher compartment doors for correct spring closure operation"
+      },
+      {
+        "step": "6",
+        "description": "Check operation of door / extinguisher limit switches"
+      },
+      {
+        "step": "7",
+        "description": "Clean extinguisher / hydrant compartment"
+      },
+      {
+        "step": "8",
+        "description": "Check power compartment for overheating etc."
+      },
+      {
+        "step": "9",
+        "description": "Check trace heating and thermostat settings (50oC)"
+      }
+    ]
+  },
+  {
+    "section": "2.6.3",
+    "equipment": "",
+    "drawing_ref": "B15/1 -15/3 &15/8",
+    "locations": [
+      "WESTBOUND BORE",
+      "COUNTY HALL"
+    ],
+    "frequencies": [
+      "WEEKLY",
+      "3 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "11",
+        "description": "Check the operation of all fasteners and renew as necessary."
+      },
+      {
+        "step": "12",
+        "description": "Change any failed panel lamps"
+      },
+      {
+        "step": "13",
+        "description": "Check all electrical connections/fuses including earth bonding."
+      }
+    ]
+  },
+  {
+    "section": "2.6.4",
+    "equipment": "",
+    "drawing_ref": "B15/1 -15/3 &15/8",
+    "locations": [
+      "WESTBOUND BORE",
+      "FIRE PUMPING STATION"
+    ],
+    "frequencies": [
+      "WEEKLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Check operation of fireman’s socket outlets"
+      },
+      {
+        "step": "2",
+        "description": "Check if any of the extinguishers have been discharged, replace as necessary"
+      },
+      {
+        "step": "3",
+        "description": "Visually inspect check condition of extinguishers for damage/corrosion, condition of discharge hose and legibility of labels"
+      },
+      {
+        "step": "4",
+        "description": "Record date of last service"
+      },
+      {
+        "step": "5",
+        "description": "Check extinguisher compartment doors for correct spring closure operation"
+      },
+      {
+        "step": "6",
+        "description": "Check operation of door / extinguisher limit switches"
+      },
+      {
+        "step": "7",
+        "description": "Clean extinguisher / hydrant compartment"
+      },
+      {
+        "step": "8",
+        "description": "Check power compartment for overheating etc."
+      },
+      {
+        "step": "9",
+        "description": "Check trace heating and thermostat settings (50oC)"
+      }
+    ]
+  },
+  {
+    "section": "2.6.4",
+    "equipment": "",
+    "drawing_ref": "B15/1 -15/3 &15/8",
+    "locations": [
+      "WESTBOUND BORE",
+      "FIRE PUMPING STATION"
+    ],
+    "frequencies": [
+      "WEEKLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "11",
+        "description": "Check the operation of all fasteners and renew as necessary."
+      },
+      {
+        "step": "12",
+        "description": "Renew all panel lamps"
+      },
+      {
+        "step": "13",
+        "description": "Check all electrical connections/fuses including earth bonding."
+      },
+      {
+        "step": "14",
+        "description": "Check all cable markers are in place and legible"
+      },
+      {
+        "step": "15",
+        "description": "Clean panel exterior with proprietary stainless steel cleaning agent."
+      }
+    ]
+  },
+  {
+    "section": "2.7.1",
+    "equipment": "",
+    "drawing_ref": "B13/1 - 13/6",
+    "locations": [
+      "COUNTY HALL",
+      "FIRE PUMPING STATION"
+    ],
+    "frequencies": [
+      "3 MONTHLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Check visible parts on pumps and associated electrical, mechanical and pipework installations for damage, corrosion, or deteriorating paintwork.  Repair as required"
+      },
+      {
+        "step": "2",
+        "description": "Check all bolts nuts and screws are secure, including pump cable connections in terminal boxes.  Check for overheating"
+      },
+      {
+        "step": "3",
+        "description": "Check correct operation of pumps"
+      },
+      {
+        "step": "4",
+        "description": "Check cable clamps are tight and that cable supports are undamaged"
+      },
+      {
+        "step": "5",
+        "description": "Clean down pumps a re pipework as required"
+      },
+      {
+        "step": "6",
+        "description": "Operate all manual valves through full range of travel to check operation. Lubricate as necessary – Reset"
+      },
+      {
+        "step": "7",
+        "description": "Check operation of sump pump"
+      }
+    ]
+  },
+  {
+    "section": "2.7.2",
+    "equipment": "",
+    "drawing_ref": "B13/1 - 13/6",
+    "locations": [
+      "FIRE PUMPING STATION"
+    ],
+    "frequencies": [
+      "6 MONTHLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Check visible parts on pumps and associated electrical, mechanical and pipework installations for damage, corrosion, or deteriorating paintwork.  Repair as required"
+      },
+      {
+        "step": "2",
+        "description": "Check all bolts nuts and screws are secure, including pui-np cable connections in terminal boxes.  Check for overheating"
+      },
+      {
+        "step": "3",
+        "description": "Check correct operation of pumps"
+      },
+      {
+        "step": "4",
+        "description": "Check cable clamps are tight and that cable supports are undamaged"
+      },
+      {
+        "step": "5",
+        "description": "Clean down pumps and pipework as required"
+      },
+      {
+        "step": "6",
+        "description": "Operate all manual valves through full range of travel to check operation, Lubricate as necessary.  Reset"
+      },
+      {
+        "step": "7",
+        "description": "Check operation of sump pump"
+      },
+      {
+        "step": "8",
+        "description": "Check valve interlock on pump isolating valves"
+      }
+    ]
+  },
+  {
+    "section": "2.8.1",
+    "equipment": "",
+    "drawing_ref": "B13/1 - 13/6",
+    "locations": [
+      "COUNTY HALL",
+      "FIRE PUMPING STATION"
+    ],
+    "frequencies": [
+      "3 MONTHLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Ensure that all electrical connections are tight and that contactors are in good order.  Inspect for signs of overheating"
+      },
+      {
+        "step": "2",
+        "description": "Check all indicator lamps are working correctly, replace defective lamps as required"
+      },
+      {
+        "step": "3",
+        "description": "Check that all motor protective devices are set correctly and are correctly rated.  Record overload settings"
+      },
+      {
+        "step": "4",
+        "description": "Ensure anti-condensation heater are operating correctly (15oC)"
+      },
+      {
+        "step": "5",
+        "description": "Check operation of pumps/starters by opening relief valve into spillway.  Check that jockey pump followed by main pump start to energise as pressure reduces"
+      },
+      {
+        "step": "6",
+        "description": "Check operation of RCD"
+      },
+      {
+        "step": "7",
+        "description": "Check duty/standby pump operation"
+      },
+      {
+        "step": "8",
+        "description": "Clean out control panel"
+      },
+      {
+        "step": "9",
+        "description": "Check the condition and operation of all pressure switches. Replace where necessary"
+      },
+      {
+        "step": "10",
+        "description": "Ensure that there are no apparent leaks on any part of fire ring main by checking frequency of operation of jockey pump / fire pumps on EPCMS history. If leak is suspected initiate investigation and complete repair. Any traffic management required for access will be provided by the client."
+      },
+      {
+        "step": "11",
+        "description": "Check condition and operation of control PLC."
+      }
+    ]
+  },
+  {
+    "section": "2.8.2",
+    "equipment": "",
+    "drawing_ref": "B13/1 - 13/6",
+    "locations": [
+      "FIRE PUMPING STATION"
+    ],
+    "frequencies": [
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Ensure that all electrical connections are tight and that contactors are in good order.  Inspect for signs of overheating"
+      },
+      {
+        "step": "2",
+        "description": "Check all indicator lamps are working correctly, replace defective lamps as required"
+      },
+      {
+        "step": "3",
+        "description": "Check that all motor protective devices are set correctly and are correctly rated.  Record overload settings"
+      },
+      {
+        "step": "4",
+        "description": "Ensure anti-condensation heater are operating correctly (15oC)"
+      },
+      {
+        "step": "5",
+        "description": "Check operation of pumps/starters by opening relief valve into spillway.  Check that jockey pump followed by main pump start to energise as pressure reduces"
+      },
+      {
+        "step": "6",
+        "description": "Carry out functional tests on RCD units using proprietary testing equipment"
+      },
+      {
+        "step": "7",
+        "description": "Check duty/standby operation"
+      },
+      {
+        "step": "8",
+        "description": "Check the condition of all relays and bases. Replace where necessary."
+      }
+    ]
+  },
+  {
+    "section": "2.8.3",
+    "equipment": "",
+    "drawing_ref": "B13/1 - 13/6",
+    "locations": [
+      "EASTBOUND BORE",
+      "COUNTY HALL"
+    ],
+    "frequencies": [
+      "MONTHLY",
+      "3 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Check operation of hydrant by flushing through the unit"
+      },
+      {
+        "step": "2",
+        "description": "Check that hydrant blanks are attached to the hydrant"
+      },
+      {
+        "step": "3",
+        "description": "Check hand wheels are not damaged. Replace if necessary"
+      },
+      {
+        "step": "4",
+        "description": "Check that all quick release assemblies are working"
+      },
+      {
+        "step": "5",
+        "description": "Remove blank plug and check that Inst. washer inside outlet is damaged or perished.\nReplace if necessary. Replace blank plug."
+      },
+      {
+        "step": "6",
+        "description": "Check hydrant and pipework for leaks. If leaks tighten the appropriate bolts or spindle securing nut. If required change spindle packing."
+      }
+    ]
+  },
+  {
+    "section": "2.8.4",
+    "equipment": "",
+    "drawing_ref": "B13/1 - 13/6",
+    "locations": [
+      "EASTBOUND BORE"
+    ],
+    "frequencies": [
+      "MONTHLY",
+      "3 YEARLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Check operation of hydrant by flushing through the unit"
+      },
+      {
+        "step": "2",
+        "description": "Check that hydrant blanks are attached to the hydrant"
+      },
+      {
+        "step": "3",
+        "description": "Check hand wheels are not damaged. Replace if necessary"
+      },
+      {
+        "step": "4",
+        "description": "Check that all quick release assemblies are working"
+      },
+      {
+        "step": "5",
+        "description": "Remove blank plug and check that Inst. washer inside outlet is damaged or perished.\nReplace if necessary. Replace blank plug."
+      },
+      {
+        "step": "6",
+        "description": "Carry out complete overhaul of hydrant renewing all seals and packing"
+      },
+      {
+        "step": "7",
+        "description": "Check hydrant and pipework for leaks. If leaks evident tighten the appropriate bolts or spindle securing nut."
+      }
+    ]
+  },
+  {
+    "section": "2.8.5",
+    "equipment": "",
+    "drawing_ref": "B13/1 - 13/6",
+    "locations": [
+      "WESTBOUND BORE",
+      "COUNTY HALL"
+    ],
+    "frequencies": [
+      "WEEKLY",
+      "3 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Check operation of hydrant by flushing through the unit"
+      },
+      {
+        "step": "2",
+        "description": "Check that hydrant blanks are attached to the hydrant"
+      },
+      {
+        "step": "3",
+        "description": "Check hand wheels are not damaged. Replace if necessary"
+      },
+      {
+        "step": "4",
+        "description": "Check that all quick release assemblies are working"
+      },
+      {
+        "step": "5",
+        "description": "Remove blank plug and check that Inst. washer inside outlet is damaged or perished.\nReplace if necessary. Replace blank plug."
+      },
+      {
+        "step": "6",
+        "description": "Check hydrant and pipework for leaks. If leaks tighten the appropriate bolts or spindle securing nut. If required change spindle packing."
+      }
+    ]
+  },
+  {
+    "section": "2.8.6",
+    "equipment": "",
+    "drawing_ref": "B13/1 - 13/6",
+    "locations": [
+      "WESTBOUND BORE"
+    ],
+    "frequencies": [
+      "WEEKLY",
+      "3 YEARLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Check operation of hydrant by flushing through the unit"
+      },
+      {
+        "step": "2",
+        "description": "Check that hydrant blanks are attached to the hydrant"
+      },
+      {
+        "step": "3",
+        "description": "Check hand wheels are not damaged. Replace if necessary"
+      },
+      {
+        "step": "4",
+        "description": "Check that all quick release assemblies are working"
+      },
+      {
+        "step": "5",
+        "description": "Remove blank plug and check that Inst. washer inside outlet is damaged or perished.\nReplace if necessary. Replace blank plug."
+      },
+      {
+        "step": "6",
+        "description": "Carry out complete overhaul of hydrant renewing all seals and packing"
+      },
+      {
+        "step": "7",
+        "description": "Check hydrant and pipework for leaks. If leaks evident tighten the appropriate bolts or spindle securing nut."
+      }
+    ]
+  },
+  {
+    "section": "2.8.7",
+    "equipment": "",
+    "drawing_ref": "B13/1 - 13/6",
+    "locations": [
+      "EASTBOUND BORE",
+      "COUNTY HALL"
+    ],
+    "frequencies": [
+      "MONTHLY",
+      "3 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Operate valve for full length of travel and check for leakage at stem seal housing."
+      },
+      {
+        "step": "2",
+        "description": "If seal leakage occurs tighten gland packing."
+      },
+      {
+        "step": "3",
+        "description": "Check flanges and pipework for leaks."
+      },
+      {
+        "step": "4",
+        "description": "Check valve bolts for tightness."
+      },
+      {
+        "step": "5",
+        "description": "Grease valve stem where necessary."
+      },
+      {
+        "step": "6",
+        "description": "Check hydrant and pipework for leaks. If leaks evident tighten the appropriate bolts or spindle securing nut."
+      }
+    ]
+  },
+  {
+    "section": "2.8.8",
+    "equipment": "",
+    "drawing_ref": "B13/1 - 13/6",
+    "locations": [
+      "EASTBOUND BORE"
+    ],
+    "frequencies": [
+      "MONTHLY",
+      "3 YEARLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Operate valve for full length of travel and check for leakage at stem seal housing."
+      },
+      {
+        "step": "2",
+        "description": "If seal leakage occurs tighten gland packing."
+      },
+      {
+        "step": "3",
+        "description": "Check flanges and pipework for leaks."
+      },
+      {
+        "step": "4",
+        "description": "Check valve bolts for tightness."
+      },
+      {
+        "step": "5",
+        "description": "Grease valve stem where necessary."
+      },
+      {
+        "step": "6",
+        "description": "Carry out complete overhaul of valves renewing seals and packing."
+      }
+    ]
+  },
+  {
+    "section": "2.8.9",
+    "equipment": "",
+    "drawing_ref": "B13/1 - 13/6",
+    "locations": [
+      "WESTBOUND BORE",
+      "COUNTY HALL"
+    ],
+    "frequencies": [
+      "WEEKLY",
+      "3 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Operate valve for full length of travel and check for leakage at stem seal housing."
+      },
+      {
+        "step": "2",
+        "description": "If seal leakage occurs tighten gland packing."
+      },
+      {
+        "step": "3",
+        "description": "Check flanges and pipework for leaks."
+      },
+      {
+        "step": "4",
+        "description": "Check valve bolts for tightness."
+      },
+      {
+        "step": "5",
+        "description": "Grease valve stem where necessary."
+      },
+      {
+        "step": "6",
+        "description": "Check hydrant and pipework for leaks. If leaks evident tighten the appropriate bolts or spindle securing nut."
+      }
+    ]
+  },
+  {
+    "section": "2.8.10",
+    "equipment": "",
+    "drawing_ref": "B13/1 - 13/6",
+    "locations": [
+      "WESTBOUND BORE"
+    ],
+    "frequencies": [
+      "WEEKLY",
+      "3 YEARLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Operate valve for full length of travel and check for leakage at stem seal housing."
+      },
+      {
+        "step": "2",
+        "description": "If seal leakage occurs tighten gland packing."
+      },
+      {
+        "step": "3",
+        "description": "Check flanges and pipework for leaks."
+      },
+      {
+        "step": "4",
+        "description": "Check valve bolts for tightness."
+      },
+      {
+        "step": "5",
+        "description": "Grease valve stem where necessary."
+      },
+      {
+        "step": "6",
+        "description": "Carry out complete overhaul of valves renewing seals and packing."
+      }
+    ]
+  },
+  {
+    "section": "2.9.3",
+    "equipment": "",
+    "drawing_ref": "B12/1 - B19/19",
+    "locations": [
+      "SERVICE BUILDING"
+    ],
+    "frequencies": [
+      "6 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Ensure that all sump environments are suitable. All work within the sump area shall be carried out in accordance with CCC sump entry requirements. Single man entry will not be permitted."
+      },
+      {
+        "step": "2",
+        "description": "Generally, carry out visual check of sump area."
+      },
+      {
+        "step": "3",
+        "description": "Carry Out Calibration of the sump PH measurement system"
+      },
+      {
+        "step": "4",
+        "description": "Check that the sump ventilation fans are operating correctly."
+      },
+      {
+        "step": "5",
+        "description": "Check the correct operation of pump level controls"
+      }
+    ]
+  },
+  {
+    "section": "2.9.4",
+    "equipment": "",
+    "drawing_ref": "B12/1 - B19/19",
+    "locations": [
+      "SERVICE BUILDING"
+    ],
+    "frequencies": [
+      "6 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Remove and dispose of all silt from the main drainage sump"
+      },
+      {
+        "step": "2",
+        "description": "Remove and dispose of all silt from the main drainage dry sump"
+      },
+      {
+        "step": "3",
+        "description": "Remove and dispose of all silt from the impounding sump"
+      },
+      {
+        "step": "4",
+        "description": "Remove and dispose of all silt from the impounding dry sump"
+      },
+      {
+        "step": "5",
+        "description": "Remove and dispose of all silt from the valve chamber"
+      }
+    ]
+  },
+  {
+    "section": "2.10.1",
+    "equipment": "",
+    "drawing_ref": "B12/1 - B19/9",
+    "locations": [
+      "COUNTY HALL",
+      "SERVICE BUILDING"
+    ],
+    "frequencies": [
+      "3 MONTHLY",
+      "6 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Ensure that all electrical connections are tight and that contactors are in good order. Replace worn contacts as required. Inspect for signs of overheating."
+      },
+      {
+        "step": "2",
+        "description": "Check all indicator lamps are working correctly and replace as required."
+      },
+      {
+        "step": "3",
+        "description": "Check that all motor protective devices are set correctly and are correctly rated. Record all motor starter overload settings."
+      },
+      {
+        "step": "4",
+        "description": "Ensure anti-condensation heaters are operating correctly (15oC). Replace with spares if required."
+      },
+      {
+        "step": "5",
+        "description": "Operate starters to ensure correct operation and record star/delta timer settings."
+      },
+      {
+        "step": "6",
+        "description": "Operate sequencer and ensure correct operation."
+      },
+      {
+        "step": "7",
+        "description": "Inspect compartment 1A mains changeover contactors are in good order. Replace worn contacts as required. Ensure changeover unit is working correctly. Inspect compartment for signs of overheating."
+      },
+      {
+        "step": "8",
+        "description": "Check pH monitoring equipment within compartment 5A for stability."
+      },
+      {
+        "step": "9",
+        "description": "Vacuums clean all compartments."
+      }
+    ]
+  },
+  {
+    "section": "2.10.2",
+    "equipment": "",
+    "drawing_ref": "B12/1 - B19/9",
+    "locations": [
+      "SERVICE BUILDING"
+    ],
+    "frequencies": [
+      "6 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Ensure that all electrical connections are tight and that contactors are in good order. Replace worn contacts as required. Inspect for signs of overheating."
+      },
+      {
+        "step": "2",
+        "description": "Check all indicator lamps are working correctly and replace as required."
+      },
+      {
+        "step": "3",
+        "description": "Check that all motor protective devices are set correctly and are correctly rated. Record \nall motor starter overload settings."
+      },
+      {
+        "step": "4",
+        "description": "Ensure anti-condensation heaters are operating correctly (15oC). Replace with spares if required."
+      },
+      {
+        "step": "5",
+        "description": "Operate starters to ensure correct operation and record star/delta timer settings. And run/start currents for each motor"
+      },
+      {
+        "step": "6",
+        "description": "Operate sequencer and ensure correct operation."
+      },
+      {
+        "step": "7",
+        "description": "Inspect compartment 1A mains changeover contactors are in good order. Replace worn contacts as required. Ensure changeover unit is working correctly. Inspect compartment for signs of overheating."
+      },
+      {
+        "step": "8",
+        "description": "Check pH monitoring equipment within compartment 5A for stability."
+      },
+      {
+        "step": "9",
+        "description": "Vacuums clean all compartments."
+      }
+    ]
+  },
+  {
+    "section": "2.11.2",
+    "equipment": "",
+    "drawing_ref": "B12/1 - B19/9",
+    "locations": [
+      "SERVICE BUILDING"
+    ],
+    "frequencies": [
+      "6 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Check visible parts on pumps and associated electrical, mechanical and pipework installations for damage, corrosion, or deteriorating paintwork. Repair as required."
+      },
+      {
+        "step": "2",
+        "description": "Check all bolts, nuts and screws are secure, including pump cable connections within terminal boxes. Check terminal boxes for signs of overheating."
+      },
+      {
+        "step": "3",
+        "description": "Check pump level controls and clean sensors as necessary. Ensure pilot holes are clear."
+      },
+      {
+        "step": "4",
+        "description": "Check cable clamps are tight and that cable supports are undamaged."
+      },
+      {
+        "step": "5",
+        "description": "Check Rotork valves designated MV1 & MV2 for operation."
+      },
+      {
+        "step": "6",
+        "description": "Check operation of skimmer diverter valve MV3."
+      },
+      {
+        "step": "7",
+        "description": "Check operation of skimmer pumps. Ensure outlets are open to Bauer coupling/sewer."
+      },
+      {
+        "step": "8",
+        "description": "Operate all manual valves through total range of travel of movement."
+      },
+      {
+        "step": "9",
+        "description": "Check access lighting and re-lamp where necessary."
+      }
+    ]
+  },
+  {
+    "section": "2.11.2",
+    "equipment": "",
+    "drawing_ref": "B12/1 - B19/9",
+    "locations": [
+      "SERVICE BUILDING"
+    ],
+    "frequencies": [
+      "6 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "11",
+        "description": "Check operation of sump vent fans."
+      },
+      {
+        "step": "12",
+        "description": "Check operation of dry well sump pump and correction operation of level control."
+      },
+      {
+        "step": "13",
+        "description": "Lubricate hinges on sump access covers."
+      },
+      {
+        "step": "14",
+        "description": "Check sump access cover locks for serviceability."
+      },
+      {
+        "step": "15",
+        "description": "Check sludge pump non-return valves for correct operation."
+      },
+      {
+        "step": "16",
+        "description": "Check operation of manual transfer of main sump water to impounding sump using any of the PU1, PU2, PU3 pumps."
+      },
+      {
+        "step": "17",
+        "description": "Check operation of sludge sump P4 following the operation 16 above - to sewer and/or Bauer coupling discharges."
+      }
+    ]
+  },
+  {
+    "section": "2.13.2",
+    "equipment": "",
+    "drawing_ref": "B5/1 - B5/6",
+    "locations": [
+      "SERVICE BUILDING"
+    ],
+    "frequencies": [
+      "6 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Visually check that the following at the services Building are indicating normal status.\nVisually check LV switch room and control room door seals.\nGas Extract Systems: Operate locally and check vents and fan operations IN BOTH LV and Control room"
+      },
+      {
+        "step": "2",
+        "description": "Check for correct operation of extractor panel"
+      },
+      {
+        "step": "3",
+        "description": "Check operation of LV SWITCHROOM, CONTROL ROOM AND BATTERY ROOM extraction circuits."
+      },
+      {
+        "step": "4",
+        "description": "Check operation of control room IG55 system timing EXTRACT circuits."
+      },
+      {
+        "step": "5",
+        "description": "Check operation of battery Room Fan and ensure unit is clean and in good working order, replace / repair where necessary"
+      },
+      {
+        "step": "6",
+        "description": "Check operation of Control Room Fan and ensure unit is clean and in good working order, replace / repair where necessary"
+      },
+      {
+        "step": "7",
+        "description": "Check operation of Office Room Fan and ensure unit is clean and in good working order, replace / repair where necessary"
+      },
+      {
+        "step": "8",
+        "description": "Check operation of LV Switch room Fan and ensure unit is clean and in good working order, replace / repair where necessary"
+      }
+    ]
+  },
+  {
+    "section": "2.17.1",
+    "equipment": "SMOKE CONTROL",
+    "drawing_ref": "",
+    "locations": [
+      "EASTBOUND BORE",
+      "COUNTY HALL"
+    ],
+    "frequencies": [
+      "MONTHLY",
+      "3 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Open smoke control panel at each portal"
+      },
+      {
+        "step": "2",
+        "description": "Lift handset at entry portal and check that the flashing warning light on the exit portal operates correctly."
+      },
+      {
+        "step": "3",
+        "description": "On lifting the called telephone check that the flasher stops and that there is acceptable speech communication between the locations."
+      },
+      {
+        "step": "4",
+        "description": "Repeat steps 1 to 3 from the exit portal."
+      },
+      {
+        "step": "5",
+        "description": "Repeat steps 1 to 4 during the fan test from the smoke panel."
+      },
+      {
+        "step": "6",
+        "description": "Check telephone sets as necessary and apply disinfectant/sterilising agent to the handset."
+      }
+    ]
+  },
+  {
+    "section": "2.17.2",
+    "equipment": "TELEPHONE",
+    "drawing_ref": "",
+    "locations": [
+      "WESTBOUND BORE",
+      "COUNTY HALL"
+    ],
+    "frequencies": [
+      "WEEKLY",
+      "3 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Open smoke control panel at each portal"
+      },
+      {
+        "step": "2",
+        "description": "Lift handset at entry portal and check that the flashing warning light on the exit portal operates correctly."
+      },
+      {
+        "step": "3",
+        "description": "On lifting the called telephone check that the flasher stops and that there is acceptable speech communication between the locations."
+      },
+      {
+        "step": "4",
+        "description": "Repeat steps 1 to 3 from the exit portal."
+      },
+      {
+        "step": "5",
+        "description": "Repeat steps 1 to 4 during the fan test from the smoke panel."
+      },
+      {
+        "step": "6",
+        "description": "Check telephone sets as necessary and apply disinfectant/sterilising agent to the handset."
+      }
+    ]
+  },
+  {
+    "section": "2.18.1",
+    "equipment": "TUNNEL EMERGENCY",
+    "drawing_ref": "",
+    "locations": [
+      "EASTBOUND BORE",
+      "COUNTY HALL"
+    ],
+    "frequencies": [
+      "MONTHLY",
+      "3 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Lift the telephone handset and check for a ringing tone at the earpiece"
+      },
+      {
+        "step": "2",
+        "description": "UTC operator to accept call to check that is logged as a connected call on the EPCMS via the door limit switch."
+      },
+      {
+        "step": "3",
+        "description": "Check that the speech and sidetone are acceptable to both parties."
+      },
+      {
+        "step": "4",
+        "description": "Arrange for UTC operator to call back and repeat items 2 and 3."
+      },
+      {
+        "step": "5",
+        "description": "Whilst telephone set is ringing check the amber ringing beacon is operational in conjunction with the ringing cadence. Replace beacon where necessary."
+      },
+      {
+        "step": "6",
+        "description": "Check telephone set is properly labelled with correct telephone number."
+      },
+      {
+        "step": "7",
+        "description": "Check telephone body cord and handset for security and evidence of damage. Check cradle switch operates smoothly."
+      },
+      {
+        "step": "8",
+        "description": "Clean telephone set as necessary and apply disinfectant/sterilising agent to the handset"
+      },
+      {
+        "step": "9",
+        "description": "Check compartment for water ingress. Vacuum clean compartment."
+      },
+      {
+        "step": "10",
+        "description": "Check and lubricate hinges. Check door fasteners and adjust or renew as required."
+      }
+    ]
+  },
+  {
+    "section": "2.18.2",
+    "equipment": "TELEPHONE",
+    "drawing_ref": "",
+    "locations": [
+      "WESTBOUND BORE",
+      "COUNTY HALL"
+    ],
+    "frequencies": [
+      "WEEKLY",
+      "3 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Lift the telephone handset and check for a ringing tone at the earpiece"
+      },
+      {
+        "step": "2",
+        "description": "UTC operator to accept call to check that is logged as a connected call on the EPCMS via the door limit switch."
+      },
+      {
+        "step": "3",
+        "description": "Check that the speech and sidetone are acceptable to both parties."
+      },
+      {
+        "step": "4",
+        "description": "Arrange for UTC operator to call back and repeat items 2 and 3."
+      },
+      {
+        "step": "5",
+        "description": "Whilst telephone set is ringing check the amber beacon is operational with the ringing cadence. Replace beacon where necessary."
+      },
+      {
+        "step": "6",
+        "description": "Check telephone set is properly labelled with correct telephone number."
+      },
+      {
+        "step": "7",
+        "description": "Check telephone body cord and handset for security and evidence of damage. Check cradle switch operates smoothly."
+      },
+      {
+        "step": "8",
+        "description": "Clean telephone set as necessary and apply disinfectant/sterilising agent to the handset"
+      },
+      {
+        "step": "9",
+        "description": "Check compartment for water ingress. Vacuum clean compartment."
+      },
+      {
+        "step": "10",
+        "description": "Check and lubricate door hinges. Check door fasteners and adjust or renew as required."
+      }
+    ]
+  },
+  {
+    "section": "2.19.3",
+    "equipment": "FIRE EXTINGUISHERS",
+    "drawing_ref": "",
+    "locations": [
+      "SERVICE BUILDING",
+      "FIRE PUMPING STATION"
+    ],
+    "frequencies": [
+      "6 MONTHLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Check extinguishers have not been discharged, replace as necessary"
+      },
+      {
+        "step": "2",
+        "description": "Visually check the exteriors of the extinguishers for signs of damage or corrosion, any cracking of 'O' rings or wear on hoses"
+      },
+      {
+        "step": "3",
+        "description": "Record the date of the last service and ensure that all labels are legible"
+      },
+      {
+        "step": "4",
+        "description": "Ensure that all fire extinguishers comply with BS6643 and BS7327"
+      },
+      {
+        "step": "5",
+        "description": "Service fire extinguishers in accordance with the manufacturer instructions and replace where necessary"
+      }
+    ]
+  },
+  {
+    "section": "2.20.1",
+    "equipment": "B15/8",
+    "drawing_ref": "",
+    "locations": [
+      "WESTBOUND BORE",
+      "COUNTY HALL"
+    ],
+    "frequencies": [
+      "WEEKLY",
+      "3 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Ensure that all fire hydrants operate correctly by attaching a standpipe and operating the hydrant valve. Ensure that the valve seats correctly on completion of test"
+      },
+      {
+        "step": "2",
+        "description": "Check operation of hose reels"
+      },
+      {
+        "step": "3",
+        "description": "Check pipework support bracket"
+      },
+      {
+        "step": "4",
+        "description": "Check operation of anti-frost heater / thermostat (set 5C)"
+      },
+      {
+        "step": "5",
+        "description": "Vacuum clean compartment"
+      }
+    ]
+  },
+  {
+    "section": "2.20.2",
+    "equipment": "B15/8",
+    "drawing_ref": "",
+    "locations": [
+      "EASTBOUND BORE",
+      "COUNTY HALL"
+    ],
+    "frequencies": [
+      "MONTHLY",
+      "3 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Ensure that all fire hydrants operate correctly by attaching a standpipe and operating the hydrant valve. Ensure that the valve seats correctly on completion of test"
+      },
+      {
+        "step": "2",
+        "description": "Check operation of hose reels"
+      },
+      {
+        "step": "3",
+        "description": "Check pipework support bracket"
+      },
+      {
+        "step": "4",
+        "description": "Check operation of anti-frost heater / thermostat (set 5C)"
+      },
+      {
+        "step": "5",
+        "description": "Vacuum clean compartment"
+      }
+    ]
+  },
+  {
+    "section": "2.21.1",
+    "equipment": "",
+    "drawing_ref": "",
+    "locations": [
+      "WESTBOUND BORE",
+      "COUNTY HALL"
+    ],
+    "frequencies": [
+      "WEEKLY",
+      "3 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Check that all emergency SOS signs are operational and replace any failed lamps"
+      },
+      {
+        "step": "2",
+        "description": "Clean fascia and check that text corresponds with telephone number"
+      },
+      {
+        "step": "3",
+        "description": "Replace any damaged signs or seals."
+      }
+    ]
+  },
+  {
+    "section": "2.21.2",
+    "equipment": "TUNNEL SOS SIGNS",
+    "drawing_ref": "",
+    "locations": [
+      "EASTBOUND BORE",
+      "COUNTY HALL"
+    ],
+    "frequencies": [
+      "MONTHLY",
+      "3 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Check that all emergency SOS signs are operational and replace any failed lamps"
+      },
+      {
+        "step": "2",
+        "description": "Clean fascia and check that text corresponds with the telephone number"
+      },
+      {
+        "step": "3",
+        "description": "Replace any damaged signs or seals"
+      }
+    ]
+  },
+  {
+    "section": "2.21.5",
+    "equipment": "",
+    "drawing_ref": "",
+    "locations": [
+      "WESTBOUND BORE",
+      "FIRE PUMPING STATION"
+    ],
+    "frequencies": [
+      "WEEKLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Check that all emergency SOS signs are operational and replace any failed lamps"
+      },
+      {
+        "step": "2",
+        "description": "Clean fascias and check that the text corresponds with the telephone number"
+      },
+      {
+        "step": "3",
+        "description": "Replace any damaged sign or seals"
+      },
+      {
+        "step": "4",
+        "description": "Replace all emergency SOS sign lamps"
+      },
+      {
+        "step": "5",
+        "description": "Check all connections are tight and check for any signs of overheating"
+      }
+    ]
+  },
+  {
+    "section": "2.21.6",
+    "equipment": "TUNNEL SOS SIGNS",
+    "drawing_ref": "",
+    "locations": [
+      "EASTBOUND BORE",
+      "FIRE PUMPING STATION"
+    ],
+    "frequencies": [
+      "MONTHLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Check that all emergency SOS signs are operational and replace any failed lamps"
+      },
+      {
+        "step": "2",
+        "description": "Clean fascias and check that text corresponds with the telephone number"
+      },
+      {
+        "step": "3",
+        "description": "Replace any damaged sign or seals"
+      },
+      {
+        "step": "4",
+        "description": "Replace all emergency SOS sign lamps"
+      },
+      {
+        "step": "5",
+        "description": "Check all connections are tight and check for any signs of overheating"
+      }
+    ]
+  },
+  {
+    "section": "2.22.1",
+    "equipment": "B11/1 - 11/4",
+    "drawing_ref": "",
+    "locations": [
+      "COUNTY HALL",
+      "SERVICE BUILDING"
+    ],
+    "frequencies": [
+      "3 MONTHLY",
+      "6 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Inspect battery and charger unit to ensure that all terminal connections are secure"
+      },
+      {
+        "step": "2",
+        "description": "Test operation of battery charger failure alarms and note values"
+      },
+      {
+        "step": "3",
+        "description": "Check batteries for any corrosion or damage."
+      },
+      {
+        "step": "4",
+        "description": "Remove dust, loose debris or dirt with a vacuum cleaner and check instruments on fascia panel are operational"
+      },
+      {
+        "step": "5",
+        "description": "Lubricate door hinge and locks"
+      },
+      {
+        "step": "6",
+        "description": "Check that earth bonding is secure"
+      }
+    ]
+  },
+  {
+    "section": "2.22.2",
+    "equipment": "B11/1 - 11/4",
+    "drawing_ref": "",
+    "locations": [
+      "SERVICE BUILDING"
+    ],
+    "frequencies": [
+      "6 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Inspect battery and charger unit to ensure that all terminal connections are secure"
+      },
+      {
+        "step": "2",
+        "description": "Test operation of battery charger failure alarms and note values"
+      },
+      {
+        "step": "3",
+        "description": "Check batteries for any corrosion or damage."
+      },
+      {
+        "step": "4",
+        "description": "Remove dust, loose debris or dirt with a vacuum cleaner and check instruments on fascia panel are operational"
+      },
+      {
+        "step": "5",
+        "description": "Lubricate door hinge and locks"
+      },
+      {
+        "step": "6",
+        "description": "Check that earth bonding is secure"
+      }
+    ]
+  },
+  {
+    "section": "2.22.3",
+    "equipment": "CHARGER",
+    "drawing_ref": "",
+    "locations": [
+      "SERVICE BUILDING",
+      "FIRE PUMPING STATION"
+    ],
+    "frequencies": [
+      "6 MONTHLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Inspect battery and charger unit to ensure that all terminal connections are secure"
+      },
+      {
+        "step": "2",
+        "description": "Test operation of battery charger failure alarms and note values"
+      },
+      {
+        "step": "3",
+        "description": "Check batteries for any corrosion or damage."
+      },
+      {
+        "step": "4",
+        "description": "Remove dust, loose or dirt with a vacuum cleaner and check instruments on fascia panel are operational"
+      },
+      {
+        "step": "5",
+        "description": "Lubricate door hinge and locks"
+      },
+      {
+        "step": "6",
+        "description": "Check that earth bonding is secure"
+      },
+      {
+        "step": "7",
+        "description": "Carry Out Battery Condition Check & Report"
+      },
+      {
+        "step": "8",
+        "description": "Check / adjust float and boost voltage and current limit settings along with alarm levels"
+      }
+    ]
+  },
+  {
+    "section": "2.23.1",
+    "equipment": "B11/1 - 11/4",
+    "drawing_ref": "",
+    "locations": [
+      "COUNTY HALL",
+      "SERVICE BUILDING"
+    ],
+    "frequencies": [
+      "3 MONTHLY",
+      "6 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Inspect battery and charger unit to ensure that all terminal connections are secure"
+      },
+      {
+        "step": "2",
+        "description": "Test operation of battery charger failure alarms and note values"
+      },
+      {
+        "step": "3",
+        "description": "Check batteries for any corrosion or damage."
+      },
+      {
+        "step": "4",
+        "description": "Remove dust, loose debris or dirt with a vacuum cleaner and check instruments on fascia panel are optional"
+      },
+      {
+        "step": "5",
+        "description": "Lubricate door hinge and locks"
+      },
+      {
+        "step": "6",
+        "description": "Check that earth bonding is secure"
+      }
+    ]
+  },
+  {
+    "section": "2.23.2",
+    "equipment": "B11/1 - 11/4",
+    "drawing_ref": "",
+    "locations": [
+      "SERVICE BUILDING"
+    ],
+    "frequencies": [
+      "6 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Inspect battery and charger unit to ensure that all terminal connections are secure"
+      },
+      {
+        "step": "2",
+        "description": "Test operation of battery charger failure alarms and note values"
+      },
+      {
+        "step": "3",
+        "description": "Check batteries for any corrosion or damage."
+      },
+      {
+        "step": "4",
+        "description": "Remove dust, loose debris or dirt with a vacuum cleaner and check instruments on fascia panel are operational"
+      },
+      {
+        "step": "5",
+        "description": "Lubricate door hinge and locks"
+      },
+      {
+        "step": "6",
+        "description": "Check that earth bonding is secure"
+      }
+    ]
+  },
+  {
+    "section": "2.23.3",
+    "equipment": "CHARGER",
+    "drawing_ref": "",
+    "locations": [
+      "SERVICE BUILDING",
+      "FIRE PUMPING STATION"
+    ],
+    "frequencies": [
+      "6 MONTHLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Inspect battery and charger unit to ensure that all terminal connections are secure"
+      },
+      {
+        "step": "2",
+        "description": "Test operation of battery charger failure alarms and note values"
+      },
+      {
+        "step": "3",
+        "description": "Check batteries for any corrosion or damage."
+      },
+      {
+        "step": "4",
+        "description": "Remove dust, loose debris or dirt with a vacuum cleaner and check instruments on fascia panel are operational"
+      },
+      {
+        "step": "5",
+        "description": "Lubricate door hinge and locks"
+      },
+      {
+        "step": "6",
+        "description": "Check that earth bonding is secure"
+      },
+      {
+        "step": "7",
+        "description": "Carry out battery condition check and report"
+      },
+      {
+        "step": "8",
+        "description": "Check / adjust float and boost voltage and current limit settings along with alarm levels"
+      }
+    ]
+  },
+  {
+    "section": "2.24.1",
+    "equipment": "NO  1,2,3,4,5,6 & 7",
+    "drawing_ref": "",
+    "locations": [
+      "WESTBOUND BORE",
+      "COUNTY HALL"
+    ],
+    "frequencies": [
+      "WEEKLY",
+      "3 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Check door seal and repair as necessary. Lubricate hinges and 'panic' bolts"
+      },
+      {
+        "step": "2",
+        "description": "Check paintwork and repair as required"
+      },
+      {
+        "step": "3",
+        "description": "Check electrical connections on door switches and test operation of flashing beacons"
+      },
+      {
+        "step": "4",
+        "description": "Check operation of emergency exit sign and ensure that all electrical connections are secure"
+      },
+      {
+        "step": "5",
+        "description": "Check emergency exit sign seal and replace if necessary"
+      },
+      {
+        "step": "6",
+        "description": "Hand Clean door and framework, closing units and signs"
+      },
+      {
+        "step": "7",
+        "description": "Check Alignment of drop bolts and re-align / adjust where issues are identified"
+      }
+    ]
+  },
+  {
+    "section": "2.24.2",
+    "equipment": "CROSS BORE DOORS",
+    "drawing_ref": "",
+    "locations": [
+      "EASTBOUND BORE",
+      "COUNTY HALL"
+    ],
+    "frequencies": [
+      "MONTHLY",
+      "3 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Check door seal and repair if necessary. Lubricate hinges and 'panic' bolts in accordance with manufacturers recommendations"
+      },
+      {
+        "step": "2",
+        "description": "Check doors and frames and repair as required"
+      },
+      {
+        "step": "3",
+        "description": "Check electrical connections on door switches and test operation of flashing beacons"
+      },
+      {
+        "step": "4",
+        "description": "Check operation of emergency exit sign and ensure that all electrical connections are secure"
+      },
+      {
+        "step": "5",
+        "description": "Check emergency exit sign seal and replace if necessary"
+      },
+      {
+        "step": "6",
+        "description": "Hand Clean door, framework, closing units and signs"
+      },
+      {
+        "step": "7",
+        "description": "Check alignment of drop bolts and realign where issues are identified"
+      }
+    ]
+  },
+  {
+    "section": "2.24.3",
+    "equipment": "NO 1,2,3,4,5,6 & 7",
+    "drawing_ref": "",
+    "locations": [
+      "WESTBOUND BORE"
+    ],
+    "frequencies": [
+      "WEEKLY",
+      "6 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Check door seal and report if necessary. Lubricate hinges and 'panic' bolts"
+      },
+      {
+        "step": "2",
+        "description": "Check doors and frames and repair as required"
+      },
+      {
+        "step": "3",
+        "description": "Check electrical connections on door switches and test operation of flashing beacons"
+      },
+      {
+        "step": "4",
+        "description": "Check operation of emergency exit sign and ensure that all electrical connections are secure"
+      },
+      {
+        "step": "5",
+        "description": "Check emergency exit sign seal and replace if necessary"
+      },
+      {
+        "step": "6",
+        "description": "Service Hinges and closing units in accordance with manufacturers instructions."
+      },
+      {
+        "step": "7",
+        "description": "Hand Clean door, framework, closing units and signs"
+      }
+    ]
+  },
+  {
+    "section": "2.24.4",
+    "equipment": "CROSS BORE DOORS",
+    "drawing_ref": "",
+    "locations": [
+      "EASTBOUND BORE"
+    ],
+    "frequencies": [
+      "MONTHLY",
+      "6 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Check door seal and report if necessary. Lubricate hinges and 'panic' bolts"
+      },
+      {
+        "step": "2",
+        "description": "Check doors and frames and repair as required"
+      },
+      {
+        "step": "3",
+        "description": "Check electrical connections on door switches and test operation of flashing beacons"
+      },
+      {
+        "step": "4",
+        "description": "Check operation of emergency exit sign and ensure that all electrical connections are secure"
+      },
+      {
+        "step": "5",
+        "description": "Check emergency exit sign seal and replace if necessary"
+      },
+      {
+        "step": "6",
+        "description": "Service Hinges and closing units in accordance with manufacturers instructions."
+      },
+      {
+        "step": "7",
+        "description": "Hand Clean door, framework, closing units and signs"
+      }
+    ]
+  },
+  {
+    "section": "2.24.5",
+    "equipment": "NO. 1,2,3,4,5,6 & 7",
+    "drawing_ref": "",
+    "locations": [
+      "WESTBOUND BORE",
+      "FIRE PUMPING STATION"
+    ],
+    "frequencies": [
+      "WEEKLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Check door seal and report if necessary. Lubricate hinges and 'panic' bolts"
+      },
+      {
+        "step": "2",
+        "description": "Check doors and frames and repair as required"
+      },
+      {
+        "step": "3",
+        "description": "Check electrical connections on door switches and test operation of flashing beacons"
+      },
+      {
+        "step": "4",
+        "description": "Check operation of emergency exit sign and ensure that all electrical connections are secure"
+      },
+      {
+        "step": "5",
+        "description": "Check emergency exit sign seal and replace if necessary"
+      },
+      {
+        "step": "6",
+        "description": "Service Hinges and closing units in accordance with manufacturers instructions."
+      },
+      {
+        "step": "7",
+        "description": "Hand Clean door, framework, closing units and signs"
+      }
+    ]
+  },
+  {
+    "section": "2.24.6",
+    "equipment": "CROSS BORE DOORS",
+    "drawing_ref": "",
+    "locations": [
+      "EASTBOUND BORE",
+      "FIRE PUMPING STATION"
+    ],
+    "frequencies": [
+      "MONTHLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Check door seal and report if necessary. Lubricate hinges and 'panic' bolts"
+      },
+      {
+        "step": "2",
+        "description": "Check doors and frames and repair as required"
+      },
+      {
+        "step": "3",
+        "description": "Check electrical connections on door switches and test operation of flashing beacons"
+      },
+      {
+        "step": "4",
+        "description": "Check operation of emergency exit sign and ensure that all electrical connections are secure"
+      },
+      {
+        "step": "5",
+        "description": "Check emergency exit sign seal and replace if necessary"
+      },
+      {
+        "step": "6",
+        "description": "Service Hinges and closing units in accordance with manufacturers instructions."
+      },
+      {
+        "step": "7",
+        "description": "Hand Clean door, framework, closing units and signs"
+      }
+    ]
+  },
+  {
+    "section": "2.25.1",
+    "equipment": "HOSE CONNECTION",
+    "drawing_ref": "",
+    "locations": [
+      "EASTBOUND BORE",
+      "COUNTY HALL"
+    ],
+    "frequencies": [
+      "MONTHLY",
+      "3 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Lubricate hinges and locking mechanism"
+      },
+      {
+        "step": "2",
+        "description": "Check security of break glass bolt. Replace if damaged."
+      },
+      {
+        "step": "3",
+        "description": "Check valves through full range of movement"
+      },
+      {
+        "step": "4",
+        "description": "Clean panels and report any defects"
+      },
+      {
+        "step": "5",
+        "description": "Lubricate and check conditions of padlock (replace, if necessary, liaise with CCC Duty Engineer)"
+      }
+    ]
+  },
+  {
+    "section": "2.25.2",
+    "equipment": "PANELS",
+    "drawing_ref": "",
+    "locations": [
+      "WESTBOUND BORE",
+      "COUNTY HALL"
+    ],
+    "frequencies": [
+      "WEEKLY",
+      "3 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Lubricate hinges and locking mechanism"
+      },
+      {
+        "step": "2",
+        "description": "Check security of break glass bolt. Replace if damaged."
+      },
+      {
+        "step": "3",
+        "description": "Check valves through full range of movement"
+      },
+      {
+        "step": "4",
+        "description": "Clean panels and report any defects"
+      },
+      {
+        "step": "5",
+        "description": "Lubricate and check conditions of padlock (replace, if necessary, liaise with CCC Duty Engineer"
+      }
+    ]
+  },
+  {
+    "section": "2.26.1",
+    "equipment": "B1/89",
+    "drawing_ref": "",
+    "locations": [
+      "EASTBOUND BORE",
+      "COUNTY HALL"
+    ],
+    "frequencies": [
+      "MONTHLY",
+      "3 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Visually inspect the sign for damage, deterioration of paintwork, loose bolts or components, water ingress or any other damage"
+      },
+      {
+        "step": "2",
+        "description": "Replace any faulty LED strings and flasher lamps (if applicable). Where local repairs are not possible replace sign with spare held by the client if available and return original to manufacturer along with brief details of fault. Arrange for repaired unit to be returned to site at earliest opportunity."
+      },
+      {
+        "step": "3",
+        "description": "Thoroughly clean faces of matrix sign and remove any accumulated dirt"
+      },
+      {
+        "step": "4",
+        "description": "Inspect all steelwork fixing bolts for tightness and security and re-tighten where necessary"
+      },
+      {
+        "step": "5",
+        "description": "Repair or replace any faulty component or full unit associated with sign, backing board, X frame, supports where necessary to bring the sign back into full working order."
+      },
+      {
+        "step": "6",
+        "description": "Ensure interlocking is functional and that NMCS2 local interface unit is healthy. \nWhere a fault is found replace with spare unit held by the client and return faulty unit to the manufacturer for repair along with brief description of the fault. Arrange for repaired unit to be returned to site at earliest opportunity."
+      }
+    ]
+  },
+  {
+    "section": "2.26.3",
+    "equipment": "B1/89",
+    "drawing_ref": "",
+    "locations": [
+      "WESTBOUND BORE",
+      "COUNTY HALL"
+    ],
+    "frequencies": [
+      "WEEKLY",
+      "3 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Visually inspect the sign for damage, deterioration of paintwork, loose bolts or components, water ingress or any other damage"
+      },
+      {
+        "step": "2",
+        "description": "Replace any faulty LED strings and flasher lamps (if applicable). Where local repairs are not possible replace sign with spare if available and return original to manufacturer along with brief details of fault. Arrange for repaired unit to be returned to site at earliest opportunity."
+      },
+      {
+        "step": "3",
+        "description": "Thoroughly clean faces of matrix sign and remove any accumulated dirt"
+      },
+      {
+        "step": "4",
+        "description": "Inspect all steelwork fixing for bolts for tightness and security and re-tighten where necessary"
+      },
+      {
+        "step": "5",
+        "description": "Repair or replace any faulty component or full unit associated with sign, backing board, X frame, supports where necessary to bring the sign back into full working order."
+      },
+      {
+        "step": "6",
+        "description": "Ensure interlocking is functional and that NMCS2 local interface unit is healthy. \nWhere a fault is found replace with spare unit held by the client and return faulty unit to the manufacturer for repair along with brief description of the fault. Arrange for repaired unit to be returned to site at earliest opportunity."
+      }
+    ]
+  },
+  {
+    "section": "2.26.5",
+    "equipment": "Portal Matrix Signs &",
+    "drawing_ref": "",
+    "locations": [
+      "EASTBOUND A4232",
+      "FIRE PUMPING STATION"
+    ],
+    "frequencies": [
+      "MONTHLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Replace any faulty LED strings and flasher lamps (if applicable). Where local repairs are not possible replace sign with spare if available and return original to manufacturer along with brief details of fault.  Arrange for repaired unit to be returned to site at earliest opportunity."
+      },
+      {
+        "step": "2",
+        "description": "Visually inspect the sign for damage, deterioration of paintwork, loose bolts or components, water ingress or any other damage"
+      },
+      {
+        "step": "3",
+        "description": "Inspect all steelwork, fixings and bolts for tightness and security and re-tighten where necessary"
+      },
+      {
+        "step": "4",
+        "description": "Thoroughly clean faces of matrix sign and remove any accumulated dirt."
+      },
+      {
+        "step": "5",
+        "description": "Ensure all electrical connections are secure and corrosion free and local isolator functions correctly"
+      },
+      {
+        "step": "6",
+        "description": "Ensure sign is fully operational prior to leaving site. Repair or replace any faulty component or full unit associated with sign, backing board, X frame, supports where necessary to bring the sign back into full working order."
+      }
+    ]
+  },
+  {
+    "section": "2.27.1",
+    "equipment": "B1/89",
+    "drawing_ref": "",
+    "locations": [
+      "EASTBOUND BORE",
+      "COUNTY HALL"
+    ],
+    "frequencies": [
+      "MONTHLY",
+      "3 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Visually inspect the sign for damage, deterioration of paintwork, loose bolts or components, water ingress or any other damage & rectify all issues immediately"
+      },
+      {
+        "step": "2",
+        "description": "Replace any faulty LED strings. Where local repairs are not possible replace sign with spare if available and return original to manufacturer along with brief details of fault.  Arrange for repaired unit to be returned to site at earliest opportunity.\n(Typical Faults on these signs resulting in sign change is 4 per bore per annum. Historical fault information is no guarantee on future performance or fault levels)"
+      },
+      {
+        "step": "3",
+        "description": "Thoroughly clean faces of LCS and remove any accumulated dirt"
+      },
+      {
+        "step": "4",
+        "description": "Repair or replace any faulty component or full unit associated with sign or supports where necessary to bring the sign back into full working order."
+      }
+    ]
+  },
+  {
+    "section": "2.27.5",
+    "equipment": "B1/89",
+    "drawing_ref": "",
+    "locations": [
+      "WESTBOUND BORE",
+      "COUNTY HALL"
+    ],
+    "frequencies": [
+      "WEEKLY",
+      "3 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Visually inspect the sign for damage, deterioration of paintwork, loose bolts or components, water ingress or any other damage"
+      },
+      {
+        "step": "2",
+        "description": "Replace any faulty LED strings.  Where local repairs are not possible replace sign with spare if available and return original to manufacturer along with brief details of fault.  Arrange for repaired unit to be returned to site at earliest opportunity.\n(Typical Faults on these signs resulting in sign change is 4 per bore per annum. Historical fault information is no guarantee on future performance or fault levels)"
+      },
+      {
+        "step": "3",
+        "description": "Thoroughly clean faces of LCS and remove any accumulated dirt"
+      },
+      {
+        "step": "4",
+        "description": "Repair or replace any faulty component or full unit associated with sign or supports where necessary to bring the sign back into full working order."
+      }
+    ]
+  },
+  {
+    "section": "2.28.1",
+    "equipment": "QPT0040/405",
+    "drawing_ref": "",
+    "locations": [
+      "EASTBOUND BORE",
+      "COUNTY HALL"
+    ],
+    "frequencies": [
+      "MONTHLY",
+      "3 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Check for ingress of water and dust"
+      },
+      {
+        "step": "2",
+        "description": "Check door panel seals. Renew as required."
+      },
+      {
+        "step": "3",
+        "description": "Check door security break glass bolt and hinges, lubricate and / or adjust as necessary.\nRenew damaged break glass bolts as necessary."
+      },
+      {
+        "step": "4",
+        "description": "Visually examine all connections points and check for signs of overheating or condensation"
+      },
+      {
+        "step": "5",
+        "description": "Check heaters and thermostats (10C)"
+      },
+      {
+        "step": "6",
+        "description": "Check all instruments and fuses"
+      },
+      {
+        "step": "7",
+        "description": "Check panel signs and lamps using lamp test push-button. Renew defective lamps as necessary."
+      },
+      {
+        "step": "8",
+        "description": "Vacuum clean panel interior"
+      },
+      {
+        "step": "9",
+        "description": "Operate all fans in 'local' mode and rectify any reported fan failures."
+      }
+    ]
+  },
+  {
+    "section": "2.28.2",
+    "equipment": "QPT0040/405",
+    "drawing_ref": "",
+    "locations": [
+      "WESTBOUND BORE",
+      "COUNTY HALL"
+    ],
+    "frequencies": [
+      "WEEKLY",
+      "3 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Check for ingress of water and dust"
+      },
+      {
+        "step": "2",
+        "description": "Check door panel seals. Renew as required."
+      },
+      {
+        "step": "3",
+        "description": "Check door security break glass bolt and hinges, lubricate and / or adjust as necessary.\nRenew damaged break glass bolts as necessary."
+      },
+      {
+        "step": "4",
+        "description": "Visually examine all connections points and check for signs of overheating or condensation"
+      },
+      {
+        "step": "5",
+        "description": "Check heaters and thermostats (10C)"
+      },
+      {
+        "step": "6",
+        "description": "Check all instruments and fuses"
+      },
+      {
+        "step": "7",
+        "description": "Check panel signs and lamps using lamp test push-button. Renew defective lamps as necessary."
+      },
+      {
+        "step": "8",
+        "description": "Vacuum clean panel interior"
+      },
+      {
+        "step": "9",
+        "description": "Operate all fans in 'local' mode and rectify any reported fan failures."
+      }
+    ]
+  },
+  {
+    "section": "2.29.1",
+    "equipment": "HIGH LEVEL EQUIPMENT",
+    "drawing_ref": "",
+    "locations": [
+      "EASTBOUND BORE",
+      "COUNTY HALL"
+    ],
+    "frequencies": [
+      "MONTHLY",
+      "3 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Visually inspect all accessible areas for any loose covers or fixings, repair / replace as necessary"
+      },
+      {
+        "step": "2",
+        "description": "Check for signs of corrosion - galvanised components to be treated with zinc rich paint where required"
+      },
+      {
+        "step": "3",
+        "description": "Visually check all earthing straps and bonds in place and connections secure"
+      }
+    ]
+  },
+  {
+    "section": "2.29.2",
+    "equipment": "HIGH LEVEL EQUIPMENT",
+    "drawing_ref": "",
+    "locations": [
+      "EASTBOUND BORE"
+    ],
+    "frequencies": [
+      "MONTHLY",
+      "3 YEARLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Visually inspect all accessible areas for any loose covers of fixings, repair / replace as necessary"
+      },
+      {
+        "step": "2",
+        "description": "Check for signs of corrosion - galvanised components to be treated with zinc rich paint where required"
+      },
+      {
+        "step": "3",
+        "description": "Visually check all earthing straps and bonds in place and connections secure"
+      },
+      {
+        "step": "4",
+        "description": "Check earth straps and bonds connections for security"
+      }
+    ]
+  },
+  {
+    "section": "2.29.3",
+    "equipment": "CONDUIT & CABLE TRAYS",
+    "drawing_ref": "",
+    "locations": [
+      "WESTBOUND BORE",
+      "COUNTY HALL"
+    ],
+    "frequencies": [
+      "WEEKLY",
+      "3 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Visually inspect all accessible areas for any loose covers or fixings, repair / replace as necessary"
+      },
+      {
+        "step": "2",
+        "description": "Check for signs of corrosion - galvanised components to be treated with zinc rich paint where required"
+      },
+      {
+        "step": "3",
+        "description": "Visually check all earthing straps and bonds in place and connections secure"
+      }
+    ]
+  },
+  {
+    "section": "2.29.4",
+    "equipment": "CONDUIT & CABLE TRAYS",
+    "drawing_ref": "",
+    "locations": [
+      "WESTBOUND BORE"
+    ],
+    "frequencies": [
+      "WEEKLY",
+      "3 YEARLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Visually inspect all accessible areas for any loose covers or fixings, repair / replace as necessary"
+      },
+      {
+        "step": "2",
+        "description": "Check for signs of corrosion - galvanised components to be treated with zinc rich paint where required"
+      },
+      {
+        "step": "3",
+        "description": "Visually check all earthing straps and bonds in place and connections secure"
+      },
+      {
+        "step": "4",
+        "description": "Check earth straps and bonds connections for security"
+      }
+    ]
+  },
+  {
+    "section": "2.29.5",
+    "equipment": "HIGH LEVEL EQUIPMENT",
+    "drawing_ref": "",
+    "locations": [
+      "EASTBOUND BORE",
+      "COUNTY HALL"
+    ],
+    "frequencies": [
+      "MONTHLY",
+      "3 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Visually check security of all steelworks and supports"
+      },
+      {
+        "step": "2",
+        "description": "Report any damage, corrosion, or suspect items"
+      },
+      {
+        "step": "3",
+        "description": "Repair / Replace damaged, corroded, missing or suspect items."
+      }
+    ]
+  },
+  {
+    "section": "2.29.6",
+    "equipment": "HIGH LEVEL EQUIPMENT",
+    "drawing_ref": "",
+    "locations": [
+      "EASTBOUND BORE"
+    ],
+    "frequencies": [
+      "MONTHLY",
+      "3 YEARLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Visually check security of all steelworks and supports"
+      },
+      {
+        "step": "2",
+        "description": "Report any damage, corrosion, or suspect items"
+      },
+      {
+        "step": "3",
+        "description": "Torque tests all screws, nuts, bolts, and fastenings on tunnel overhead fixings. (Historically this has taken a team of 8 fitters 32 hours across 2 consecutive 2-night routine closures)"
+      },
+      {
+        "step": "4",
+        "description": "Check all isolation points between dissimilar metals, i.e., stainless steel and aluminium etc. for galvanic action"
+      },
+      {
+        "step": "5",
+        "description": "Repair / Replace damaged, corroded, missing or suspect items."
+      }
+    ]
+  },
+  {
+    "section": "2.29.7",
+    "equipment": "STEEL WORK SUPPORT SYSTEM",
+    "drawing_ref": "",
+    "locations": [
+      "WESTBOUND BORE",
+      "COUNTY HALL"
+    ],
+    "frequencies": [
+      "WEEKLY",
+      "3 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Visually check security of all steelworks and supports"
+      },
+      {
+        "step": "2",
+        "description": "Report any damage, corrosion, or suspect items"
+      },
+      {
+        "step": "3",
+        "description": "Repair / Replace damaged, corroded, missing or suspect items."
+      }
+    ]
+  },
+  {
+    "section": "2.29.8",
+    "equipment": "STEELWORK SUPPORT SYSTEMS",
+    "drawing_ref": "",
+    "locations": [
+      "WESTBOUND BORE"
+    ],
+    "frequencies": [
+      "WEEKLY",
+      "3 YEARLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Visually check security of all steelworks and supports"
+      },
+      {
+        "step": "2",
+        "description": "Report any damage, corrosion, or suspect items"
+      },
+      {
+        "step": "3",
+        "description": "Torque tests all screws, nuts, bolts, and fastenings on tunnel overhead fixings. (Historically this has taken a team of 8 fitters 32 hours across 2 consecutive 2-night routine closures)"
+      },
+      {
+        "step": "4",
+        "description": "Check all isolation points between dissimilar metals, i.e., stainless steel and aluminium etc. for galvanic action"
+      },
+      {
+        "step": "5",
+        "description": "Repair / Replace damaged, corroded, missing or suspect items."
+      }
+    ]
+  },
+  {
+    "section": "2.29.9",
+    "equipment": "",
+    "drawing_ref": "",
+    "locations": [
+      "EASTBOUND BORE",
+      "COUNTY HALL"
+    ],
+    "frequencies": [
+      "MONTHLY",
+      "3 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Visually inspect aerial support system for damage and security of clipping arrangements"
+      },
+      {
+        "step": "2",
+        "description": "Inspect any visible associated cables at high level for damage"
+      },
+      {
+        "step": "3",
+        "description": "Repair / Replace damaged, corroded, missing or suspect items."
+      },
+      {
+        "step": "4",
+        "description": "Check condition of joints and repair where necessary"
+      },
+      {
+        "step": "5",
+        "description": "Check operation of Radio system and ensure fully functional. Rectify any problems found"
+      },
+      {
+        "step": "6",
+        "description": "Check operation of Radio Pager system and ensure fully functional. Rectify any problems found"
+      },
+      {
+        "step": "7",
+        "description": "Carry Out routine maintenance of radio control equipment within the service building in accordance with the manufacturer’s recommendations. \nThis item is only required at 6 Monthly intervals"
+      }
+    ]
+  },
+  {
+    "section": "2.29.10",
+    "equipment": "RADIO COMMUNIC'S SYSTEM",
+    "drawing_ref": "",
+    "locations": [
+      "WESTBOUND BORE",
+      "COUNTY HALL"
+    ],
+    "frequencies": [
+      "WEEKLY",
+      "3 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Visually inspect aerial support system for damage and security of clipping arrangements"
+      },
+      {
+        "step": "2",
+        "description": "Inspect any visible associated cables at high level for damage"
+      },
+      {
+        "step": "3",
+        "description": "Repair / Replace damaged, corroded, missing or suspect items."
+      },
+      {
+        "step": "4",
+        "description": "Check condition of joints and repair where necessary"
+      },
+      {
+        "step": "5",
+        "description": "Check operation of Radio system and ensure fully functional. Rectify any problems found"
+      },
+      {
+        "step": "6",
+        "description": "Check operation of Radio Pager system and ensure fully functional. Rectify any problems found"
+      }
+    ]
+  },
+  {
+    "section": "2.29.11",
+    "equipment": "HIGH LEVEL EQUIPMENT",
+    "drawing_ref": "",
+    "locations": [
+      "EASTBOUND BORE",
+      "COUNTY HALL"
+    ],
+    "frequencies": [
+      "MONTHLY",
+      "3 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Visually inspect CCTV cameras for damage and security of associated local cabling"
+      },
+      {
+        "step": "2",
+        "description": "Inspect any visible cables at high level for damage and repair where necessary"
+      },
+      {
+        "step": "3",
+        "description": "Report damaged, corroded, missing or suspect items associated with CCTV"
+      },
+      {
+        "step": "4",
+        "description": "Check security of fixings to soffit"
+      }
+    ]
+  },
+  {
+    "section": "2.29.12",
+    "equipment": "CCTV",
+    "drawing_ref": "",
+    "locations": [
+      "WESTBOUND BORE",
+      "COUNTY HALL"
+    ],
+    "frequencies": [
+      "WEEKLY",
+      "3 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Visually inspect CCTV cameras for damage and security of associated local cabling"
+      },
+      {
+        "step": "2",
+        "description": "Inspect any visible cables at high level for damage and repair where necessary"
+      },
+      {
+        "step": "3",
+        "description": "Report damaged, corroded, missing or suspect items associated with CCTV"
+      },
+      {
+        "step": "4",
+        "description": "Check security of fixings to soffit"
+      }
+    ]
+  },
+  {
+    "section": "2.30.2",
+    "equipment": "LIGHTNING PROTECTION",
+    "drawing_ref": "",
+    "locations": [
+      "SERVICE BUILDING"
+    ],
+    "frequencies": [
+      "6 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Visually examine all external points, joints, and bonds for signs of corrosion or damage. Repair as required"
+      },
+      {
+        "step": "2",
+        "description": "Visually check all earthing straps and connections"
+      },
+      {
+        "step": "3",
+        "description": "Check condition and connections on mains earth bars in  room, generator room and sump"
+      },
+      {
+        "step": "4",
+        "description": "Carry out test on  earthing and lightning protection system to BS 7671 and provide certificate of testing."
+      },
+      {
+        "step": "5",
+        "description": "Visually inspect the security of lighting protection tapes and down conductors including all joints and bonds."
+      },
+      {
+        "step": "6",
+        "description": "Carry out tests on main earthing system to confirm effectiveness of the earth mat system and provide relevant certification."
+      }
+    ]
+  },
+  {
+    "section": "2.30.3",
+    "equipment": "",
+    "drawing_ref": "B1/15",
+    "locations": [
+      "EASTBOUND BORE",
+      "COUNTY HALL"
+    ],
+    "frequencies": [
+      "MONTHLY",
+      "3 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Visually examine all external points, joints, and bonds for signs of corrosion or damage. Repair as required"
+      },
+      {
+        "step": "2",
+        "description": "Visually check all earthing straps and connections"
+      }
+    ]
+  },
+  {
+    "section": "2.30.4",
+    "equipment": "",
+    "drawing_ref": "B1/15",
+    "locations": [
+      "WESTBOUND BORE",
+      "COUNTY HALL"
+    ],
+    "frequencies": [
+      "WEEKLY",
+      "3 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Visually examine all external points, joints, and bonds for signs of corrosion or damage. Repair as required"
+      },
+      {
+        "step": "2",
+        "description": "Visually check all earthing straps and connections"
+      }
+    ]
+  },
+  {
+    "section": "2.30.5",
+    "equipment": "",
+    "drawing_ref": "B1/15",
+    "locations": [
+      "EASTBOUND BORE",
+      "FIRE PUMPING STATION"
+    ],
+    "frequencies": [
+      "MONTHLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Visually examine all external points, joints and bonds for signs of corrosion or damage. Repair as required"
+      },
+      {
+        "step": "2",
+        "description": "Visually check all earthing straps and connections"
+      },
+      {
+        "step": "3",
+        "description": "Check condition and connections on mains earth bars in"
+      },
+      {
+        "step": "4",
+        "description": "Carry out test on tunnel earthing system to BS 7671 and provide certificate of testing"
+      }
+    ]
+  },
+  {
+    "section": "2.30.6",
+    "equipment": "",
+    "drawing_ref": "B1/15",
+    "locations": [
+      "WESTBOUND BORE",
+      "FIRE PUMPING STATION"
+    ],
+    "frequencies": [
+      "WEEKLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Visually examine all external points, joints, and bonds for signs of corrosion or damage. Repair as required"
+      },
+      {
+        "step": "2",
+        "description": "Visually check all earthing straps and connections"
+      },
+      {
+        "step": "3",
+        "description": "Check condition and connections on mains earth bars in"
+      },
+      {
+        "step": "4",
+        "description": "Carry out test on tunnel earthing system to BS 7671 and provide certificate of testing"
+      }
+    ]
+  },
+  {
+    "section": "2.30.8",
+    "equipment": "",
+    "drawing_ref": "B1/15 & B12/6",
+    "locations": [
+      "SERVICE BUILDING",
+      "FIRE PUMPING STATION"
+    ],
+    "frequencies": [
+      "6 MONTHLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Visually examine all external points, joints, and bonds for signs of corrosion or damage."
+      },
+      {
+        "step": "2",
+        "description": "Visually check all earthing straps and connections"
+      },
+      {
+        "step": "3",
+        "description": "Check condition and connections on mains earth path in service building."
+      },
+      {
+        "step": "4",
+        "description": "Carry out test on sump earthing system to BS 7671"
+      }
+    ]
+  },
+  {
+    "section": "2.31.1",
+    "equipment": "B15/4 - 15/6",
+    "drawing_ref": "",
+    "locations": [
+      "EASTBOUND BORE",
+      "COUNTY HALL"
+    ],
+    "frequencies": [
+      "MONTHLY",
+      "3 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Ensure that all electrical connections are tight and that the contactors within the fan’s starters are in good order"
+      },
+      {
+        "step": "2",
+        "description": "Inspect the starter for any signs of overheating"
+      },
+      {
+        "step": "3",
+        "description": "Check that the motor protective devices are correctly set and / or rated. Record the overload settings"
+      },
+      {
+        "step": "4",
+        "description": "Check that all indicators operate correctly."
+      },
+      {
+        "step": "5",
+        "description": "Ensure that anti-condensation is working correctly."
+      },
+      {
+        "step": "6",
+        "description": "Check operation and setting of thermostat"
+      },
+      {
+        "step": "7",
+        "description": "Operate the motor starter to ensure that the motor operates correctly in both directions. Ensure current sensing relay reports back to EPCMS correctly. Adjust Sensor values where necessary. Ensure each fan has come to a full stop before reversing."
+      },
+      {
+        "step": "8",
+        "description": "Test run fans from smoke control panels in both directions"
+      },
+      {
+        "step": "9",
+        "description": "Clean interior of panels with vacuum cleaners"
+      },
+      {
+        "step": "10",
+        "description": "Lubricate the panel door hinges and fasteners."
+      }
+    ]
+  },
+  {
+    "section": "2.31.2",
+    "equipment": "B14/4 - 15/6",
+    "drawing_ref": "",
+    "locations": [
+      "WESTBOUND BORE",
+      "COUNTY HALL"
+    ],
+    "frequencies": [
+      "WEEKLY",
+      "3 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Ensure that all electrical connections are tight and that the contactors within the fan’s starters are in good order"
+      },
+      {
+        "step": "2",
+        "description": "Inspect the starter for any signs of overheating"
+      },
+      {
+        "step": "3",
+        "description": "Check that the motor devices are correctly set and / or rated. Record the overload settings"
+      },
+      {
+        "step": "4",
+        "description": "Check that all indicators operate correctly"
+      },
+      {
+        "step": "5",
+        "description": "Ensure that anti - condensation is working"
+      },
+      {
+        "step": "6",
+        "description": "Check operation and setting of thermostat"
+      },
+      {
+        "step": "7",
+        "description": "Operate the motor starter to ensure that the motor operates correctly in both directions Ensure current sensing relay reports back to EPCMS correctly. Adjust Sensor values where necessary. Ensure each fan has come to a full stop before reversing."
+      },
+      {
+        "step": "8",
+        "description": "Test run fans from smoke control panels in both directions"
+      },
+      {
+        "step": "9",
+        "description": "Clean interior of panels with vacuum cleaners"
+      },
+      {
+        "step": "10",
+        "description": "Lubricate the panel door hinges and fasteners."
+      }
+    ]
+  },
+  {
+    "section": "2.31.3",
+    "equipment": "TUNNEL VENTILATION",
+    "drawing_ref": "",
+    "locations": [
+      "EASTBOUND BORE",
+      "FIRE PUMPING STATION"
+    ],
+    "frequencies": [
+      "MONTHLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Ensure that all electrical connections are tight and that the contactors within the fan’s starters are in good order"
+      },
+      {
+        "step": "2",
+        "description": "Inspect the starter for any signs of overheating"
+      },
+      {
+        "step": "3",
+        "description": "Check that the motor protective devices are correctly set and / or rated. Record the overload settings"
+      },
+      {
+        "step": "4",
+        "description": "Check that all indicators operate correctly."
+      },
+      {
+        "step": "5",
+        "description": "Ensure that anti - condensation is working correctly."
+      },
+      {
+        "step": "6",
+        "description": "Check cable glands for signs of water ingress."
+      },
+      {
+        "step": "7",
+        "description": "Check all cable markers are in place and legible."
+      },
+      {
+        "step": "8",
+        "description": "Check all earth connections are tight."
+      },
+      {
+        "step": "9",
+        "description": "Operate the motor starter to ensure that the motor operates correctly in both directions and check incomer connections for security. Ensure fan has come to a full stop before reversing."
+      },
+      {
+        "step": "10",
+        "description": "Repair or replace any defective components as necessary"
+      }
+    ]
+  },
+  {
+    "section": "2.31.3",
+    "equipment": "TUNNEL VENTILATION",
+    "drawing_ref": "",
+    "locations": [
+      "EASTBOUND BORE",
+      "FIRE PUMPING STATION"
+    ],
+    "frequencies": [
+      "MONTHLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "12",
+        "description": "Measure and record IR readings for each fan."
+      },
+      {
+        "step": "13",
+        "description": "Carry out functional tests on RCD units using proprietary testing equipment."
+      },
+      {
+        "step": "14",
+        "description": "Clean interior of panels with vacuum cleaners."
+      },
+      {
+        "step": "15",
+        "description": "Clean panel exterior with proprietary stainless steel cleaning agent."
+      }
+    ]
+  },
+  {
+    "section": "2.31.4",
+    "equipment": "PANELS",
+    "drawing_ref": "",
+    "locations": [
+      "WESTBOUND BORE",
+      "FIRE PUMPING STATION"
+    ],
+    "frequencies": [
+      "WEEKLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Ensure that all electrical connections are tight and that the contactors within the fan’s starters are in good order"
+      },
+      {
+        "step": "2",
+        "description": "Inspect the starter for any signs of overheating"
+      },
+      {
+        "step": "3",
+        "description": "Check that the motor protective devices are correctly set and / or rated. Record the overload settings"
+      },
+      {
+        "step": "4",
+        "description": "Check that all indicators operate correctly."
+      },
+      {
+        "step": "5",
+        "description": "Ensure that anti - condensation is working correctly."
+      },
+      {
+        "step": "6",
+        "description": "Check cable glands for signs of water ingress."
+      },
+      {
+        "step": "7",
+        "description": "Check all cable markers are in place and legible."
+      },
+      {
+        "step": "8",
+        "description": "Check all earth connections are tight."
+      },
+      {
+        "step": "9",
+        "description": "Operate the motor starter to ensure that the motor operates correctly in both directions and check incomer connections for security. Ensure fan has come to a full stop before reversing."
+      },
+      {
+        "step": "10",
+        "description": "Repair or replace any defective components as necessary"
+      }
+    ]
+  },
+  {
+    "section": "2.31.4",
+    "equipment": "PANELS",
+    "drawing_ref": "",
+    "locations": [
+      "WESTBOUND BORE",
+      "FIRE PUMPING STATION"
+    ],
+    "frequencies": [
+      "WEEKLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "12",
+        "description": "Measure and record IR readings for each fan."
+      },
+      {
+        "step": "13",
+        "description": "Carry out functional tests on RCD units using proprietary testing equipment."
+      },
+      {
+        "step": "14",
+        "description": "Clean interior of panels with vacuum cleaners."
+      },
+      {
+        "step": "15",
+        "description": "Clean panel exterior with proprietary stainless steel cleaning agent."
+      }
+    ]
+  },
+  {
+    "section": "2.32.1",
+    "equipment": "B4/1 - 4/3",
+    "drawing_ref": "",
+    "locations": [
+      "EASTBOUND BORE",
+      "COUNTY HALL"
+    ],
+    "frequencies": [
+      "MONTHLY",
+      "3 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Isolate electrical supply to fans in accordance with CCC Safety Procedures"
+      },
+      {
+        "step": "2",
+        "description": "Carry out Insulation resistance test of motor windings to earth measured at 500V DC.\nRecord result of lowest reading in the form attached to this schedule"
+      },
+      {
+        "step": "3",
+        "description": "Visually check each fan for any obvious damage / defect"
+      },
+      {
+        "step": "4",
+        "description": "Clean dirt build up from impeller blades"
+      },
+      {
+        "step": "5",
+        "description": "Clean interiors of silencers and fan exteriors"
+      },
+      {
+        "step": "6",
+        "description": "Check fan terminal box connections for tightness"
+      },
+      {
+        "step": "7",
+        "description": "Ensure that the fan mountings are in good order and correctly tightened"
+      },
+      {
+        "step": "8",
+        "description": "Restore electrical supply to fans, run locally and check for any undue vibration. Where undue vibration or excess noise is noted immediately investigate and if necessary, replace unit with a spare. Return any spares units utilised for full repair"
+      },
+      {
+        "step": "9",
+        "description": "Ensure drain hole on silencers and terminal box are clear of obstructions, clear as necessary."
+      },
+      {
+        "step": "10",
+        "description": "Provide storage for 2 lifting fan cradles for duration of the contract and service / Test cradles in accordance with LOLER (See Comments Below)"
+      }
+    ]
+  },
+  {
+    "section": "2.32.2",
+    "equipment": "B4/1 - 4/3",
+    "drawing_ref": "",
+    "locations": [
+      "WESTBOUND BORE",
+      "COUNTY HALL"
+    ],
+    "frequencies": [
+      "WEEKLY",
+      "3 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Isolate electrical supply to fans in accordance with CCC Safety Procedures"
+      },
+      {
+        "step": "2",
+        "description": "Carry out Insulation resistance test of motor windings to earth measured at 500V DC.\nRecord result of lowest reading in the form attached to this schedule"
+      },
+      {
+        "step": "3",
+        "description": "Visually check each fan for any obvious damage / defect"
+      },
+      {
+        "step": "4",
+        "description": "Clean dirt build up from impeller blades"
+      },
+      {
+        "step": "5",
+        "description": "Clean interiors of silencers and fan exteriors"
+      },
+      {
+        "step": "6",
+        "description": "Check fan terminal box connections for tightness"
+      },
+      {
+        "step": "7",
+        "description": "Ensure that the fan mountings are in good order and correctly tightened"
+      },
+      {
+        "step": "8",
+        "description": "Restore electrical supply to fans and check for any undue vibration. Where undue vibration or excess noise is noted immediately investigate and if necessary, replace unit with a spare. Return any spares units utilised for full repair"
+      },
+      {
+        "step": "9",
+        "description": "Ensure drain hole on silencers and terminal box are clear of obstructions, clear as necessary."
+      }
+    ]
+  },
+  {
+    "section": "2.32.3",
+    "equipment": "TUNNEL FANS",
+    "drawing_ref": "",
+    "locations": [
+      "EASTBOUND BORE"
+    ],
+    "frequencies": [
+      "MONTHLY",
+      "6 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Isolate electrical supply to fans in accordance with CCC Safety Procedures"
+      },
+      {
+        "step": "2",
+        "description": "Check Torque of main support beam bolts holding tunnel fan mounting brackets to tunnel roof. Adjust / repair where necessary"
+      },
+      {
+        "step": "3",
+        "description": "Ensure all fixings on the assembly are secure. Fixings that are locked into position in any way or are painted over need not be disturbed if they can be seen to be secure. Any locking devices that are disturbed during maintenance must be discarded and replaced with identical devices."
+      },
+      {
+        "step": "4",
+        "description": "Examine motor cooling fins, remove any material/dirt build-up between motor fins"
+      },
+      {
+        "step": "5",
+        "description": "Examine motor fixings, re-torque arm to motor fixings if necessary"
+      },
+      {
+        "step": "6",
+        "description": "Examine impeller for dirt build-up and for physical damage to the impeller and stationary parts. Remove material/dirt build-up."
+      },
+      {
+        "step": "7",
+        "description": "Check condition and tautness of fan safety support chains, clean support change and replace if there are any signs of damage or deterioration."
+      },
+      {
+        "step": "8",
+        "description": "Examine the clearance between the fan impeller blade tips and the fan duct. Refer to O & M manual for required clearance."
+      },
+      {
+        "step": "9",
+        "description": "Check torque of fan-to-frame fixings, re-torque if required. Refer to O and M manual"
+      },
+      {
+        "step": "10",
+        "description": "Examine torque of fan and ancillary equipment fixings Refer to O and M manual"
+      },
+      {
+        "step": "11",
+        "description": "Check for any signs of corrosion and report to CCC Engineer"
+      },
+      {
+        "step": "12",
+        "description": "Clean interiors of silencers and fan exteriors"
+      },
+      {
+        "step": "13",
+        "description": "Check all connections and cabling for security and prove local isolators are operational"
+      },
+      {
+        "step": "14",
+        "description": "Rotate the motor shaft by hand. Investigate any sound of internal chaffing rubbing or stiffness. Stiffness may indicate that bearings may require lubrication or replacing. Initiate appropriate remedial action where issues are identified."
+      },
+      {
+        "step": "15",
+        "description": "Restore electricity supply to fan. Run fan for 5 minutes recording operational vibration level and refer to O&M manual to ensure they remain within specification."
+      }
+    ]
+  },
+  {
+    "section": "2.32.4",
+    "equipment": "",
+    "drawing_ref": "",
+    "locations": [
+      "WESTBOUND BORE"
+    ],
+    "frequencies": [
+      "WEEKLY",
+      "6 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Isolate electrical supply to fans in accordance with CCC Safety Procedures"
+      },
+      {
+        "step": "2",
+        "description": "Check Torque of main support beam bolts holding tunnel fan mounting brackets to tunnel roof. Adjust / repair where necessary"
+      },
+      {
+        "step": "3",
+        "description": "Ensure all fixings on the assembly are secure. Fixings that are locked into position in any way or are painted over need not be disturbed if they can be seen to be secure. Any locking devices that are disturbed during maintenance must be discarded and replaced with identical devices."
+      },
+      {
+        "step": "4",
+        "description": "Examine motor cooling fins, remove any material/dirt build-up between motor fins"
+      },
+      {
+        "step": "5",
+        "description": "Examine motor fixings, re-torque arm to motor fixings if necessary"
+      },
+      {
+        "step": "6",
+        "description": "Examine impeller for dirt build-up and for physical damage to the impeller and stationary parts. Remove material/dirt build-up."
+      },
+      {
+        "step": "7",
+        "description": "Check condition and tautness of fan safety support chains, clean support change and replace if there are any signs of damage or deterioration."
+      },
+      {
+        "step": "8",
+        "description": "Examine the clearance between the fan impeller blade tips and the fan duct. Refer to O & M manual for required clearance."
+      },
+      {
+        "step": "9",
+        "description": "Check torque of fan-to-frame fixings, re-torque if required. Refer to O and M manual"
+      },
+      {
+        "step": "10",
+        "description": "Examine torque of fan and ancillary equipment fixings Refer to O and M manual"
+      },
+      {
+        "step": "11",
+        "description": "Check for any signs of corrosion and report to CCC Engineer"
+      },
+      {
+        "step": "12",
+        "description": "Clean interiors of silencers and fan exteriors"
+      },
+      {
+        "step": "13",
+        "description": "Check all connections and cabling for security and prove local isolators are operational"
+      },
+      {
+        "step": "14",
+        "description": "Rotate the motor shaft by hand. Investigate any sound of internal chaffing rubbing or stiffness. Stiffness may indicate that bearings may require lubrication or replacing. Initiate appropriate remedial action where issues are identified."
+      },
+      {
+        "step": "15",
+        "description": "Restore electricity supply to fan. Run fan for 5 minutes recording operational vibration level and refer to O&M manual to ensure they remain within specification."
+      }
+    ]
+  },
+  {
+    "section": "2.32.5",
+    "equipment": "B4/1 - 4/3",
+    "drawing_ref": "",
+    "locations": [
+      "EASTBOUND BORE"
+    ],
+    "frequencies": [
+      "MONTHLY",
+      "3 YEARLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Replace fan unit with overhauled spare. \n(See fan refurbishment schedule attached to this form for specific fan replacement date)"
+      },
+      {
+        "step": "2",
+        "description": "Replace all anti vibration mountings with new units and connect all safety chains"
+      },
+      {
+        "step": "3",
+        "description": "Re-Torque all fixings associated with the fan and ensure fan doesn’t encroach into the traffic window"
+      },
+      {
+        "step": "4",
+        "description": "Restore electricity supply to fan and run the fan. Check for correct rotation and all necessary clearances.\nEnsure running current and voltages match the fan nameplate.\nTake vibration readings of each fan as defined in British Standards and provide readings within closure report."
+      },
+      {
+        "step": "5",
+        "description": "Return removed fans to Flaktwoods in Colchester for overhaul which should include:\nBearing and Seal replacement.\nVibration Analysis\nSilencer refurbishment\nImpeller refurb / balancing\nMotor Test / Report\nExternal Terminal Box Refurb"
+      }
+    ]
+  },
+  {
+    "section": "2.32.6",
+    "equipment": "B4/1 - 4/3",
+    "drawing_ref": "",
+    "locations": [
+      "WESTBOUND BORE"
+    ],
+    "frequencies": [
+      "WEEKLY",
+      "3 YEARLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Replace fan unit with overhauled spare. \n(See fan refurbishment schedule attached to this form for specific fan replacement date)"
+      },
+      {
+        "step": "2",
+        "description": "Replace all anti vibration mountings with new units and connect all safety chains"
+      },
+      {
+        "step": "3",
+        "description": "Re-Torque all fixings associated with the fan and ensure fan doesn’t encroach into the traffic window"
+      },
+      {
+        "step": "4",
+        "description": "Restore electricity supply to fan and run the fan. Check for correct rotation and all necessary clearances.\nEnsure running current and voltages match the fan nameplate.\nTake vibration readings of each fan as defined in British Standards and provide readings within closure report."
+      },
+      {
+        "step": "5",
+        "description": "Return removed fans to Flaktwoods in Colchester for overhaul which should include:\nBearing and Seal replacement.\nVibration Analysis\nSilencer refurbishment\nImpeller refurb / balancing\nMotor Test / Report\nExternal Terminal Box Refurb"
+      }
+    ]
+  },
+  {
+    "section": "2.35.2",
+    "equipment": "POWER CABLES",
+    "drawing_ref": "",
+    "locations": [
+      "SERVICE BUILDING"
+    ],
+    "frequencies": [
+      "6 MONTHLY",
+      "3 YEARLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Visually inspect all accessible power cables for any signs of damage, defects, or corrosion etc. Repair / Replace as necessary"
+      },
+      {
+        "step": "2",
+        "description": "Visually inspect all barriers, enclosures, and guards for damage. Repair / Replace as necessary. Ensuring that correct electrical separation of circuits is maintained."
+      },
+      {
+        "step": "3",
+        "description": "Test all power cables in accordance with IET Wiring Regulations to include: -\nInsulation resistance between phases and to earth\nContinuity of protective conductors\nEarth Fault  Impedance\nPolarity\nContinuity of Ring circuits where applicable\nProspective fault current levels"
+      },
+      {
+        "step": "4",
+        "description": "Ensure all conductors are clearly identified, replace any missing labels."
+      },
+      {
+        "step": "5",
+        "description": "Ensure the protective devices for individual circuits are labelled and are of the correct rating."
+      },
+      {
+        "step": "6",
+        "description": "Repair / renew any circuits / protective devices that fail to comply with statutory requirements."
+      },
+      {
+        "step": "7",
+        "description": "Record and supply results of all circuits tested on a report. Identify any exclusions and provide a condition report on installation.\nThe format of form to be approved by the CCC Engineer and shall be submitted within 4 weeks of the completion of the testing."
+      }
+    ]
+  },
+  {
+    "section": "2.35.3",
+    "equipment": "Volume 10 Cable Schedule",
+    "drawing_ref": "",
+    "locations": [
+      "EASTBOUND BORE",
+      "COUNTY HALL"
+    ],
+    "frequencies": [
+      "MONTHLY",
+      "3 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Visually inspect all accessible power cables for any signs of damage, defects, or corrosion etc. Rectify / Repair where necessary"
+      }
+    ]
+  },
+  {
+    "section": "2.35.4",
+    "equipment": "B1/5",
+    "drawing_ref": "",
+    "locations": [
+      "EASTBOUND BORE"
+    ],
+    "frequencies": [
+      "MONTHLY",
+      "3 YEARLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Visually inspect all accessible power cables for any signs of damage, defects, or corrosion etc. Repair / Replace as necessary"
+      },
+      {
+        "step": "2",
+        "description": "Visually inspect all barriers, enclosures, and guards for damage. Repair / Replace as necessary. Ensuring that correct electrical separation of circuits is maintained."
+      },
+      {
+        "step": "3",
+        "description": "Test all power cables in accordance with IET Wiring Regulations to include: -\nInsulation resistance between phases and to earth\nContinuity of protective conductors\nEarth Fault  Impedance\nPolarity\nContinuity of Ring circuits where applicable\nProspective fault current levels"
+      },
+      {
+        "step": "4",
+        "description": "Ensure all conductors are clearly identified, replace any missing labels."
+      },
+      {
+        "step": "5",
+        "description": "Ensure the protective devices for individual circuits are labelled and are of the correct rating."
+      },
+      {
+        "step": "6",
+        "description": "Repair / renew any circuits / protective devices that fail to comply with statutory requirements."
+      },
+      {
+        "step": "7",
+        "description": "Record and supply results of all circuits tested on a report. Identify any exclusions and provide a condition report on installation.\nThe format of form to be approved by the CCC Engineer and shall be submitted within 4 weeks of the completion of the testing."
+      }
+    ]
+  },
+  {
+    "section": "2.35.5",
+    "equipment": "Volume 10 Cable Schedule",
+    "drawing_ref": "",
+    "locations": [
+      "WESTBOUND BORE",
+      "COUNTY HALL"
+    ],
+    "frequencies": [
+      "WEEKLY",
+      "3 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Visually inspect all accessible power cables for any signs of damage, defects, or corrosion etc. Rectify / Repair where necessary"
+      }
+    ]
+  },
+  {
+    "section": "2.35.6",
+    "equipment": "B1/6",
+    "drawing_ref": "",
+    "locations": [
+      "WESTBOUND BORE"
+    ],
+    "frequencies": [
+      "WEEKLY",
+      "3 YEARLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Visually inspect all accessible power cables for any signs of damage, defects, or corrosion etc. Repair / Replace as necessary"
+      },
+      {
+        "step": "2",
+        "description": "Visually inspect all barriers, enclosures, and guards for damage. Repair / Replace as necessary. Ensuring that correct electrical separation of circuits is maintained."
+      },
+      {
+        "step": "3",
+        "description": "Test all power cables in accordance with IET Wiring Regulations to include: -\nInsulation resistance between phases and to earth\nContinuity of protective conductors\nEarth Fault  Impedance\nPolarity\nContinuity of Ring circuits where applicable\nProspective fault current levels"
+      },
+      {
+        "step": "4",
+        "description": "Ensure all conductors are clearly identified, replace any missing labels."
+      },
+      {
+        "step": "5",
+        "description": "Ensure the protective devices for individual circuits are labelled and are of the correct rating."
+      },
+      {
+        "step": "6",
+        "description": "Repair / renew any circuits / protective devices that fail to comply with statutory requirements."
+      },
+      {
+        "step": "7",
+        "description": "Record and supply results of all circuits tested on a report. Identify any exclusions and provide a condition report on installation.\nThe format of form to be approved by the CCC Engineer and shall be submitted within 4 weeks of the completion of the testing."
+      }
+    ]
+  },
+  {
+    "section": "2.35.10",
+    "equipment": "B2/22-1",
+    "drawing_ref": "",
+    "locations": [
+      "VARIOUS"
+    ],
+    "frequencies": [
+      "3 YEARLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Visually inspect all accessible power cables for any signs of damage, defects, or corrosion etc. Repair / Replace as necessary"
+      },
+      {
+        "step": "2",
+        "description": "Visually inspect all barriers, enclosures, and guards for damage. Repair / Replace as necessary. Ensuring that correct electrical separation of circuits is maintained."
+      },
+      {
+        "step": "3",
+        "description": "Test all power cables in accordance with IET Wiring Regulations to include: -\nInsulation resistance between phases and to earth\nContinuity of protective conductors\nEarth Fault  Impedance\nPolarity\nContinuity of Ring circuits where applicable\nProspective fault current levels"
+      },
+      {
+        "step": "4",
+        "description": "Ensure all conductors are clearly identified, replace any missing labels."
+      },
+      {
+        "step": "5",
+        "description": "Ensure the protective devices for individual circuits are labelled and are of the correct rating."
+      },
+      {
+        "step": "6",
+        "description": "Repair / renew any circuits / protective devices that fail to comply with statutory requirements."
+      },
+      {
+        "step": "7",
+        "description": "Record and supply results of all circuits tested on a report. Identify any exclusions and provide a condition report on installation.\nThe format of form to be approved by the CCC Engineer and shall be submitted within 4 weeks of the completion of the testing."
+      }
+    ]
+  },
+  {
+    "section": "2.35.11",
+    "equipment": "Volume 10 Cable Schedule",
+    "drawing_ref": "",
+    "locations": [
+      "COUNTY HALL",
+      "FIRE PUMPING STATION"
+    ],
+    "frequencies": [
+      "3 MONTHLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Visually inspect all accessible power cables for any signs of damage, defects, or corrosion etc. Rectify / Repair where necessary"
+      }
+    ]
+  },
+  {
+    "section": "2.35.12",
+    "equipment": "B1/13",
+    "drawing_ref": "",
+    "locations": [
+      "FIRE PUMPING STATION",
+      "VARIOUS"
+    ],
+    "frequencies": [
+      "ANNUALLY",
+      "3 YEARLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Visually inspect all accessible power cables for any signs of damage, defects, or corrosion etc. Repair / Replace as necessary"
+      },
+      {
+        "step": "2",
+        "description": "Visually inspect all barriers, enclosures, and guards for damage. Repair / Replace as necessary. Ensuring that correct electrical separation of circuits is maintained."
+      },
+      {
+        "step": "3",
+        "description": "Test all power cables In accordance with IET Wiring Regulations to include: -\nInsulation resistance between phases and to earth\nContinuity of protective conductors\nEarth Fault  Impedance\nPolarity\nContinuity of Ring circuits where applicable\nProspective fault current levels"
+      },
+      {
+        "step": "4",
+        "description": "Ensure all conductors are clearly identified, replace any missing labels."
+      },
+      {
+        "step": "5",
+        "description": "Ensure the protective devices for individual circuits are labelled and are of the correct rating."
+      },
+      {
+        "step": "6",
+        "description": "Repair / renew any circuits / protective devices that fail to comply with statutory requirements."
+      },
+      {
+        "step": "7",
+        "description": "Record and supply results of all circuits tested on a report. Identify any exclusions and provide a condition report on installation.\nThe format of form to be approved by the CCC Engineer and shall be submitted within 4 weeks of the completion of the testing."
+      }
+    ]
+  },
+  {
+    "section": "2.35.13",
+    "equipment": "Volume 10 Cable Schedule",
+    "drawing_ref": "",
+    "locations": [
+      "COUNTY HALL",
+      "SERVICE BUILDING"
+    ],
+    "frequencies": [
+      "3 MONTHLY",
+      "6 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Visually inspect all accessible power and control cables for any signs of damage, defects or corrosion etc. Rectify / Repair where necessary"
+      }
+    ]
+  },
+  {
+    "section": "2.35.14",
+    "equipment": "SUMP",
+    "drawing_ref": "",
+    "locations": [
+      "SERVICE BUILDING",
+      "VARIOUS"
+    ],
+    "frequencies": [
+      "6 MONTHLY",
+      "3 YEARLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Visually inspect all accessible power and control cables for any signs of damage, defects, or corrosion etc. Repair / Replace as necessary"
+      },
+      {
+        "step": "2",
+        "description": "Visually inspect all barriers, enclosures, and guards for damage. Repair / Replace as necessary. Ensuring that correct electrical separation of circuits is maintained."
+      },
+      {
+        "step": "3",
+        "description": "Test all power cables and control in accordance with IET Wiring Regulations to include: -\nInsulation resistance between phases and to earth\nContinuity of protective conductors\nEarth Fault  Impedance\nPolarity\nContinuity of Ring circuits where applicable\nProspective fault current levels"
+      },
+      {
+        "step": "4",
+        "description": "Ensure all conductors are clearly identified, replace any missing labels."
+      },
+      {
+        "step": "5",
+        "description": "Ensure the protective devices for individual circuits are labelled and are of the correct rating."
+      },
+      {
+        "step": "6",
+        "description": "Repair / renew any circuits / protective devices that fail to comply with statutory requirements."
+      },
+      {
+        "step": "7",
+        "description": "Record and supply results of all circuits tested on a report. Identify any exclusions and provide a condition report on installation.\nThe format of form to be approved by the CCC Engineer and shall be submitted within 4 weeks of the completion of the testing."
+      }
+    ]
+  },
+  {
+    "section": "2.36.1",
+    "equipment": "Volume 10 Cable Schedule",
+    "drawing_ref": "",
+    "locations": [
+      "COUNTY HALL",
+      "SERVICE BUILDING"
+    ],
+    "frequencies": [
+      "3 MONTHLY",
+      "6 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Visually inspect all accessible control/communication cables for any signs of damage, defects, or corrosion etc. Rectify / Repair where necessary"
+      },
+      {
+        "step": "2",
+        "description": "Check with CCC Engineer for any known control / communication issues on any of the networks / systems and where necessary investigate and rectify"
+      }
+    ]
+  },
+  {
+    "section": "2.36.2",
+    "equipment": "B2/2 B2/4",
+    "drawing_ref": "",
+    "locations": [
+      "SERVICE BUILDING"
+    ],
+    "frequencies": [
+      "6 MONTHLY",
+      "3 YEARLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Visually inspect all accessible control/comms cables for any signs of damage, defects, or corrosion etc. Rectify / Repair where necessary"
+      },
+      {
+        "step": "2",
+        "description": "Ensure Electrical Segregation is maintained"
+      },
+      {
+        "step": "3",
+        "description": "Ensure all cables are dressed neatly and clearly identified"
+      },
+      {
+        "step": "4",
+        "description": "Check the security of all terminations"
+      },
+      {
+        "step": "5",
+        "description": "Check with CCC Engineer for any known defects on the communications / control network and rectify where necessary."
+      }
+    ]
+  },
+  {
+    "section": "2.36.3",
+    "equipment": "Volume 10 Cable Schedule",
+    "drawing_ref": "",
+    "locations": [
+      "EASTBOUND BORE",
+      "COUNTY HALL"
+    ],
+    "frequencies": [
+      "MONTHLY",
+      "3 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Visually inspect all accessible control/communication cables for any signs of damage, defects, or corrosion etc. Rectify / Repair where necessary"
+      },
+      {
+        "step": "2",
+        "description": "Check with CCC Engineer for any know control / communication issues on any of the networks / systems and where necessary investigate and rectify"
+      }
+    ]
+  },
+  {
+    "section": "2.36.4",
+    "equipment": "B1/7",
+    "drawing_ref": "",
+    "locations": [
+      "EASTBOUND BORE"
+    ],
+    "frequencies": [
+      "MONTHLY",
+      "3 YEARLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Visually inspect all accessible control/communication cables for any signs of damage, defects, or corrosion etc. Rectify / Repair where necessary"
+      },
+      {
+        "step": "2",
+        "description": "Ensure Electrical Segregation is maintained"
+      },
+      {
+        "step": "3",
+        "description": "Ensure all cables are dressed neatly and clearly identified"
+      },
+      {
+        "step": "4",
+        "description": "Check the security of all terminations"
+      },
+      {
+        "step": "5",
+        "description": "Check with CCC Engineer for any known defects on the communications / control network and rectify where necessary"
+      }
+    ]
+  },
+  {
+    "section": "2.36.5",
+    "equipment": "Volume 10 Cable Schedule",
+    "drawing_ref": "",
+    "locations": [
+      "WESTBOUND BORE",
+      "COUNTY HALL"
+    ],
+    "frequencies": [
+      "WEEKLY",
+      "3 MONTHLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Visually inspect all accessible control/communication cables for any signs of damage, defects, or corrosion etc. Rectify / Repair where necessary"
+      },
+      {
+        "step": "2",
+        "description": "Check with CCC Engineer for any know control / communication issues on any of the networks / systems and where necessary investigate and rectify"
+      }
+    ]
+  },
+  {
+    "section": "2.36.6",
+    "equipment": "B1/8",
+    "drawing_ref": "",
+    "locations": [
+      "WESTBOUND BORE"
+    ],
+    "frequencies": [
+      "WEEKLY",
+      "3 YEARLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Visually inspect all accessible control/communication cables for any signs of damage, defects, or corrosion etc. Rectify / Repair where necessary"
+      },
+      {
+        "step": "2",
+        "description": "Ensure Electrical Segregation is maintained"
+      },
+      {
+        "step": "3",
+        "description": "Ensure all cables are dressed neatly and clearly identified"
+      },
+      {
+        "step": "4",
+        "description": "Check the security of all terminations"
+      },
+      {
+        "step": "5",
+        "description": "Check with CCC Engineer for any known defects on the communications / control network and rectify where necessary"
+      }
+    ]
+  },
+  {
+    "section": "2.36.7",
+    "equipment": "Volume 10 Cable Schedule",
+    "drawing_ref": "",
+    "locations": [
+      "COUNTY HALL",
+      "FIRE PUMPING STATION"
+    ],
+    "frequencies": [
+      "3 MONTHLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Visually inspect all accessible control/communication cables for any signs of damage, defects, or corrosion etc. Rectify / Repair where necessary"
+      },
+      {
+        "step": "2",
+        "description": "Check with CCC Engineer for any know control / communication issues on any of the networks / systems and where necessary investigate and rectify"
+      }
+    ]
+  },
+  {
+    "section": "2.36.8",
+    "equipment": "B1/13",
+    "drawing_ref": "",
+    "locations": [
+      "FIRE PUMPING STATION"
+    ],
+    "frequencies": [
+      "ANNUALLY",
+      "3 YEARLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Visually inspect all accessible control/comms cables for any signs of damage, defects, or corrosion etc. Rectify / Repair where necessary"
+      },
+      {
+        "step": "2",
+        "description": "Ensure Electrical Segregation is maintained"
+      },
+      {
+        "step": "3",
+        "description": "Ensure all cables are dressed neatly and clearly identified"
+      },
+      {
+        "step": "4",
+        "description": "Check the security of all terminations"
+      },
+      {
+        "step": "5",
+        "description": "Check with CCC Engineer for any known defects on the communications / control network and rectify where necessary"
+      }
+    ]
+  },
+  {
+    "section": "2.36.10",
+    "equipment": "B1/22-1",
+    "drawing_ref": "",
+    "locations": [
+      "VARIOUS"
+    ],
+    "frequencies": [
+      "3 YEARLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Visually inspect all accessible control/comms cables for any signs of damage, defects, or corrosion etc. Rectify / Repair where necessary"
+      },
+      {
+        "step": "2",
+        "description": "Ensure Electrical Segregation is maintained"
+      },
+      {
+        "step": "3",
+        "description": "Ensure all cables are dressed neatly and clearly identified"
+      },
+      {
+        "step": "4",
+        "description": "Check the security of all terminations"
+      },
+      {
+        "step": "5",
+        "description": "Check with CCC Engineer for any known defects on the communications / control network and rectify where necessary"
+      }
+    ]
+  },
+  {
+    "section": "2.37.1",
+    "equipment": "Cabinet List Annex 5",
+    "drawing_ref": "",
+    "locations": [
+      "FIRE PUMPING STATION",
+      "VARIOUS"
+    ],
+    "frequencies": [
+      "ANNUALLY",
+      "5 YEARLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Visually inspect cabinets (See list Annex 5) for any signs of damage, defects, or corrosion etc."
+      },
+      {
+        "step": "2",
+        "description": "Check all electrical connections are secure and free from signs of burning"
+      },
+      {
+        "step": "3",
+        "description": "Check door operation and lubricate hinges and locks"
+      },
+      {
+        "step": "4",
+        "description": "Check for signs of water ingress and condition of door seals and repair as necessary. Install silicon gel back in cabinet"
+      },
+      {
+        "step": "5",
+        "description": "Clean cabinet internals and repair base seal where necessary"
+      },
+      {
+        "step": "6",
+        "description": "Check condition of paintwork and repair as necessary"
+      },
+      {
+        "step": "7",
+        "description": "Check all earth connections are secure and free from corrosion"
+      },
+      {
+        "step": "8",
+        "description": "Check all cable markers are in place and legible. Correct as necessary."
+      },
+      {
+        "step": "9",
+        "description": "Carry out an earth fault loop impedance check and record reading"
+      }
+    ]
+  },
+  {
+    "section": "2.38.2",
+    "equipment": "",
+    "drawing_ref": "B1/39",
+    "locations": [
+      "SERVICE BUILDING",
+      "SUMP PUMPING STATION"
+    ],
+    "frequencies": [
+      "6 MONTHLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Isolate Damper unit"
+      },
+      {
+        "step": "2",
+        "description": "Clean all Grilles associated with each damper and check for damage"
+      },
+      {
+        "step": "3",
+        "description": "Check the security of the damper blades and grilles"
+      },
+      {
+        "step": "4",
+        "description": "Check for the correct operation"
+      },
+      {
+        "step": "5",
+        "description": "Check alignment of damper blades"
+      },
+      {
+        "step": "6",
+        "description": "Check all electrical connections for security and signs of burning"
+      },
+      {
+        "step": "7",
+        "description": "Leave unit in full service and repair any defects."
+      }
+    ]
+  },
+  {
+    "section": "2.38.3",
+    "equipment": "",
+    "drawing_ref": "B1/39",
+    "locations": [
+      "SERVICE BUILDING",
+      "SUMP PUMPING STATION"
+    ],
+    "frequencies": [
+      "6 MONTHLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Isolate Damper unit"
+      },
+      {
+        "step": "2",
+        "description": "Clean all Grilles associated with each damper and check for damage"
+      },
+      {
+        "step": "3",
+        "description": "Check the security of the damper blades and grilles"
+      },
+      {
+        "step": "4",
+        "description": "Check for the correct operation"
+      },
+      {
+        "step": "5",
+        "description": "Check alignment of damper blades"
+      },
+      {
+        "step": "6",
+        "description": "Check all electrical connections for security and signs of burning"
+      },
+      {
+        "step": "7",
+        "description": "Leave unit in full service and report any defects to the Duty Engineer"
+      }
+    ]
+  },
+  {
+    "section": "2.39.3",
+    "equipment": "",
+    "drawing_ref": "",
+    "locations": [
+      "WESTBOUND BORE",
+      "SUMP PUMPING STATION"
+    ],
+    "frequencies": [
+      "6 WEEKLY",
+      "6 MONTHLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Lift up first chamber cover at EDP 1 to 14 Inclusive. Clean all edges of frames and covers, Grease and replace"
+      },
+      {
+        "step": "2",
+        "description": "Lift up first chamber cover at Vent Panels 1 to 10 Inclusive. Clean all edges of frames and covers, Grease and replace"
+      },
+      {
+        "step": "3",
+        "description": "Lift up first chamber covers at Smoke Panels 1 to 2 Inclusive. Clean all edges of frames and covers, Grease and replace"
+      },
+      {
+        "step": "4",
+        "description": "Lift up first chamber covers at valve chambers on portal entrance and exit. Clean all edges of frames and covers,\nGrease and replace"
+      },
+      {
+        "step": "5",
+        "description": "Lift up first chamber covers at portal approach, entrance (4) and exit (4). Clean all edges of frames and covers, Grease and replace.\nGrease and replace"
+      }
+    ]
+  },
+  {
+    "section": "2.40.3",
+    "equipment": "Tunnel Chamber Covers",
+    "drawing_ref": "",
+    "locations": [
+      "EASTBOUND BORE",
+      "SUMP PUMPING STATION"
+    ],
+    "frequencies": [
+      "MONTHLY",
+      "6 MONTHLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Lift up first chamber covers at EDP 1 to 14 Inclusive. Clean all edges of frames and covers, Grease and replace"
+      },
+      {
+        "step": "2",
+        "description": "Lift up first chamber covers at Vent Panels 1 to 10 Inclusive. Clean all edges of frames and covers, Grease and replace"
+      },
+      {
+        "step": "3",
+        "description": "Lift up first chamber covers at Smoke Panels 1 to 2 Inclusive. Clean all edges of frames and covers, Grease and replace"
+      },
+      {
+        "step": "4",
+        "description": "Lift up first chamber covers at valve chambers on portal entrance and exit. Clean all edges of frames and covers,\nGrease and replace"
+      },
+      {
+        "step": "5",
+        "description": "Lift up first chamber covers at portal approach, entrance (4) and exit (4). Clean all edges of frames and covers, Grease and replace.\nGrease and replace"
+      }
+    ]
+  },
+  {
+    "section": "2.41.1",
+    "equipment": "Liner Heat Detection",
+    "drawing_ref": "",
+    "locations": [
+      "EASTBOUND BORE",
+      "COUNTY HALL",
+      "SUMP PUMPING STATION"
+    ],
+    "frequencies": [
+      "MONTHLY",
+      "3 MONTHLY",
+      "6 MONTHLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Visually check control panel within TSB for any obvious faults and alarms"
+      },
+      {
+        "step": "2",
+        "description": "Check EPCMS for any reported alarms"
+      },
+      {
+        "step": "3",
+        "description": "Carry out visual inspection of fibre cable within the bore including any cable supports"
+      },
+      {
+        "step": "4",
+        "description": "Check junction boxes within the bore for signs of damage or corrosion"
+      }
+    ]
+  },
+  {
+    "section": "2.41.2",
+    "equipment": "",
+    "drawing_ref": "",
+    "locations": [
+      "WESTBOUND BORE",
+      "COUNTY HALL",
+      "SUMP PUMPING STATION"
+    ],
+    "frequencies": [
+      "6 WEEKLY",
+      "3 MONTHLY",
+      "6 MONTHLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Visually check control panel within TSB for any obvious faults and alarms"
+      },
+      {
+        "step": "2",
+        "description": "Check EPCMS for any reported alarms"
+      },
+      {
+        "step": "3",
+        "description": "Carry out visual inspection of fibre cable within the bore including any cable supports"
+      },
+      {
+        "step": "4",
+        "description": "Check junction boxes within the bore for signs of damage or corrosion"
+      }
+    ]
+  },
+  {
+    "section": "2.41.3",
+    "equipment": "Liner Heat Detection",
+    "drawing_ref": "",
+    "locations": [
+      "EASTBOUND BORE",
+      "SUMP PUMPING STATION"
+    ],
+    "frequencies": [
+      "MONTHLY",
+      "6 MONTHLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Visually check control panel within TSB for any obvious faults and alarms"
+      },
+      {
+        "step": "2",
+        "description": "Check EPCMS for any reported alarms"
+      },
+      {
+        "step": "3",
+        "description": "Carry out full system operational checks utilising specialist sub-contractor"
+      },
+      {
+        "step": "4",
+        "description": "Check all controls and functions in accordance with operating procedures"
+      },
+      {
+        "step": "5",
+        "description": "Confirm that all heat detections are reported within in the correct zones on the EPCMS.\nRe-calibrate where necessary."
+      },
+      {
+        "step": "6",
+        "description": "Ensure that all rate of rise and high temperature alarms are generated correctly"
+      },
+      {
+        "step": "7",
+        "description": "Ensure the correct escape signs illuminate and extinguish according to the zone initiated."
+      },
+      {
+        "step": "8",
+        "description": "Ensure correct cross door chaser lighting operates when called from EPCMS"
+      }
+    ]
+  },
+  {
+    "section": "2.41.4",
+    "equipment": "",
+    "drawing_ref": "",
+    "locations": [
+      "WESTBOUND BORE",
+      "SUMP PUMPING STATION"
+    ],
+    "frequencies": [
+      "6 WEEKLY",
+      "6 MONTHLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Visually check control panel within TSB for any obvious faults and alarms"
+      },
+      {
+        "step": "2",
+        "description": "Check EPCMS for any reported alarms"
+      },
+      {
+        "step": "3",
+        "description": "Carry out full system operational checks utilising specialist sub-contractor"
+      },
+      {
+        "step": "4",
+        "description": "Check all controls and functions in accordance with operating procedures"
+      },
+      {
+        "step": "5",
+        "description": "Confirm that all heat detections are reported within in the correct zones on the EPCMS.\nRe-calibrate where necessary."
+      },
+      {
+        "step": "6",
+        "description": "Ensure that all rate of rise and high temperature alarms are generated correctly"
+      },
+      {
+        "step": "7",
+        "description": "Ensure the correct escape signs illuminate and extinguish according to the zone initiated."
+      },
+      {
+        "step": "8",
+        "description": "Ensure correct cross door chaser lighting operates when called from EPCMS"
+      }
+    ]
+  },
+  {
+    "section": "2.42.1",
+    "equipment": "Tunnel Cladding Structural",
+    "drawing_ref": "",
+    "locations": [
+      "EASTBOUND BORE",
+      "COUNTY HALL",
+      "SUMP PUMPING STATION"
+    ],
+    "frequencies": [
+      "MONTHLY",
+      "3 MONTHLY",
+      "6 MONTHLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Carry out a visual inspection of the tunnel cladding lining system throughout its length on both nearside and offside walls. Inspection shall include all horizontal and vertical cladding panels."
+      },
+      {
+        "step": "2",
+        "description": "Carry out a visual inspection of the tunnel cladding vertical support struts throughout its length on both nearside and offside walls"
+      },
+      {
+        "step": "3",
+        "description": "Carry out a visual inspection of entry and exit portal circulating wall ensuring there are no visible structural defects"
+      },
+      {
+        "step": "4",
+        "description": "Carry out a visual inspection of exit and entry portal slate linings ensuring there are no visible structural defects."
+      },
+      {
+        "step": "5",
+        "description": "Carry out visual inspection of the tunnel soffit throughout its length."
+      },
+      {
+        "step": "6",
+        "description": "Record in the comment section any damage noted on any of the above and initiate arrangements for repair."
+      },
+      {
+        "step": "7",
+        "description": "Have all rectification actions been completed. \nIf no provide details in comment section below of follow up actions required."
+      }
+    ]
+  },
+  {
+    "section": "2.42.2",
+    "equipment": "Integrity Checks",
+    "drawing_ref": "",
+    "locations": [
+      "WESTBOUND BORE",
+      "COUNTY HALL",
+      "SUMP PUMPING STATION"
+    ],
+    "frequencies": [
+      "6 WEEKLY",
+      "3 MONTHLY",
+      "6 MONTHLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Carry out a visual inspection of the tunnel cladding lining system throughout its length on both nearside and offside walls. Inspection shall include all horizontal and vertical cladding panels."
+      },
+      {
+        "step": "2",
+        "description": "Carry out a visual inspection of the tunnel cladding vertical support struts throughout its length on both nearside and offside walls"
+      },
+      {
+        "step": "3",
+        "description": "Carry out a visual inspection of entry and exit portal circulating wall ensuring there are no visible structural defects"
+      },
+      {
+        "step": "4",
+        "description": "Carry out a visual inspection of exit and entry portal slate linings ensuring there are no visible structural defects."
+      },
+      {
+        "step": "5",
+        "description": "Carry out visual inspection of the tunnel soffit throughout its length."
+      },
+      {
+        "step": "6",
+        "description": "Record in the comment section any damage noted on any of the above and initiate arrangements for a repair"
+      },
+      {
+        "step": "7",
+        "description": "Have all rectification actions been completed. \nIf no provide details in comment section below of follow up actions required."
+      }
+    ]
+  },
+  {
+    "section": "2.42.3",
+    "equipment": "Tunnel Cladding Structural",
+    "drawing_ref": "",
+    "locations": [
+      "EASTBOUND BORE",
+      "SUMP PUMPING STATION"
+    ],
+    "frequencies": [
+      "MONTHLY",
+      "6 MONTHLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Carry out an inspection of the tunnel cladding and torque test all bolts holding the full height vertical cladding strips throughout its length on both nearside and offside walls. There are a total of 1146 Strips within the bore spaced vertically at 1.25M intervals throughout its length. Each strip contains 10 bolts spaced equally throughout its length. The Lowest fixing on each strip is approximately 1M from road level and the highest is approximately 6M from the road level. \nWhere the sockets in the bolt head are found to be rounded replace with new.\nFor the purpose of pricing include for 200 bolt replacements per annum \n(M6 x 35mm Csk Hex)"
+      },
+      {
+        "step": "2",
+        "description": "Carry out a visual inspection of entry and exit portal circulating wall ensuring there are no visible structural defects"
+      },
+      {
+        "step": "3",
+        "description": "Carry out a visual inspection of exit and entry portal slate linings ensuring there are no visible structural defects."
+      },
+      {
+        "step": "4",
+        "description": "Carry out visual inspection of the tunnel soffit throughout its length.\nCarry out inspection of horizontal green cladding strips and associated supports and rectify any defects found"
+      },
+      {
+        "step": "5",
+        "description": "Record in the comment section any damage noted on any of the above and initiate arrangements for a repair"
+      },
+      {
+        "step": "6",
+        "description": "Have all rectification actions been completed. \nIf no provide details in comment section below of follow up actions required."
+      },
+      {
+        "step": "7",
+        "description": "Remove any Graffiti from any of the above."
+      }
+    ]
+  },
+  {
+    "section": "2.42.4",
+    "equipment": "Integrity Checks & Repair",
+    "drawing_ref": "",
+    "locations": [
+      "WESTBOUND BORE",
+      "SUMP PUMPING STATION"
+    ],
+    "frequencies": [
+      "6 WEEKLY",
+      "6 MONTHLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Carry out an inspection of the tunnel cladding and torque test all bolts holding the full height vertical cladding strips throughout its length on both nearside and offside walls. There are a total of 1146 Strips within the bore spaced vertically at 1.25M intervals throughout its length. Each strip contains 10 bolts spaced equally throughout its length. The Lowest fixing on each strip is approximately 1M from road level and the highest is approximately 6M from the road level. \nWhere the sockets in the bolt head are found to be rounded replace with new\nFor the purpose of pricing include for 200 bolt replacements per annum\n(M6 x 35mm Csk Hex)"
+      },
+      {
+        "step": "2",
+        "description": "Carry out a visual inspection of entry and exit portal circulating wall ensuring there are no visible structural defects"
+      },
+      {
+        "step": "3",
+        "description": "Carry out a visual inspection of exit and entry portal slate linings ensuring there are no visible structural defects."
+      },
+      {
+        "step": "4",
+        "description": "Carry out visual inspection of the tunnel soffit throughout its length.\nCarry out inspection of horizontal green cladding strips and associated supports and rectify any defects found"
+      },
+      {
+        "step": "5",
+        "description": "Record in the comment section any damage noted on any of the above and initiate arrangements for a repair"
+      },
+      {
+        "step": "6",
+        "description": "Have all rectification actions been completed. \nIf no provide details in comment section below of follow up actions required."
+      },
+      {
+        "step": "7",
+        "description": "Remove any Graffiti from any of the above."
+      }
+    ]
+  },
+  {
+    "section": "2.42.5",
+    "equipment": "Tunnel Sweep and Cladding  Cleaning",
+    "drawing_ref": "",
+    "locations": [
+      "EASTBOUND BORE",
+      "COUNTY HALL",
+      "SUMP PUMPING STATION"
+    ],
+    "frequencies": [
+      "MONTHLY",
+      "3 MONTHLY",
+      "6 MONTHLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Prior to wash insert plugs into high level CO/VIS/NO Sensors\nRemove plugs from sensors on completion of the wash"
+      },
+      {
+        "step": "2",
+        "description": "Carry out a thorough clean / wash / rinse of the tunnel cladding throughout the length of the tunnel. The wash shall include all vertical white cladding, cladding strips, horizontal green trims. All maintenance activities must be completed outside of the wash programme."
+      },
+      {
+        "step": "3",
+        "description": "Carry out thorough clean / wash / rinse of cross bore door recesses and alcoves."
+      },
+      {
+        "step": "4",
+        "description": "Carry out thorough clean / wash / rinse of all Tunnel Stainless Steel Emergency Distribution, Ventilation, Hydrant and Smoke Panels."
+      },
+      {
+        "step": "5",
+        "description": "Carry out thorough sweep of the full carriageway removing all silt / debris from walkway and road surface / Cross door routes"
+      },
+      {
+        "step": "6",
+        "description": "Carry out thorough clean of all road markings within the tunnel including road centre dividing line."
+      }
+    ]
+  },
+  {
+    "section": "2.42.6",
+    "equipment": "",
+    "drawing_ref": "",
+    "locations": [
+      "WESTBOUND BORE",
+      "COUNTY HALL",
+      "SUMP PUMPING STATION"
+    ],
+    "frequencies": [
+      "6 WEEKLY",
+      "*3 MONTHLY",
+      "6 MONTHLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Prior to wash insert plugs into high level CO/VIS/NO Sensors\nRemove plugs from sensors on completion of the wash"
+      },
+      {
+        "step": "2",
+        "description": "Carry out a thorough clean / wash / rinse of the tunnel cladding throughout the length of the tunnel. The wash shall include all vertical white cladding, cladding strips, horizontal green trims. All maintenance activities must be completed outside of the wash programme. Prior to carrying out the wash submit to the Cardiff Council Engineer a COSHH data sheet for the cleaning solution that will be used."
+      },
+      {
+        "step": "3",
+        "description": "Carry out thorough clean / wash / rinse of cross bore door recesses and alcoves."
+      },
+      {
+        "step": "4",
+        "description": "Carry out thorough clean / wash / rinse of all Tunnel Stainless Steel Emergency Distribution, Ventilation, Hydrant and Smoke Panels."
+      },
+      {
+        "step": "5",
+        "description": "Carry out thorough sweep of the full carriageway removing all silt / debris from walkway and road surface / Cross door routes"
+      },
+      {
+        "step": "6",
+        "description": "Carry out thorough clean of all road markings within the tunnel including road centre dividing line."
+      }
+    ]
+  },
+  {
+    "section": "2.42.7",
+    "equipment": "Sump Cleaning / Desilting",
+    "drawing_ref": "",
+    "locations": [
+      "SUMP PUMPING STATION"
+    ],
+    "frequencies": [
+      "6 MONTHLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Carry out a thorough clean / wash / rinse of the tunnel main Drainage Sump including removal of all silt and debris."
+      },
+      {
+        "step": "2",
+        "description": "Carry out a thorough clean / wash / rinse of the Impounding Drainage Sump including removal of all silt and debris."
+      },
+      {
+        "step": "3",
+        "description": "Carry out a thorough clean / wash / rinse of the Dry Well of the Impounding Drainage Sump including removal of all silt and debris."
+      },
+      {
+        "step": "4",
+        "description": "Carry out a thorough clean / wash / rinse of the Dry Well of the Main Drainage Sump including removal of all silt and debris."
+      },
+      {
+        "step": "5",
+        "description": "Carry out a thorough clean / wash / rinse of the Valve Chamber"
+      },
+      {
+        "step": "6",
+        "description": "Remove and dispose of all silt and other debris from site in an approved manner and provide the client with disposal certification on completion of the works."
+      }
+    ]
+  },
+  {
+    "section": "2.43.1",
+    "equipment": "Tunnel Lighting\nT-Line 2865 LED Luminaires & Control",
+    "drawing_ref": "",
+    "locations": [
+      "EASTBOUND BORE",
+      "COUNTY HALL",
+      "SUMP PUMPING STATION"
+    ],
+    "frequencies": [
+      "MONTHLY",
+      "3 MONTHLY",
+      "6 MONTHLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Carry out inspection of stage 1-3 LED Luminaires and replace any:\nFailed T-Line units with a spare that will be issued by Cardiff Council. \nFaulty DALI driver (Phillips XITANIUM 1-10V Dimming) a spare that will be issued by Cardiff Council\nFaulty RS485 DALI Gateway that will be issued by Cardiff Council\nFaulty plugs/sockets at driver or T-Line that will be issued by Cardiff Council"
+      },
+      {
+        "step": "2",
+        "description": "Return any failed T-Line units, DALI Gateways back to manufacturer (Phillips) for repair and return to Cardiff Council Spares holding upon completion of repair.\n Upon"
+      },
+      {
+        "step": "3",
+        "description": "Inspect scoutmaster control unit and rectify any hardware faults.\nClean monitor and Keyboard\nReplace fan filter and ensure fan is operational.\nArchive System data files and historical luminaire data\nCheck system for errors and rectify as necessary."
+      },
+      {
+        "step": "4",
+        "description": "Ensure RS485 network buses are healthy, rectify any faults."
+      },
+      {
+        "step": "5",
+        "description": "Check status of SCADA communications and rectify any errors / faults."
+      }
+    ]
+  },
+  {
+    "section": "2.43.2",
+    "equipment": "Tunnel Lighting\nT-Line 2865 LED Luminaires & Control",
+    "drawing_ref": "",
+    "locations": [
+      "EASTBOUND BORE",
+      "SUMP PUMPING STATION"
+    ],
+    "frequencies": [
+      "MONTHLY",
+      "6 MONTHLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Carry out inspection of stage 1-3 LED Luminaires and replace any:\nFailed T-Line units with a spare that will be issued by Cardiff Council. \nFaulty DALI driver (Phillips XITANIUM 1-10V Dimming) a spare that will be issued by Cardiff Council\nFaulty RS485 DALI Gateway that will be issued by Cardiff Council\nFaulty plugs/sockets at driver or T-Line that will be issued by Cardiff Council"
+      },
+      {
+        "step": "2",
+        "description": "Return any failed T-Line units, DALI Gateways back to manufacturer (Phillips) for repair and return to Cardiff Council Spares holding upon completion of repair.\n Upon"
+      },
+      {
+        "step": "3",
+        "description": "Inspect scoutmaster control unit and rectify any hardware faults.\nClean monitor and Keyboard\nReplace fan filter and ensure fan is operational.\nArchive System data files and historical luminaire data\nCheck system for errors and rectify as necessary."
+      },
+      {
+        "step": "4",
+        "description": "Ensure RS485 network buses are healthy, rectify any faults."
+      },
+      {
+        "step": "5",
+        "description": "Check status of SCADA communications and rectify any errors / faults."
+      }
+    ]
+  },
+  {
+    "section": "2.43.3",
+    "equipment": "Tunnel Lighting\nT-Line 2865 LED Luminaires & Control",
+    "drawing_ref": "",
+    "locations": [
+      "EASTBOUND BORE",
+      "SUMP PUMPING STATION"
+    ],
+    "frequencies": [
+      "MONTHLY",
+      "Annual"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Carry out inspection of stage 1-3 LED Luminaires and replace any:\nFailed T-Line units with a spare that will be issued by Cardiff Council. \nFaulty DALI driver (Phillips XITANIUM 1-10V Dimming) a spare that will be issued by Cardiff Council\nFaulty RS485 DALI Gateway that will be issued by Cardiff Council\nFaulty plugs/sockets at driver or T-Line that will be issued by Cardiff Council"
+      },
+      {
+        "step": "2",
+        "description": "Return any failed T-Line units, DALI Gateways back to manufacturer (Phillips) for repair and return to Cardiff Council Spares holding upon completion of repair.\n Upon"
+      },
+      {
+        "step": "3",
+        "description": "Inspect scoutmaster control unit and rectify any hardware faults.\nClean monitor and Keyboard\nReplace fan filter and ensure fan is operational.\nArchive System data files and historical luminaire data\nCheck system for errors and rectify as necessary.\nCarry Out HDD maintenance.\nCarry out functional test of luminaires and B-Scout system communications and operations."
+      },
+      {
+        "step": "4",
+        "description": "Ensure RS485 network buses are healthy, rectify any faults."
+      },
+      {
+        "step": "5",
+        "description": "Check status of SCADA communications and rectify any errors / faults."
+      }
+    ]
+  },
+  {
+    "section": "2.43.4",
+    "equipment": "",
+    "drawing_ref": "",
+    "locations": [
+      "WESTBOUND BORE",
+      "COUNTY HALL",
+      "SUMP PUMPING STATION"
+    ],
+    "frequencies": [
+      "6 WEEKLY",
+      "3 MONTHLY",
+      "6 MONTHLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Carry out inspection of stage 1-3 LED Luminaires and replace any:\nFailed T-Line units with a spare that will be issued by Cardiff Council. \nFaulty DALI driver (Phillips XITANIUM 1-10V Dimming) a spare that will be issued by Cardiff Council\nFaulty RS485 DALI Gateway that will be issued by Cardiff Council\nFaulty plugs/sockets at driver or T-Line that will be issued by Cardiff Council"
+      },
+      {
+        "step": "2",
+        "description": "Return any failed T-Line units, DALI Gateways back to manufacturer (Phillips) for repair and return to Cardiff Council Spares holding upon completion of repair.\n Upon"
+      },
+      {
+        "step": "3",
+        "description": "Inspect scoutmaster control unit and rectify any hardware faults.\nClean monitor and Keyboard\nReplace fan filter and ensure fan is operational.\nArchive System data files and historical luminaire data\nCheck system for errors and rectify as necessary."
+      },
+      {
+        "step": "4",
+        "description": "Ensure RS485 network buses are healthy, rectify any faults."
+      },
+      {
+        "step": "5",
+        "description": "Check status of SCADA communications and rectify any errors / faults."
+      }
+    ]
+  },
+  {
+    "section": "2.43.5",
+    "equipment": "",
+    "drawing_ref": "",
+    "locations": [
+      "WESTBOUND BORE",
+      "SUMP PUMPING STATION"
+    ],
+    "frequencies": [
+      "6 WEEKLY",
+      "6 MONTHLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Carry out inspection of stage 1-3 LED Luminaires and replace any:\nFailed T-Line units with a spare that will be issued by Cardiff Council. \nFaulty DALI driver (Phillips XITANIUM 1-10V Dimming) a spare that will be issued by Cardiff Council\nFaulty RS485 DALI Gateway that will be issued by Cardiff Council\nFaulty plugs/sockets at driver or T-Line that will be issued by Cardiff Council"
+      },
+      {
+        "step": "2",
+        "description": "Return any failed T-Line units, DALI Gateways back to manufacturer (Phillips) for repair and return to Cardiff Council Spares holding upon completion of repair.\n Upon"
+      },
+      {
+        "step": "3",
+        "description": "Inspect scoutmaster control unit and rectify any hardware faults.\nClean monitor and Keyboard\nReplace fan filter and ensure fan is operational.\nArchive System data files and historical luminaire data\nCheck system for errors and rectify as necessary."
+      },
+      {
+        "step": "4",
+        "description": "Ensure RS485 network buses are healthy, rectify any faults."
+      },
+      {
+        "step": "5",
+        "description": "Check status of SCADA communications and rectify any errors / faults."
+      }
+    ]
+  },
+  {
+    "section": "2.43.6",
+    "equipment": "",
+    "drawing_ref": "",
+    "locations": [
+      "WESTBOUND BORE",
+      "SUMP PUMPING STATION"
+    ],
+    "frequencies": [
+      "6 WEEKLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Carry out inspection of stage 1-3 LED Luminaires and replace any:\nFailed T-Line units with a spare that will be issued by Cardiff Council. \nFaulty DALI driver (Phillips XITANIUM 1-10V Dimming) a spare that will be issued by Cardiff Council\nFaulty RS485 DALI Gateway that will be issued by Cardiff Council\nFaulty plugs/sockets at driver or T-Line that will be issued by Cardiff Council"
+      },
+      {
+        "step": "2",
+        "description": "Return any failed T-Line units, DALI Gateways back to manufacturer (Phillips) for repair and return to Cardiff Council Spares holding upon completion of repair.\n Upon"
+      },
+      {
+        "step": "3",
+        "description": "Inspect scoutmaster control unit and rectify any hardware faults.\nClean monitor and Keyboard\nReplace fan filter and ensure fan is operational.\nArchive System data files and historical luminaire data\nCheck system for errors and rectify as necessary.\nCarry Out HDD maintenance.\nCarry out functional test of luminaires and B-Scout system communications and operations."
+      },
+      {
+        "step": "4",
+        "description": "Ensure RS485 network buses are healthy, rectify any faults."
+      },
+      {
+        "step": "5",
+        "description": "Check status of SCADA communications and rectify any errors / faults."
+      }
+    ]
+  },
+  {
+    "section": "2.43.7",
+    "equipment": "Tunnel Lighting\nT-Line 2865 LED Luminaires & Control",
+    "drawing_ref": "",
+    "locations": [
+      "EASTBOUND BORE",
+      "SUMP PUMPING STATION"
+    ],
+    "frequencies": [
+      "MONTHLY",
+      "6 MONTHLY",
+      "ANNUALLY",
+      "3 YEARLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Carry out inspection and torque testing of all Tunnel Luminaire fixing and mounting brackets. This includes : \n178 LED Type Luminaires\n354 SON Type luminaires \nRectify any defects and replace any missing fixings."
+      }
+    ]
+  },
+  {
+    "section": "2.43.8",
+    "equipment": "",
+    "drawing_ref": "",
+    "locations": [
+      "WESTBOUND BORE",
+      "SUMP PUMPING STATION"
+    ],
+    "frequencies": [
+      "6 WEEKLY",
+      "6 MONTHLY",
+      "ANNUALLY",
+      "3 YEARLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Carry out inspection and torque testing of all Tunnel Luminaire fixing and mounting brackets. This includes : \n178 LED Type Luminaires\n354 SON Type luminaires \nRectify any defects and replace any missing fixings."
+      }
+    ]
+  },
+  {
+    "section": "2.44.1",
+    "equipment": "Tunnel SON Lighting\nStages 4 to 8",
+    "drawing_ref": "",
+    "locations": [
+      "EASTBOUND BORE",
+      "COUNTY HALL",
+      "SUMP PUMPING STATION"
+    ],
+    "frequencies": [
+      "MONTHLY",
+      "3 MONTHLY",
+      "6 MONTHLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Check for any failed lamps on stages 4 to 8 inclusive and replace where necessary"
+      },
+      {
+        "step": "2",
+        "description": "Check for any failed lighting control gear trays and replace where necessary"
+      },
+      {
+        "step": "3",
+        "description": "Check for any broken diffusers / reflectors / Toughened Glass covers/protectors and replace where necessary."
+      },
+      {
+        "step": "4",
+        "description": "Check for any failed lamp holders and replace where necessary"
+      },
+      {
+        "step": "5",
+        "description": "Check security of all covers / locks"
+      }
+    ]
+  },
+  {
+    "section": "2.44.2",
+    "equipment": "Tunnel SON Lighting\nStages 4 to 8",
+    "drawing_ref": "",
+    "locations": [
+      "EASTBOUND BORE",
+      "SUMP PUMPING STATION"
+    ],
+    "frequencies": [
+      "MONTHLY",
+      "6 MONTHLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Check for any failed lamps on stages 4 to 8 inclusive and replace where necessary"
+      },
+      {
+        "step": "2",
+        "description": "Check for any failed lighting control gear trays and replace where necessary"
+      },
+      {
+        "step": "3",
+        "description": "Check for any broken diffusers / reflectors / Glass lens covers and replace where necessary."
+      },
+      {
+        "step": "4",
+        "description": "Check for any failed lamp holders and replace where necessary"
+      },
+      {
+        "step": "5",
+        "description": "Clean all luminaire glass lenses"
+      }
+    ]
+  },
+  {
+    "section": "2.44.3",
+    "equipment": "",
+    "drawing_ref": "B3/2",
+    "locations": [
+      "EASTBOUND BORE",
+      "SUMP PUMPING STATION"
+    ],
+    "frequencies": [
+      "MONTHLY",
+      "6 MONTHLY",
+      "ANNUALLY",
+      "3YEARLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Check condition of each luminaire mounting bracket and security of fixing pin."
+      },
+      {
+        "step": "2",
+        "description": "Check security of luminaire mounted bracket component and check for corrosion around bracket/ luminaire mount. Rectify as necessary."
+      },
+      {
+        "step": "3",
+        "description": "Carry out torque testing of stainless nuts / bolts securing support bracket to overhead steel work."
+      }
+    ]
+  },
+  {
+    "section": "2.44.4",
+    "equipment": "",
+    "drawing_ref": "",
+    "locations": [
+      "WESTBOUND BORE",
+      "COUNTY HALL",
+      "SUMP PUMPING STATION"
+    ],
+    "frequencies": [
+      "6 WEEKLY",
+      "3 MONTHLY",
+      "6 MONTHLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Check for any failed lamps on stages 4 to 8 inclusive and replace where necessary"
+      },
+      {
+        "step": "2",
+        "description": "Check for any failed lighting control gear trays and replace where necessary"
+      },
+      {
+        "step": "3",
+        "description": "Check for any broken diffusers / reflectors / Toughened Glass covers/protectors and replace where necessary."
+      },
+      {
+        "step": "4",
+        "description": "Check for any failed lamp holders and replace where necessary"
+      },
+      {
+        "step": "5",
+        "description": "Check security of all covers / locks"
+      }
+    ]
+  },
+  {
+    "section": "2.44.5",
+    "equipment": "",
+    "drawing_ref": "",
+    "locations": [
+      "WESTBOUND BORE",
+      "SUMP PUMPING STATION"
+    ],
+    "frequencies": [
+      "6 WEEKLY",
+      "6 MONTHLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Check for any failed lamps on stages 4 to 8 inclusive and replace where necessary"
+      },
+      {
+        "step": "2",
+        "description": "Check for any failed lighting control gear trays and replace where necessary"
+      },
+      {
+        "step": "3",
+        "description": "Check for any broken diffusers / reflectors / Glass lens covers and replace where necessary."
+      },
+      {
+        "step": "4",
+        "description": "Check for any failed lamp holders and replace where necessary"
+      },
+      {
+        "step": "5",
+        "description": "Clean all luminaire glass lenses"
+      }
+    ]
+  },
+  {
+    "section": "2.44.6",
+    "equipment": "",
+    "drawing_ref": "B3/2",
+    "locations": [
+      "WESTBOUND BORE",
+      "SUMP PUMPING STATION"
+    ],
+    "frequencies": [
+      "6 WEEKLY",
+      "6 MONTHLY",
+      "ANNUALLY",
+      "3YEARLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Check condition of each luminaire mounting bracket and security of fixing pin."
+      },
+      {
+        "step": "2",
+        "description": "Check security of luminaire mounted bracket component and check for corrosion around bracket/ luminaire mount. Rectify as necessary."
+      },
+      {
+        "step": "3",
+        "description": "Carry out torque testing of stainless nuts / bolts securing support bracket to overhead steel work."
+      }
+    ]
+  },
+  {
+    "section": "2.45.1",
+    "equipment": "Audible & Visual Escape",
+    "drawing_ref": "",
+    "locations": [
+      "EASTBOUND BORE",
+      "COUNTY HALL",
+      "SUMP PUMPING STATION"
+    ],
+    "frequencies": [
+      "MONTHLY",
+      "3 MONTHLY",
+      "6 MONTHLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Carry out visual inspection of chaser lighting at each Emergency door position and check for damage.\nCarry out repair / replacement to damaged units as necessary."
+      },
+      {
+        "step": "2",
+        "description": "Manually operate the system at each door position. Ensure that:\nEach arrow functions and is sequential.\nStrobe lighting on sign operates and sign is illuminated.\nAudible sound and white noise alert are operational"
+      },
+      {
+        "step": "3",
+        "description": "Replace any defective components necessary to bring the system back into full service."
+      },
+      {
+        "step": "4",
+        "description": "Inspect control panel for signs of water ingress and security of all connections and components."
+      },
+      {
+        "step": "5",
+        "description": "Operate door from EPCMS and log door checked."
+      }
+    ]
+  },
+  {
+    "section": "2.45.2",
+    "equipment": "Audible & Visual Escape",
+    "drawing_ref": "",
+    "locations": [
+      "EASTBOUND BORE",
+      "SUMP PUMPING STATION"
+    ],
+    "frequencies": [
+      "MONTHLY",
+      "6 MONTHLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Carry out visual inspection of chaser lighting at each Emergency door position and check for damage.\nCarry out repair / replacement to damaged units as necessary."
+      },
+      {
+        "step": "2",
+        "description": "Manually operate the system at each door position. Ensure that:\nEach arrow functions and is sequential.\nStrobe lighting on sign operates and sign is illuminated.\nAudible sound and white noise alert are operational"
+      },
+      {
+        "step": "3",
+        "description": "Replace any defective components necessary to bring the system back into full service."
+      },
+      {
+        "step": "4",
+        "description": "Inspect control panel for signs of water ingress and security of all connections and components."
+      },
+      {
+        "step": "5",
+        "description": "Operate door from EPCMS and log door checked."
+      },
+      {
+        "step": "6",
+        "description": "Check EPCMS for any alarms and rectify as necessary"
+      },
+      {
+        "step": "7",
+        "description": "Check security of all fixings on LED Arrows, signs, and cable containment."
+      }
+    ]
+  },
+  {
+    "section": "2.45.3",
+    "equipment": "Emergency Escape Doors",
+    "drawing_ref": "",
+    "locations": [
+      "WESTBOUND BORE",
+      "COUNTY HALL",
+      "SUMP PUMPING STATION"
+    ],
+    "frequencies": [
+      "6 WEEKLY",
+      "3 MONTHLY",
+      "6 MONTHLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Carry out visual inspection of chaser lighting at each Emergency door position and check for damage.\nCarry out repair / replacement to damaged units as necessary."
+      },
+      {
+        "step": "2",
+        "description": "Manually operate the system at each door position. Ensure that:\nEach arrow functions and is sequential.\nStrobe lighting on sign operates and sign is illuminated.\nAudible sound and white noise alert are operational"
+      },
+      {
+        "step": "3",
+        "description": "Replace any defective components necessary to bring the system back into full service."
+      },
+      {
+        "step": "4",
+        "description": "Inspect control panel for signs of water ingress and security of all connections and components."
+      },
+      {
+        "step": "5",
+        "description": "Operate door from EPCMS and log door checked."
+      }
+    ]
+  },
+  {
+    "section": "2.45.4",
+    "equipment": "Emergency Escape Doors",
+    "drawing_ref": "",
+    "locations": [
+      "WESTBOUND BORE",
+      "SUMP PUMPING STATION"
+    ],
+    "frequencies": [
+      "6 WEEKLY",
+      "6 MONTHLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Carry out visual inspection of chaser lighting at each Emergency door position and check for damage.\nCarry out repair / replacement to damaged units as necessary."
+      },
+      {
+        "step": "2",
+        "description": "Manually operate the system at each door position. Ensure that:\nEach arrow functions and is sequential.\nStrobe lighting on sign operates and sign is illuminated.\nAudible sound and white noise alert are operational"
+      },
+      {
+        "step": "3",
+        "description": "Replace any defective components necessary to bring the system back into full service."
+      },
+      {
+        "step": "4",
+        "description": "Inspect control panel for signs of water ingress and security of all connections and components."
+      },
+      {
+        "step": "5",
+        "description": "Operate door from EPCMS and log door checked."
+      },
+      {
+        "step": "6",
+        "description": "Check EPCMS for any alarms and rectify as necessary"
+      },
+      {
+        "step": "7",
+        "description": "Check security of all fixings on LED Arrows, signs, and cable containment."
+      }
+    ]
+  },
+  {
+    "section": "2.46.1",
+    "equipment": "Wayfinder Signs",
+    "drawing_ref": "",
+    "locations": [
+      "EASTBOUND BORE",
+      "COUNTY HALL",
+      "SUMP PUMPING STATION"
+    ],
+    "frequencies": [
+      "MONTHLY",
+      "3 MONTHLY",
+      "6 MONTHLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Carry out visual inspection of Wayfinder signs and replace any failed lamps.\nCarry out repair / replacement to damaged units as necessary."
+      },
+      {
+        "step": "2",
+        "description": "Check EPCMS for any alarms and rectify as necessary"
+      },
+      {
+        "step": "3",
+        "description": "Replace any defective components necessary to bring the system back into full service."
+      },
+      {
+        "step": "4",
+        "description": "Ensure facia of sign is clean."
+      }
+    ]
+  },
+  {
+    "section": "2.46.2",
+    "equipment": "Wayfinder Signs",
+    "drawing_ref": "",
+    "locations": [
+      "EASTBOUND BORE",
+      "SUMP PUMPING STATION"
+    ],
+    "frequencies": [
+      "MONTHLY",
+      "6 MONTHLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Carry out visual inspection of Wayfinder signs and replace any failed lamps.\nCarry out repair / replacement to damaged units as necessary."
+      },
+      {
+        "step": "2",
+        "description": "Check EPCMS for any alarms and rectify as necessary"
+      },
+      {
+        "step": "3",
+        "description": "Replace any defective components necessary to bring the system back into full service."
+      },
+      {
+        "step": "4",
+        "description": "Ensure facia of sign is clean."
+      },
+      {
+        "step": "5",
+        "description": "Check security of all fixings on signs."
+      },
+      {
+        "step": "6",
+        "description": "Check zoning in conjunction with annual checks detailed on 2.41.3.\nRe-calibrate and rectify any issues where necessary"
+      }
+    ]
+  },
+  {
+    "section": "2.46.3",
+    "equipment": "",
+    "drawing_ref": "",
+    "locations": [
+      "WESTBOUND BORE",
+      "COUNTY HALL",
+      "SUMP PUMPING STATION"
+    ],
+    "frequencies": [
+      "6 WEEKLY",
+      "3 MONTHLY",
+      "6 MONTHLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Carry out visual inspection of Wayfinder signs and replace any failed lamps.\nCarry out repair / replacement to damaged units as necessary."
+      },
+      {
+        "step": "2",
+        "description": "Check EPCMS for any alarms and rectify as necessary"
+      },
+      {
+        "step": "3",
+        "description": "Replace any defective components necessary to bring the system back into full service."
+      },
+      {
+        "step": "4",
+        "description": "Ensure facia of sign is clean."
+      }
+    ]
+  },
+  {
+    "section": "2.46.4",
+    "equipment": "",
+    "drawing_ref": "",
+    "locations": [
+      "WESTBOUND BORE",
+      "SUMP PUMPING STATION"
+    ],
+    "frequencies": [
+      "6 WEEKLY",
+      "6 MONTHLY",
+      "ANNUALLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Carry out visual inspection of Wayfinder signs and replace any failed lamps.\nCarry out repair / replacement to damaged units as necessary."
+      },
+      {
+        "step": "2",
+        "description": "Check EPCMS for any alarms and rectify as necessary"
+      },
+      {
+        "step": "3",
+        "description": "Replace any defective components necessary to bring the system back into full service."
+      },
+      {
+        "step": "4",
+        "description": "Ensure facia of sign is clean."
+      },
+      {
+        "step": "5",
+        "description": "Check security of all fixings on signs."
+      },
+      {
+        "step": "6",
+        "description": "Check zoning in conjunction with annual checks detailed on 2.41.4.\nRe-calibrate and rectify any issues where necessary"
+      }
+    ]
+  }
+]
