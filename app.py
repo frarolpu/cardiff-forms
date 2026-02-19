@@ -35,6 +35,13 @@ def add_header(response):
 @app.errorhandler(Exception)
 def handle_error(error):
     """Catch any unhandled exceptions and return JSON"""
+    # Don't log trivial 404s (like favicon.ico)
+    if isinstance(error, Exception) and '404' in str(error):
+        return jsonify({
+            'success': False,
+            'message': 'Not found'
+        }), 404
+    
     import traceback
     error_msg = f"{type(error).__name__}: {str(error)}\n{traceback.format_exc()}"
     log_error(error_msg)
@@ -273,21 +280,32 @@ def create_pdf(form_data):
 
 @app.route('/api/save-form', methods=['POST'])
 def save_form():
+    """Save submitted form as PDF with JSON metadata"""
     try:
-        data = request.json
+        # Extract request data
+        try:
+            data = request.json
+            if not data:
+                return jsonify({
+                    'success': False,
+                    'message': 'No JSON data provided'
+                }), 400
+        except Exception as e:
+            log_error(f"JSON parse error: {str(e)}")
+            return jsonify({
+                'success': False,
+                'message': f'Invalid JSON: {str(e)}'
+            }), 400
         
         # Create filename with timestamp and section number
         section = data.get('section', 'unknown')
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
         filename = f"{section}_{timestamp}.pdf"
         
+        # Try to generate PDF
         try:
-            # Generate PDF
             pdf_buffer = create_pdf(data)
-            
             filepath = SAVED_FORMS_DIR / filename
-            
-            # Save PDF file
             with open(filepath, 'wb') as f:
                 f.write(pdf_buffer.getvalue())
         except Exception as e:
@@ -299,24 +317,46 @@ def save_form():
             filename = f"{section}_{timestamp}.json"
             data['pdf_error'] = str(e)
         
-        # Also save JSON metadata for quick reference
-        json_filename = f"{section}_{timestamp}.json"
-        json_filepath = SAVED_FORMS_DIR / json_filename
-        with open(json_filepath, 'w') as f:
-            json.dump(data, f, indent=2)
+        # Save JSON metadata for quick reference
+        try:
+            json_filename = f"{section}_{timestamp}.json"
+            json_filepath = SAVED_FORMS_DIR / json_filename
+            with open(json_filepath, 'w') as f:
+                json.dump(data, f, indent=2)
+        except Exception as e:
+            log_error(f"JSON save error: {str(e)}")
         
-        return jsonify({
-            'success': True,
-            'message': f'Form {section} saved successfully',
-            'filename': filename
-        }), 200
+        # Return success response
+        try:
+            response = jsonify({
+                'success': True,
+                'message': f'Form {section} saved successfully',
+                'filename': filename
+            })
+            response.status_code = 200
+            return response
+        except Exception as e:
+            log_error(f"Response generation error: {str(e)}")
+            return jsonify({
+                'success': True,
+                'message': f'Form {section} saved successfully',
+                'filename': filename
+            }), 200
     
     except Exception as e:
-        print(f"Save error: {str(e)}")
-        return jsonify({
-            'success': False,
-            'message': str(e)
-        }), 500
+        import traceback
+        error_msg = f"Unexpected save error: {str(e)}\n{traceback.format_exc()}"
+        log_error(error_msg)
+        print(error_msg, file=sys.stderr)
+        try:
+            return jsonify({
+                'success': False,
+                'message': str(e),
+                'error_type': type(e).__name__
+            }), 500
+        except:
+            # If even error response fails, return plain text JSON
+            return '{"success": false, "message": "Internal server error"}', 500
 
 @app.route('/api/saved-forms', methods=['GET'])
 def get_saved_forms():

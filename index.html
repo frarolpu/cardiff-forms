@@ -1503,16 +1503,34 @@
                     body: JSON.stringify(formData)
                 });
 
+                // Check if response is valid
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                // Check content type
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    const text = await response.text();
+                    console.error('Invalid response format:', text);
+                    showError(`Server error: Invalid response format. ${text.substring(0, 100)}`);
+                    return;
+                }
+
                 const result = await response.json();
                 if (result.success) {
                     showSuccess(`✓ Form saved! Filename: ${result.filename}`);
                     resetForm();
                 } else {
-                    showError(`Failed to save: ${result.message}`);
+                    showError(`Failed to save: ${result.message || 'Unknown error'}`);
                 }
             } catch (error) {
-                showError(`Error saving form: ${error.message}`);
                 console.error('Save error:', error);
+                if (error.name === 'SyntaxError') {
+                    showError(`Error saving form: Invalid server response (${error.message})`);
+                } else {
+                    showError(`Error saving form: ${error.message}`);
+                }
             }
         }
 
