@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mockup 1: Modern Corporate</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #ffffff;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, #1a1f3a 0%, #2d3a5c 100%);
+            padding: 30px 20px;
+            color: white;
+            box-shadow: 2px 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar h2 {
+            font-size: 18px;
+            margin-bottom: 25px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            border-bottom: 3px solid #0084ff;
+            padding-bottom: 12px;
+        }
+
+        .sidebar-search {
+            margin-bottom: 25px;
+        }
+
+        .sidebar-search input {
+            width: 100%;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            transition: all 0.3s;
+        }
+
+        .sidebar-search input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .sidebar-search input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 0 0 3px rgba(0, 132, 255, 0.2);
+        }
+
+        .form-list {
+            list-style: none;
+        }
+
+        .form-item {
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.25s;
+            border-left: 4px solid transparent;
+        }
+
+        .form-item:hover {
+            background: rgba(0, 132, 255, 0.2);
+            border-left-color: #0084ff;
+            transform: translateX(4px);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 40px;
+            background: #f8f9fa;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-left h1 {
+            font-size: 28px;
+            color: #1a1f3a;
+            margin-bottom: 5px;
+        }
+
+        .header-left p {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+
+        .header-right {
+            text-align: right;
+        }
+
+        .header-logos {
+            display: flex;
+            gap: 20px;
+            justify-content: flex-end;
+        }
+
+        .header-logos img {
+            max-height: 50px;
+            opacity: 0.8;
+        }
+
+        .content {
+            background: white;
+            padding: 35px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .form-section {
+            margin-bottom: 35px;
+        }
+
+        .form-section h2 {
+            font-size: 18px;
+            color: #1a1f3a;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #e8ecf1;
+            font-weight: 600;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            letter-spacing: 0.3px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 12px 15px;
+            border: 1px solid #d4d9e3;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            background: white;
+            transition: all 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #0084ff;
+            background: #f0f7ff;
+            box-shadow: 0 0 0 4px rgba(0, 132, 255, 0.1);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            min-height: 44px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #0084ff 0%, #005ce6 100%);
+            color: white;
+            box-shadow: 0 3px 12px rgba(0, 132, 255, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 132, 255, 0.4);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #0084ff;
+            border: 2px solid #0084ff;
+        }
+
+        .btn-secondary:hover {
+            background: #f0f7ff;
+        }
+
+        .demo-note {
+            background: #e8f4ff;
+            border-left: 4px solid #0084ff;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            font-size: 14px;
+            color: #0066cc;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                padding: 20px;
+                border-right: none;
+                border-bottom: 2px solid #e8ecf1;
+            }
+
+            .main-content {
+                padding: 24px;
+            }
+
+            .header {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+
+            .header-right {
+                width: 100%;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 16px;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .header {
+                padding: 20px;
+            }
+
+            .header-left h1 {
+                font-size: 22px;
+            }
+
+            .form-section h2 {
+                font-size: 16px;
+            }
+
+            .btn-group {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .form-list {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                gap: 8px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .sidebar {
+                padding: 16px;
+            }
+
+            .sidebar h2 {
+                font-size: 16px;
+            }
+
+            .header-left h1 {
+                font-size: 20px;
+            }
+
+            .form-row {
+                gap: 12px;
+            }
+
+            .content {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <h2>FORMS MENU</h2>
+            <div class="sidebar-search">
+                <input type="text" placeholder="Search forms...">
+            </div>
+            <ul class="form-list">
+                <li class="form-item">Electrical Safety Check</li>
+                <li class="form-item">Fire Door Inspection</li>
+                <li class="form-item">Equipment Maintenance</li>
+                <li class="form-item">Safety Audit</li>
+                <li class="form-item">Hazard Assessment</li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <div class="header-left">
+                    <h1>Maintenance Form</h1>
+                    <p>Section: Engineering | Equipment: Pump A-102</p>
+                </div>
+                <div class="header-right">
+                    <div class="header-logos">
+                        <span style="color: #999; font-size: 12px;">Cardiff Council</span>
+                        <span style="color: #999; font-size: 12px;">SICE</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content">
+                <div class="demo-note">
+                    <strong>Design 1: Modern Corporate</strong> - Clean, professional with bold accent color (blue). Modern gradients and shadows.
+                </div>
+
+                <div class="form-section">
+                    <h2>Equipment Information</h2>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Equipment Name</label>
+                            <input type="text" value="Pump A-102" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Location</label>
+                            <select>
+                                <option>Building 1 - Floor 2</option>
+                                <option>Building 2 - Floor 3</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Inspection Frequency</label>
+                            <input type="text" value="Monthly" readonly>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h2>Maintenance Tasks</h2>
+                    <div style="background: #f8f9fa; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
+                        <label style="display: flex; align-items: center; margin-bottom: 10px;">
+                            <input type="checkbox" style="width: 18px; height: 18px; margin-right: 10px;">
+                            <span>Check fluid levels</span>
+                        </label>
+                        <label style="display: flex; align-items: center; margin-bottom: 10px;">
+                            <input type="checkbox" style="width: 18px; height: 18px; margin-right: 10px;">
+                            <span>Inspect for leaks</span>
+                        </label>
+                        <label style="display: flex; align-items: center;">
+                            <input type="checkbox" style="width: 18px; height: 18px; margin-right: 10px;">
+                            <span>Test pressure gauge</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn btn-primary">Save Form</button>
+                    <button class="btn btn-secondary">Clear Form</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

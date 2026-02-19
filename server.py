@@ -4,6 +4,7 @@ import json
 import os
 import base64
 import tempfile
+import mimetypes
 from datetime import datetime
 from io import BytesIO
 from reportlab.lib.pagesizes import letter, A4
@@ -504,6 +505,10 @@ class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             self.end_headers()
 
     def do_GET(self):
+        # Handle root path - serve index.html
+        if self.path == '/':
+            self.path = '/index.html'
+        
         # Handle forms viewer page
         if self.path == '/forms-viewer':
             html_content = '''
@@ -648,8 +653,29 @@ class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                 self.wfile.write(json.dumps(response).encode('utf-8'))
         
         else:
-            # Serve static files normally
-            super().do_GET()
+            # Serve static files with better error handling
+            try:
+                path = self.translate_path(self.path)
+                if os.path.isfile(path):
+                    with open(path, 'rb') as f:
+                        self.send_response(200)
+                        ctype = mimetypes.guess_type(path)[0] or 'application/octet-stream'
+                        self.send_header('Content-type', ctype)
+                        fs = os.fstat(f.fileno())
+                        self.send_header('Content-Length', str(fs.st_size))
+                        self.end_headers()
+                        f.seek(0)
+                        self.copyfile(f, self.wfile)
+                else:
+                    self.send_response(404)
+                    self.send_header('Content-type', 'text/html')
+                    self.end_headers()
+                    self.wfile.write(b'404 - Not Found')
+            except Exception as e:
+                self.send_response(500)
+                self.send_header('Content-type', 'text/html')
+                self.end_headers()
+                self.wfile.write(f'500 - Server Error: {str(e)}'.encode('utf-8'))
 
 # Initialize database before starting server
 if DB_AVAILABLE:

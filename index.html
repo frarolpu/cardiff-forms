@@ -125,6 +125,24 @@
             opacity: 0.9;
         }
 
+        .equipment-group-header {
+            padding: 12px 15px;
+            margin-top: 16px;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #0084ff;
+            letter-spacing: 0.5px;
+            opacity: 0.8;
+            list-style: none;
+            border-left: 4px solid #0084ff;
+        }
+
+        .equipment-group-header:first-child {
+            margin-top: 0;
+        }
+
         .main-content {
             margin-left: 280px;
             flex: 1;
@@ -1064,16 +1082,52 @@
             const formList = document.getElementById('formList');
             const cleanedForms = allForms.filter(f => f.tasks.length > 0);
             
-            formList.innerHTML = '';
+            // Group forms by equipment/system extracted from drawing_ref
+            const grouped = {};
             cleanedForms.forEach((form, index) => {
-                const li = document.createElement('li');
-                li.className = 'form-item';
-                li.innerHTML = `
-                    <div class="form-item-title">Section ${form.section}</div>
-                    <div class="form-item-info">${form.tasks.length} tasks</div>
-                `;
-                li.onclick = () => selectForm(index);
-                formList.appendChild(li);
+                // Extract equipment ID from drawing_ref (e.g., "B8/1" from "B8/1 to B8/6")
+                let equipment = 'Other';
+                if (form.drawing_ref && form.drawing_ref.length > 0) {
+                    const match = form.drawing_ref.match(/^([A-Z]\d+)/);
+                    equipment = match ? match[1] : 'Other';
+                }
+                
+                if (!grouped[equipment]) {
+                    grouped[equipment] = [];
+                }
+                grouped[equipment].push({ ...form, _index: index });
+            });
+            
+            formList.innerHTML = '';
+            
+            // Sort equipment groups
+            const sortedEquipment = Object.keys(grouped).sort();
+            
+            sortedEquipment.forEach(equipment => {
+                // Create group header
+                const groupHeader = document.createElement('li');
+                groupHeader.className = 'equipment-group-header';
+                groupHeader.innerHTML = `<strong>System ${equipment}</strong>`;
+                formList.appendChild(groupHeader);
+                
+                // Sort sections within group numerically
+                const sortedSections = grouped[equipment].sort((a, b) => {
+                    const aNum = parseFloat(a.section);
+                    const bNum = parseFloat(b.section);
+                    return aNum - bNum;
+                });
+                
+                // Add forms under group
+                sortedSections.forEach(form => {
+                    const li = document.createElement('li');
+                    li.className = 'form-item';
+                    li.innerHTML = `
+                        <div class="form-item-title">Section ${form.section}</div>
+                        <div class="form-item-info">${form.tasks.length} tasks</div>
+                    `;
+                    li.onclick = () => selectForm(form._index);
+                    formList.appendChild(li);
+                });
             });
         }
 
@@ -1098,6 +1152,13 @@
             document.getElementById('formTitle').textContent = `Section ${form.section}`;
             
             let infoHTML = `<strong>Section:</strong> ${form.section}`;
+            
+            // Extract and display equipment system
+            if (form.drawing_ref && form.drawing_ref.length > 0) {
+                const match = form.drawing_ref.match(/^([A-Z]\d+)/);
+                const equipment = match ? match[1] : 'Other';
+                infoHTML += ` | <strong>System:</strong> <span class="info-badge">${equipment}</span>`;
+            }
             
             if (form.locations && form.locations.length > 0) {
                 infoHTML += ` | <strong>Locations:</strong> `;
