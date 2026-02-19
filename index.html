@@ -1082,15 +1082,10 @@
             const formList = document.getElementById('formList');
             const cleanedForms = allForms.filter(f => f.tasks.length > 0);
             
-            // Group forms by equipment/system extracted from drawing_ref
+            // Group forms by equipment/system
             const grouped = {};
             cleanedForms.forEach((form, index) => {
-                // Extract equipment ID from drawing_ref (e.g., "B8/1" from "B8/1 to B8/6")
-                let equipment = 'Other';
-                if (form.drawing_ref && form.drawing_ref.length > 0) {
-                    const match = form.drawing_ref.match(/^([A-Z]\d+)/);
-                    equipment = match ? match[1] : 'Other';
-                }
+                const equipment = form.equipment && form.equipment.trim() ? form.equipment.trim() : 'Ungrouped';
                 
                 if (!grouped[equipment]) {
                     grouped[equipment] = [];
@@ -1100,14 +1095,14 @@
             
             formList.innerHTML = '';
             
-            // Sort equipment groups
+            // Sort equipment groups alphabetically
             const sortedEquipment = Object.keys(grouped).sort();
             
             sortedEquipment.forEach(equipment => {
                 // Create group header
                 const groupHeader = document.createElement('li');
                 groupHeader.className = 'equipment-group-header';
-                groupHeader.innerHTML = `<strong>System ${equipment}</strong>`;
+                groupHeader.innerHTML = `<strong>${equipment}</strong>`;
                 formList.appendChild(groupHeader);
                 
                 // Sort sections within group numerically
@@ -1153,11 +1148,9 @@
             
             let infoHTML = `<strong>Section:</strong> ${form.section}`;
             
-            // Extract and display equipment system
-            if (form.drawing_ref && form.drawing_ref.length > 0) {
-                const match = form.drawing_ref.match(/^([A-Z]\d+)/);
-                const equipment = match ? match[1] : 'Other';
-                infoHTML += ` | <strong>System:</strong> <span class="info-badge">${equipment}</span>`;
+            // Display equipment/system
+            if (form.equipment && form.equipment.trim()) {
+                infoHTML += ` | <strong>Equipment/System:</strong> <span class="info-badge">${form.equipment}</span>`;
             }
             
             if (form.locations && form.locations.length > 0) {
