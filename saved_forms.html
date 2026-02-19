@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saved Forms Repository</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header {
+            background: linear-gradient(180deg, #1a1f3a 0%, #2d3a5c 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 10px;
+            margin-bottom: 40px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        .header-info {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .header-info p {
+            margin: 5px 0;
+        }
+
+        .btn-back {
+            background: #0084ff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: all 0.25s;
+        }
+
+        .btn-back:hover {
+            background: #0066cc;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 132, 255, 0.3);
+        }
+
+        .controls {
+            margin-bottom: 30px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.25s;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #0084ff;
+            box-shadow: 0 0 0 3px rgba(0, 132, 255, 0.1);
+        }
+
+        .btn-refresh {
+            background: #0084ff;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: all 0.25s;
+        }
+
+        .btn-refresh:hover {
+            background: #0066cc;
+            transform: translateY(-2px);
+        }
+
+        .forms-table {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #f8f9fa;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #1a1f3a;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 14px;
+        }
+
+        tbody tr {
+            transition: all 0.2s;
+        }
+
+        tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .section-badge {
+            background: #0084ff;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .equipment-badge {
+            background: #e8f4f8;
+            color: #1a1f3a;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 13px;
+            display: inline-block;
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-view, .btn-download {
+            background: #0084ff;
+            color: white;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-view:hover, .btn-download:hover {
+            background: #0066cc;
+            transform: translateY(-1px);
+        }
+
+        .btn-download {
+            background: #28a745;
+        }
+
+        .btn-download:hover {
+            background: #218838;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state p {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.2s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.3s;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 15px;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            color: #1a1f3a;
+        }
+
+        .close {
+            color: #999;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .close:hover {
+            color: #1a1f3a;
+        }
+
+        .form-detail {
+            display: grid;
+            gap: 20px;
+        }
+
+        .detail-section {
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 15px;
+            background: #f8f9fa;
+        }
+
+        .detail-section h3 {
+            margin: 0 0 10px 0;
+            color: #0084ff;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .detail-row {
+            display: grid;
+            grid-template-columns: 150px 1fr;
+            gap: 20px;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .detail-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #1a1f3a;
+        }
+
+        .detail-value {
+            color: #555;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #0084ff;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #0084ff;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1>Saved Forms Repository</h1>
+                <div class="header-info">
+                    <p id="lastUpdate">Loading...</p>
+                </div>
+            </div>
+            <a href="index.html" class="btn-back">Back to Forms</a>
+        </div>
+
+        <div class="stats" id="statsContainer"></div>
+
+        <div class="controls">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search by section, equipment, or inspector...">
+            </div>
+            <button class="btn-refresh" onclick="loadSavedForms()">Refresh</button>
+        </div>
+
+        <div class="forms-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Section</th>
+                        <th>Equipment/System</th>
+                        <th>Inspector</th>
+                        <th>Date</th>
+                        <th>File</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="formsBody">
+                    <tr>
+                        <td colspan="6" class="loading">
+                            <div class="spinner"></div>
+                            Loading saved forms...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal for viewing form details -->
+    <div id="viewModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Form Details</h2>
+                <button class="close" onclick="closeModal()">&times;</button>
+            </div>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <script>
+        let allSavedForms = [];
+
+        async function loadSavedForms() {
+            try {
+                const response = await fetch('/api/saved-forms');
+                const result = await response.json();
+                
+                if (result.success) {
+                    allSavedForms = result.forms;
+                    displayForms(allSavedForms);
+                    updateStats(allSavedForms);
+                } else {
+                    displayError('Failed to load saved forms');
+                }
+            } catch (error) {
+                displayError(`Error loading forms: ${error.message}`);
+            }
+        }
+
+        function displayForms(forms) {
+            const tbody = document.getElementById('formsBody');
+            
+            if (forms.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="empty-state">
+                            <p>No saved forms yet</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = forms.map(form => `
+                <tr>
+                    <td><span class="section-badge">${form.section}</span></td>
+                    <td><span class="equipment-badge">${form.equipment || 'N/A'}</span></td>
+                    <td>${form.inspector || 'N/A'}</td>
+                    <td>${new Date(form.inspectionDate).toLocaleDateString() || 'N/A'}</td>
+                    <td><small>${form.filename}</small></td>
+                    <td>
+                        <div class="actions">
+                            <button class="btn-view" onclick="viewForm('${form.filename}')">View</button>
+                            <button class="btn-download" onclick="downloadForm('${form.filename}')">Download</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function updateStats(forms) {
+            const uniqueEquipment = new Set(forms.map(f => f.equipment)).size;
+            const uniqueSections = new Set(forms.map(f => f.section)).size;
+            
+            document.getElementById('statsContainer').innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-value">${forms.length}</div>
+                    <div class="stat-label">Total Forms</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${uniqueEquipment}</div>
+                    <div class="stat-label">Equipment Types</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${uniqueSections}</div>
+                    <div class="stat-label">Sections</div>
+                </div>
+            `;
+
+            const lastForm = forms[0];
+            if (lastForm) {
+                const lastDate = new Date(lastForm.inspectionDate).toLocaleDateString('en-GB', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric'
+                });
+                document.getElementById('lastUpdate').textContent = `Last saved: ${lastDate}`;
+            }
+        }
+
+        async function viewForm(filename) {
+            try {
+                const pdfFilename = filename;
+                const jsonFilename = filename.replace('.pdf', '.json');
+                
+                const response = await fetch(`/api/download-form/${jsonFilename}`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    const data = result.data;
+                    let html = `
+                        <div class="form-detail">
+                            <div class="detail-section">
+                                <h3>General Information</h3>
+                                <div class="detail-row">
+                                    <div class="detail-label">Section:</div>
+                                    <div class="detail-value">${data.section}</div>
+                                </div>
+                                <div class="detail-row">
+                                    <div class="detail-label">Equipment:</div>
+                                    <div class="detail-value">${data.equipment || 'N/A'}</div>
+                                </div>
+                                <div class="detail-row">
+                                    <div class="detail-label">Inspector:</div>
+                                    <div class="detail-value">${data.inspector || 'N/A'}</div>
+                                </div>
+                                <div class="detail-row">
+                                    <div class="detail-label">Date:</div>
+                                    <div class="detail-value">${new Date(data.inspectionDate).toLocaleDateString()}</div>
+                                </div>
+                            </div>
+
+                            <div class="detail-section">
+                                <h3>Signatures</h3>
+                                <div class="detail-row">
+                                    <div class="detail-label">Engineer:</div>
+                                    <div class="detail-value">${data.signatures?.engineer || 'N/A'}</div>
+                                </div>
+                                <div class="detail-row">
+                                    <div class="detail-label">Supervisor:</div>
+                                    <div class="detail-value">${data.signatures?.supervisor || 'N/A'}</div>
+                                </div>
+                            </div>
+
+                            <div class="detail-section">
+                                <h3>Tasks Completed</h3>
+                                <div class="detail-row">
+                                    <div class="detail-label">Total Tasks:</div>
+                                    <div class="detail-value">${data.tasks?.length || 0}</div>
+                                </div>
+                                <div class="detail-row">
+                                    <div class="detail-label">Completed:</div>
+                                    <div class="detail-value">${data.tasks?.filter(t => t.completed).length || 0}</div>
+                                </div>
+                            </div>
+
+                            <div class="detail-section">
+                                <h3>Comments</h3>
+                                <div class="detail-value">${data.comments || 'No comments'}</div>
+                            </div>
+
+                            <div class="detail-section">
+                                <h3>Attachments</h3>
+                                <div class="detail-row">
+                                    <div class="detail-label">Photos:</div>
+                                    <div class="detail-value">${data.photos || 0}</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    document.getElementById('modalBody').innerHTML = html;
+                    document.getElementById('viewModal').style.display = 'block';
+                } else {
+                    alert('Could not load form details');
+                }
+            } catch (error) {
+                alert(`Error loading form: ${error.message}`);
+            }
+        }
+
+        function downloadForm(filename) {
+            const link = document.createElement('a');
+            link.href = `/api/download-form/${filename}`;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function closeModal() {
+            document.getElementById('viewModal').style.display = 'none';
+        }
+
+        function displayError(message) {
+            const tbody = document.getElementById('formsBody');
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="6" class="empty-state">
+                        <p style="color: #e74c3c;">${message}</p>
+                    </td>
+                </tr>
+            `;
+        }
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('keyup', (e) => {
+            const query = e.target.value.toLowerCase();
+            const filtered = allSavedForms.filter(form =>
+                form.section.toLowerCase().includes(query) ||
+                form.equipment?.toLowerCase().includes(query) ||
+                form.inspector?.toLowerCase().includes(query)
+            );
+            displayForms(filtered);
+        });
+
+        // Close modal when clicking outside
+        window.onclick = (event) => {
+            const modal = document.getElementById('viewModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        };
+
+        // Load forms on page load
+        document.addEventListener('DOMContentLoaded', loadSavedForms);
+    </script>
+</body>
+</html>

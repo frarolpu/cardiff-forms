@@ -1,0 +1,15 @@
+{
+  "section": "2.7.1",
+  "tasks": [
+    {
+      "completed": true,
+      "step": "1"
+    }
+  ],
+  "equipment": "EMERGENCY LIGHTS",
+  "inspector": "Bob Wilson",
+  "signatures": {
+    "supervisor": "Alice M",
+    "engineer": "Bob W"
+  }
+}

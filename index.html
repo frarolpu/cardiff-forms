@@ -531,23 +531,51 @@
         }
 
         .success-message {
-            background: #d4edda;
-            border: 1px solid #c3e6cb;
-            color: #155724;
-            padding: 15px;
-            border-radius: 5px;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            border: 2px solid #1e7e34;
+            color: white;
+            padding: 16px 24px;
+            border-radius: 8px;
             display: none;
-            margin-bottom: 20px;
+            z-index: 9999;
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+            max-width: 400px;
+            animation: slideInUp 0.3s ease-out;
+            font-weight: 600;
+            letter-spacing: 0.3px;
         }
 
         .error-message {
-            background: #f8d7da;
-            border: 1px solid #f5c6cb;
-            color: #721c24;
-            padding: 15px;
-            border-radius: 5px;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            border: 2px solid #a71d2a;
+            color: white;
+            padding: 16px 24px;
+            border-radius: 8px;
             display: none;
-            margin-bottom: 20px;
+            z-index: 9999;
+            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+            max-width: 400px;
+            animation: slideInUp 0.3s ease-out;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        @keyframes slideInUp {
+            from {
+                transform: translateY(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
         }
 
         .info-badge {
@@ -937,6 +965,9 @@
             <div class="sidebar-search">
                 <input type="text" id="searchForms" placeholder="Search section...">
             </div>
+            <div style="margin-bottom: 20px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.2);">
+                <a href="saved_forms.html" style="display: block; padding: 10px 12px; background: rgba(0,132,255,0.2); border-left: 3px solid #0084ff; color: white; text-decoration: none; font-size: 13px; border-radius: 4px; transition: all 0.25s; font-weight: 600; letter-spacing: 0.5px;">View Saved Forms</a>
+            </div>
             <ul class="form-list" id="formList"></ul>
         </div>
 
@@ -1051,7 +1082,7 @@
                             <!-- ACTIONS -->
                             <div class="form-actions">
                                 <button type="button" class="btn btn-secondary" onclick="resetForm()">Clear</button>
-                                <button type="submit" class="btn btn-primary">Save</button>
+                                <button type="button" class="btn btn-primary" onclick="saveFormToRepository()">Save</button>
                             </div>
                         </form>
                     </div>
@@ -1424,9 +1455,79 @@
             }, 5000);
         }
 
+        async function saveFormToRepository() {
+            if (currentFormIndex === -1) {
+                showError('No form selected');
+                return;
+            }
+
+            const cleanedForms = allForms.filter(f => f.tasks.length > 0);
+            const form = cleanedForms[currentFormIndex];
+            
+            // Collect task completions
+            const tasks = [];
+            document.querySelectorAll('.task-checkbox').forEach(checkbox => {
+                tasks.push({
+                    step: checkbox.dataset.step,
+                    completed: checkbox.checked
+                });
+            });
+            
+            // Collect all form data
+            const formData = {
+                section: form.section,
+                equipment: form.equipment,
+                drawing_ref: form.drawing_ref,
+                locations: form.locations,
+                frequencies: form.frequencies,
+                inspectionDate: document.getElementById('inspectionDate').value,
+                inspector: document.getElementById('inspector').value,
+                comments: document.getElementById('comments').value,
+                tasks: tasks,
+                signatures: {
+                    engineer: document.getElementById('engineerName').value,
+                    engineerDate: document.getElementById('engineerDate').value,
+                    supervisor: document.getElementById('supervisorName').value,
+                    supervisorDate: document.getElementById('supervisorDate').value
+                },
+                photos: photos.length,
+                timestamp: new Date().toISOString()
+            };
+
+            try {
+                const response = await fetch('/api/save-form', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    showSuccess(`✓ Form saved! Filename: ${result.filename}`);
+                    resetForm();
+                } else {
+                    showError(`Failed to save: ${result.message}`);
+                }
+            } catch (error) {
+                showError(`Error saving form: ${error.message}`);
+                console.error('Save error:', error);
+            }
+        }
+
+        function showSuccess(message) {
+            const msgDiv = document.getElementById('successMessage');
+            msgDiv.innerHTML = `✓ ${message}`;
+            msgDiv.style.display = 'block';
+            setTimeout(() => {
+                msgDiv.style.display = 'none';
+            }, 4000);
+        }
+
         function showError(message) {
             const msgDiv = document.getElementById('errorMessage');
-            msgDiv.textContent = message;
+            msgDiv.innerHTML = `✗ ${message}`;
             msgDiv.style.display = 'block';
             setTimeout(() => {
                 msgDiv.style.display = 'none';

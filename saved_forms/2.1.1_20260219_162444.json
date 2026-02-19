@@ -1,0 +1,14 @@
+{
+  "section": "2.1.1",
+  "tasks": [
+    {
+      "completed": true,
+      "step": "1"
+    }
+  ],
+  "equipment": "SWITCHBOARD",
+  "inspector": "Test",
+  "signatures": {
+    "engineer": "Test"
+  }
+}
