@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Maintenance Forms - Digitalized</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/signature_pad/5.0.3/signature_pad.umd.min.js"></script>
 
     <style>
         * {
@@ -330,23 +329,6 @@
             font-size: 0.95em;
             margin-bottom: 10px;
             color: #333;
-        }
-
-        .signature-pad {
-            width: 100%;
-            height: 150px;
-            border: 2px solid #d0d3dd;
-            border-radius: 8px;
-            margin-top: 12px;
-            background: white;
-            cursor: crosshair;
-            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
-            transition: all 0.2s ease;
-        }
-
-        .signature-pad:focus-within {
-            border-color: #0a2463;
-            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05), 0 0 0 3px rgba(10, 36, 99, 0.1);
         }
 
         .button-group {
@@ -1010,7 +992,6 @@
                                         <input type="text" id="inspector" placeholder="Inspector name" required>
                                     </div>
                                 </div>
-                            </div>
 
                             <!-- TASKS -->
                             <div class="form-section">
@@ -1041,39 +1022,43 @@
                                 </div>
                             </div>
 
-                            <!-- DIGITAL SIGNATURES -->
+                            <!-- APPROVAL / INITIALS -->
                             <div class="form-section">
-                                <h2>Digital Signatures</h2>
+                                <h2>Approval</h2>
                                 <div class="signature-row">
                                     <div class="signature-box">
-                                        <h3 class="field-required">Maintenance Engineer</h3>
-                                        <canvas id="signaturePad1" class="signature-pad"></canvas>
-                                        <div class="button-group">
-                                            <button type="button" class="btn btn-clear" onclick="clearSignature(1)">Clear</button>
+                                        <h3>Maintenance Engineer</h3>
+                                        <div class="form-row">
+                                            <div class="form-group" style="flex: 1;">
+                                                <label>Name</label>
+                                                <input type="text" id="engineerName" placeholder="Full name">
+                                            </div>
+                                            <div class="form-group" style="flex: 0.5;">
+                                                <label>Initials</label>
+                                                <input type="text" id="engineerInitials" placeholder="e.g. JD" maxlength="3">
+                                            </div>
                                         </div>
-                                        <div class="form-group" style="margin-top: 10px;">
-                                            <label>Name</label>
-                                            <input type="text" id="engineerName" placeholder="Engineer name" required>
-                                        </div>
-                                        <div class="form-group" style="margin-top: 10px;">
+                                        <div class="form-group">
                                             <label>Date</label>
-                                            <input type="date" id="engineerDate" required>
+                                            <input type="date" id="engineerDate">
                                         </div>
                                     </div>
 
                                     <div class="signature-box">
-                                        <h3 class="field-required">Contractor Supervisor</h3>
-                                        <canvas id="signaturePad2" class="signature-pad"></canvas>
-                                        <div class="button-group">
-                                            <button type="button" class="btn btn-clear" onclick="clearSignature(2)">Clear</button>
+                                        <h3>Contractor Supervisor</h3>
+                                        <div class="form-row">
+                                            <div class="form-group" style="flex: 1;">
+                                                <label>Name</label>
+                                                <input type="text" id="supervisorName" placeholder="Full name">
+                                            </div>
+                                            <div class="form-group" style="flex: 0.5;">
+                                                <label>Initials</label>
+                                                <input type="text" id="supervisorInitials" placeholder="e.g. AS" maxlength="3">
+                                            </div>
                                         </div>
-                                        <div class="form-group" style="margin-top: 10px;">
-                                            <label>Name</label>
-                                            <input type="text" id="supervisorName" placeholder="Supervisor name" required>
-                                        </div>
-                                        <div class="form-group" style="margin-top: 10px;">
+                                        <div class="form-group">
                                             <label>Date</label>
-                                            <input type="date" id="supervisorDate" required>
+                                            <input type="date" id="supervisorDate">
                                         </div>
                                     </div>
                                 </div>
@@ -1094,7 +1079,6 @@
     <script>
         let allForms = [];
         let currentFormIndex = -1;
-        let signaturePads = {};
         let photos = [];
 
         // Load form data
@@ -1103,6 +1087,12 @@
                 const response = await fetch('forms_final.json');
                 allForms = await response.json();
                 populateFormList();
+                
+                // Set today's date for inspection and approval dates
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('inspectionDate').value = today;
+                document.getElementById('engineerDate').value = today;
+                document.getElementById('supervisorDate').value = today;
             } catch (error) {
                 console.error('Error loading forms:', error);
                 showError('Error loading forms');
@@ -1195,15 +1185,16 @@
 
             if (form.frequencies && form.frequencies.length > 0) {
                 infoHTML += ` | <strong>Frequencies:</strong> `;
-                form.frequencies.forEach(freq => {
+                form.frequencies.forEach((freq, idx) => {
                     if (freq && freq !== 'TASK') {
+                        if (idx > 0) infoHTML += ` `;
                         infoHTML += `<span class="info-badge">${freq}</span>`;
                     }
                 });
             }
 
-            if (form.drawing_ref && form.drawing_ref.length > 0) {
-                infoHTML += ` | <strong>Drawing Reference:</strong> <span class="info-badge">${form.drawing_ref}</span>`;
+            if (form.drawing_ref !== undefined) {
+                infoHTML += ` | <strong>Drawing Reference:</strong> <span class="info-badge">${form.drawing_ref || 'N/A'}</span>`;
             }
 
             document.getElementById('sectionInfo').innerHTML = infoHTML;
@@ -1239,27 +1230,6 @@
                 `;
                 taskList.appendChild(taskItem);
             });
-        }
-
-        function initializeSignaturePads() {
-            const canvas1 = document.getElementById('signaturePad1');
-            const canvas2 = document.getElementById('signaturePad2');
-
-            const resizeCanvases = () => {
-                [canvas1, canvas2].forEach((canvas, index) => {
-                    const rect = canvas.parentElement.getBoundingClientRect();
-                    canvas.width = rect.width - 4;
-                    canvas.height = 150;
-                });
-            };
-
-            resizeCanvases();
-            signaturePads[1] = new SignaturePad(canvas1);
-            signaturePads[2] = new SignaturePad(canvas2);
-        }
-
-        function clearSignature(padNumber) {
-            signaturePads[padNumber].clear();
         }
 
         // SEARCH
@@ -1331,16 +1301,6 @@
         document.getElementById('maintenanceForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
-            if (signaturePads[1].isEmpty()) {
-                showError('Por favor, firma como Ingeniero');
-                return;
-            }
-
-            if (signaturePads[2].isEmpty()) {
-                showError('Por favor, firma como Supervisor');
-                return;
-            }
-
             const cleanedForms = allForms.filter(f => f.tasks.length > 0);
             const form = cleanedForms[currentFormIndex];
 
@@ -1352,11 +1312,11 @@
                 tasks: getCompletedTasks(),
                 comments: document.getElementById('comments').value,
                 engineerName: document.getElementById('engineerName').value,
+                engineerInitials: document.getElementById('engineerInitials').value,
                 engineerDate: document.getElementById('engineerDate').value,
                 supervisorName: document.getElementById('supervisorName').value,
+                supervisorInitials: document.getElementById('supervisorInitials').value,
                 supervisorDate: document.getElementById('supervisorDate').value,
-                signature1: signaturePads[1].toDataURL(),
-                signature2: signaturePads[2].toDataURL(),
                 photos: photos
             };
 
@@ -1402,35 +1362,10 @@
             document.getElementById('maintenanceForm').reset();
             photos = [];
             displayPhotos();
-            clearSignature(1);
-            clearSignature(2);
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('inspectionDate').value = today;
             document.getElementById('engineerDate').value = today;
             document.getElementById('supervisorDate').value = today;
-        }
-
-        function resetForm() {
-            // Clear signature pads
-            signaturePads[1].clear();
-            signaturePads[2].clear();
-            
-            // Clear photos
-            photos = [];
-            displayPhotos();
-            
-            // Clear form fields
-            document.getElementById('maintenanceForm').reset();
-            
-            // Set today's date again
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('inspectionDate').value = today;
-            document.getElementById('engineerDate').value = today;
-            document.getElementById('supervisorDate').value = today;
-            
-            // Reset to first form
-            currentFormIndex = 0;
-            loadFormData(allForms[0]);
         }
 
         function downloadJSON(data) {
@@ -1467,8 +1402,10 @@
             // Collect task completions
             const tasks = [];
             document.querySelectorAll('.task-checkbox').forEach(checkbox => {
+                const taskItem = checkbox.closest('.task-item');
+                const description = taskItem.querySelector('.task-description').textContent;
                 tasks.push({
-                    step: checkbox.dataset.step,
+                    step: description,
                     completed: checkbox.checked
                 });
             });
@@ -1485,12 +1422,14 @@
                 comments: document.getElementById('comments').value,
                 tasks: tasks,
                 signatures: {
-                    engineer: document.getElementById('engineerName').value,
+                    engineer: document.getElementById('engineerName').value || document.getElementById('inspector').value,
+                    engineerInitials: document.getElementById('engineerInitials').value,
                     engineerDate: document.getElementById('engineerDate').value,
                     supervisor: document.getElementById('supervisorName').value,
+                    supervisorInitials: document.getElementById('supervisorInitials').value,
                     supervisorDate: document.getElementById('supervisorDate').value
                 },
-                photos: photos.length,
+                photos: photos,
                 timestamp: new Date().toISOString()
             };
 

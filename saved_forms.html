@@ -465,12 +465,16 @@
                 return;
             }
 
-            tbody.innerHTML = forms.map(form => `
+            tbody.innerHTML = forms.map(form => {
+                const dateStr = form.inspectionDate && form.inspectionDate !== 'N/A' ? 
+                    new Date(form.inspectionDate).toLocaleDateString() : 'N/A';
+                
+                return `
                 <tr>
                     <td><span class="section-badge">${form.section}</span></td>
                     <td><span class="equipment-badge">${form.equipment || 'N/A'}</span></td>
                     <td>${form.inspector || 'N/A'}</td>
-                    <td>${new Date(form.inspectionDate).toLocaleDateString() || 'N/A'}</td>
+                    <td>${dateStr}</td>
                     <td><small>${form.filename}</small></td>
                     <td>
                         <div class="actions">
@@ -479,11 +483,12 @@
                         </div>
                     </td>
                 </tr>
-            `).join('');
+            `;
+            }).join('');
         }
 
         function updateStats(forms) {
-            const uniqueEquipment = new Set(forms.map(f => f.equipment)).size;
+            const uniqueEquipment = new Set(forms.map(f => f.equipment).filter(e => e && e !== 'N/A')).size;
             const uniqueSections = new Set(forms.map(f => f.section)).size;
             
             document.getElementById('statsContainer').innerHTML = `
@@ -502,93 +507,24 @@
             `;
 
             const lastForm = forms[0];
-            if (lastForm) {
+            if (lastForm && lastForm.inspectionDate && lastForm.inspectionDate !== 'N/A') {
                 const lastDate = new Date(lastForm.inspectionDate).toLocaleDateString('en-GB', {
                     day: '2-digit',
                     month: '2-digit',
                     year: 'numeric'
                 });
                 document.getElementById('lastUpdate').textContent = `Last saved: ${lastDate}`;
+            } else {
+                document.getElementById('lastUpdate').textContent = `Last saved: N/A`;
             }
         }
 
         async function viewForm(filename) {
             try {
-                const pdfFilename = filename;
-                const jsonFilename = filename.replace('.pdf', '.json');
-                
-                const response = await fetch(`/api/download-form/${jsonFilename}`);
-                const result = await response.json();
-                
-                if (result.success) {
-                    const data = result.data;
-                    let html = `
-                        <div class="form-detail">
-                            <div class="detail-section">
-                                <h3>General Information</h3>
-                                <div class="detail-row">
-                                    <div class="detail-label">Section:</div>
-                                    <div class="detail-value">${data.section}</div>
-                                </div>
-                                <div class="detail-row">
-                                    <div class="detail-label">Equipment:</div>
-                                    <div class="detail-value">${data.equipment || 'N/A'}</div>
-                                </div>
-                                <div class="detail-row">
-                                    <div class="detail-label">Inspector:</div>
-                                    <div class="detail-value">${data.inspector || 'N/A'}</div>
-                                </div>
-                                <div class="detail-row">
-                                    <div class="detail-label">Date:</div>
-                                    <div class="detail-value">${new Date(data.inspectionDate).toLocaleDateString()}</div>
-                                </div>
-                            </div>
-
-                            <div class="detail-section">
-                                <h3>Signatures</h3>
-                                <div class="detail-row">
-                                    <div class="detail-label">Engineer:</div>
-                                    <div class="detail-value">${data.signatures?.engineer || 'N/A'}</div>
-                                </div>
-                                <div class="detail-row">
-                                    <div class="detail-label">Supervisor:</div>
-                                    <div class="detail-value">${data.signatures?.supervisor || 'N/A'}</div>
-                                </div>
-                            </div>
-
-                            <div class="detail-section">
-                                <h3>Tasks Completed</h3>
-                                <div class="detail-row">
-                                    <div class="detail-label">Total Tasks:</div>
-                                    <div class="detail-value">${data.tasks?.length || 0}</div>
-                                </div>
-                                <div class="detail-row">
-                                    <div class="detail-label">Completed:</div>
-                                    <div class="detail-value">${data.tasks?.filter(t => t.completed).length || 0}</div>
-                                </div>
-                            </div>
-
-                            <div class="detail-section">
-                                <h3>Comments</h3>
-                                <div class="detail-value">${data.comments || 'No comments'}</div>
-                            </div>
-
-                            <div class="detail-section">
-                                <h3>Attachments</h3>
-                                <div class="detail-row">
-                                    <div class="detail-label">Photos:</div>
-                                    <div class="detail-value">${data.photos || 0}</div>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                    document.getElementById('modalBody').innerHTML = html;
-                    document.getElementById('viewModal').style.display = 'block';
-                } else {
-                    alert('Could not load form details');
-                }
+                // Simply open the PDF in a new window
+                window.open(`/api/download-form/${filename}`, '_blank');
             } catch (error) {
-                alert(`Error loading form: ${error.message}`);
+                alert(`Error opening form: ${error.message}`);
             }
         }
 
