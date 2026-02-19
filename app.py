@@ -20,6 +20,17 @@ SAVED_FORMS_DIR.mkdir(exist_ok=True)
 # Error log file
 ERROR_LOG = Path('pdf_errors.log')
 
+# Disable caching for development
+@app.after_request
+def add_header(response):
+    response.cache_control.max_age = 0
+    response.cache_control.no_cache = True
+    response.cache_control.no_store = True
+    response.cache_control.must_revalidate = True
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+    return response
+
 def log_error(message):
     """Write error to log file"""
     try:
