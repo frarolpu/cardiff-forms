@@ -31,6 +31,21 @@ def add_header(response):
     response.headers['Expires'] = '0'
     return response
 
+# Global error handler for API errors
+@app.errorhandler(Exception)
+def handle_error(error):
+    """Catch any unhandled exceptions and return JSON"""
+    import traceback
+    error_msg = f"{type(error).__name__}: {str(error)}\n{traceback.format_exc()}"
+    log_error(error_msg)
+    print(error_msg, file=sys.stderr)
+    
+    return jsonify({
+        'success': False,
+        'message': f'Server error: {str(error)}',
+        'error_type': type(error).__name__
+    }), 500
+
 def log_error(message):
     """Write error to log file"""
     try:
@@ -280,8 +295,9 @@ def save_form():
             error_msg = f"PDF generation error: {str(e)}\n{traceback.format_exc()}"
             log_error(error_msg)
             print(error_msg, file=sys.stderr)
-            # If PDF fails, still save as JSON
+            # If PDF fails, still save as JSON and note the error
             filename = f"{section}_{timestamp}.json"
+            data['pdf_error'] = str(e)
         
         # Also save JSON metadata for quick reference
         json_filename = f"{section}_{timestamp}.json"
