@@ -407,4 +407,8 @@ def download_form(filename):
         }), 500
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    # Use environment variable to determine if running in production
+    is_production = os.environ.get('ENVIRONMENT', '').lower() == 'production'
+    port = int(os.environ.get('PORT', 5000))
+    debug = not is_production  # Only debug locally
+    app.run(debug=debug, host='0.0.0.0', port=port)
