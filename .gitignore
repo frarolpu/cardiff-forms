@@ -18,6 +18,7 @@ parse_*.py
 formulario_*.html
 app.html
 *_flag.svg
+server.py
 *_shield.svg
 extracted_*.json
 forms_parsed.json
