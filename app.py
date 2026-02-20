@@ -6,15 +6,54 @@ import sys
 from pathlib import Path
 from fpdf import FPDF
 from io import BytesIO
+import psycopg2
+from psycopg2.extras import RealDictCursor
+import base64
 
 app = Flask(__name__)
 
-# Create directory for saved forms
-SAVED_FORMS_DIR = Path('saved_forms')
-SAVED_FORMS_DIR.mkdir(exist_ok=True)
+# Database connection
+DATABASE_URL = os.environ.get('DATABASE_URL')
 
 # Error log file
 ERROR_LOG = Path('pdf_errors.log')
+
+def get_db_connection():
+    """Get database connection"""
+    try:
+        conn = psycopg2.connect(DATABASE_URL)
+        return conn
+    except Exception as e:
+        log_error(f"Database connection error: {str(e)}")
+        return None
+
+def init_db():
+    """Initialize database table for saved forms"""
+    conn = get_db_connection()
+    if not conn:
+        return False
+    
+    try:
+        cursor = conn.cursor()
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS saved_forms (
+                id SERIAL PRIMARY KEY,
+                section VARCHAR(50),
+                filename VARCHAR(255),
+                pdf_data BYTEA,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
+        conn.commit()
+        cursor.close()
+        conn.close()
+        return True
+    except Exception as e:
+        log_error(f"Database init error: {str(e)}")
+        return False
+
+# Initialize database on startup
+init_db()
 
 # Disable caching for development
 @app.after_request
@@ -240,8 +279,9 @@ def create_pdf(form_data):
         raise
 
 @app.route('/api/save-form', methods=['POST'])
+@app.route('/api/save-form', methods=['POST'])
 def save_form():
-    """Save submitted form as PDF with JSON metadata"""
+    """Save submitted form as PDF in database"""
     try:
         # Extract request data
         try:
@@ -263,14 +303,29 @@ def save_form():
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
         filename = f"{section}_{timestamp}.pdf"
         
-        # Generate and save PDF
+        # Generate PDF
         pdf_buffer = create_pdf(data)
-        filepath = SAVED_FORMS_DIR / filename
-        with open(filepath, 'wb') as f:
-            f.write(pdf_buffer.getvalue())
+        pdf_data = pdf_buffer.getvalue()
         
-        # Return success response
+        # Save to database
+        conn = get_db_connection()
+        if not conn:
+            return jsonify({
+                'success': False,
+                'message': 'Database connection failed'
+            }), 500
+        
         try:
+            cursor = conn.cursor()
+            cursor.execute(
+                'INSERT INTO saved_forms (section, filename, pdf_data) VALUES (%s, %s, %s)',
+                (section, filename, pdf_data)
+            )
+            conn.commit()
+            cursor.close()
+            conn.close()
+            
+            # Return success response
             response = jsonify({
                 'success': True,
                 'message': f'Form {section} saved successfully',
@@ -279,6 +334,18 @@ def save_form():
             response.status_code = 200
             return response
         except Exception as e:
+            log_error(f"Database insert error: {str(e)}")
+            conn.close()
+            return jsonify({
+                'success': False,
+                'message': f'Error saving to database: {str(e)}'
+            }), 500
+    except Exception as e:
+        log_error(f"Unexpected save error: {str(e)}")
+        return jsonify({
+            'success': False,
+            'message': f'Server error: {str(e)}'
+        }), 500
             log_error(f"Response generation error: {str(e)}")
             return jsonify({
                 'success': True,
@@ -302,23 +369,33 @@ def save_form():
             return '{"success": false, "message": "Internal server error"}', 500
 
 @app.route('/api/saved-forms', methods=['GET'])
+@app.route('/get-saved-forms', methods=['GET'])
 def get_saved_forms():
     try:
-        saved_forms = []
+        conn = get_db_connection()
+        if not conn:
+            return jsonify({
+                'success': False,
+                'message': 'Database connection failed'
+            }), 500
         
-        # Get only PDF files, sorted by date (newest first)
-        for file in sorted(SAVED_FORMS_DIR.glob('*.pdf'), reverse=True):
-            # Extract info from filename (format: section_timestamp.pdf)
-            parts = file.stem.split('_')  # Remove .pdf and split
-            section = '_'.join(parts[:-2]) if len(parts) > 2 else 'Unknown'
-            
+        cursor = conn.cursor(cursor_factory=RealDictCursor)
+        cursor.execute(
+            'SELECT id, filename, section, created_at FROM saved_forms ORDER BY created_at DESC'
+        )
+        rows = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        
+        saved_forms = []
+        for row in rows:
             saved_forms.append({
-                'filename': file.name,
-                'section': section,
+                'id': row['id'],
+                'filename': row['filename'],
+                'section': row['section'],
+                'created_at': row['created_at'].isoformat() if row['created_at'] else None,
                 'equipment': 'N/A',
-                'inspector': 'N/A',
-                'inspectionDate': 'N/A',
-                'size': f"{file.stat().st_size / 1024:.1f} KB"
+                'inspector': 'N/A'
             })
         
         return jsonify({
@@ -328,22 +405,44 @@ def get_saved_forms():
         }), 200
     
     except Exception as e:
+        log_error(f"Get saved forms error: {str(e)}")
         return jsonify({
             'success': False,
             'message': str(e)
         }), 500
 
-@app.route('/api/download-form/<filename>', methods=['GET'])
-def download_form(filename):
+@app.route('/api/download-form/<int:form_id>', methods=['GET'])
+def download_form(form_id):
     try:
-        filepath = SAVED_FORMS_DIR / filename
+        conn = get_db_connection()
+        if not conn:
+            return jsonify({
+                'success': False,
+                'message': 'Database connection failed'
+            }), 500
         
-        if not filepath.exists():
-            return jsonify({'success': False, 'message': 'File not found'}), 404
+        cursor = conn.cursor(cursor_factory=RealDictCursor)
+        cursor.execute(
+            'SELECT filename, pdf_data FROM saved_forms WHERE id = %s',
+            (form_id,)
+        )
+        row = cursor.fetchone()
+        cursor.close()
+        conn.close()
         
-        return send_file(filepath, as_attachment=True, download_name=filename, mimetype='application/pdf')
+        if not row:
+            return jsonify({'success': False, 'message': 'Form not found'}), 404
+        
+        # Return PDF file
+        return send_file(
+            BytesIO(row['pdf_data']),
+            as_attachment=True,
+            download_name=row['filename'],
+            mimetype='application/pdf'
+        )
     
     except Exception as e:
+        log_error(f"Download form error: {str(e)}")
         return jsonify({
             'success': False,
             'message': str(e)

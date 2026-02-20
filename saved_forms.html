@@ -436,7 +436,7 @@
 
         async function loadSavedForms() {
             try {
-                const response = await fetch('/api/saved-forms');
+                const response = await fetch('/get-saved-forms');
                 const result = await response.json();
                 
                 if (result.success) {
@@ -466,8 +466,8 @@
             }
 
             tbody.innerHTML = forms.map(form => {
-                const dateStr = form.inspectionDate && form.inspectionDate !== 'N/A' ? 
-                    new Date(form.inspectionDate).toLocaleDateString() : 'N/A';
+                const dateStr = form.created_at ? 
+                    new Date(form.created_at).toLocaleDateString() : 'N/A';
                 
                 return `
                 <tr>
@@ -478,8 +478,8 @@
                     <td><small>${form.filename}</small></td>
                     <td>
                         <div class="actions">
-                            <button class="btn-view" onclick="viewForm('${form.filename}')">View</button>
-                            <button class="btn-download" onclick="downloadForm('${form.filename}')">Download</button>
+                            <button class="btn-view" onclick="viewForm(${form.id})">View</button>
+                            <button class="btn-download" onclick="downloadForm(${form.id}, '${form.filename}')">Download</button>
                         </div>
                     </td>
                 </tr>
@@ -519,18 +519,18 @@
             }
         }
 
-        async function viewForm(filename) {
+        async function viewForm(formId) {
             try {
                 // Simply open the PDF in a new window
-                window.open(`/api/download-form/${filename}`, '_blank');
+                window.open(`/api/download-form/${formId}`, '_blank');
             } catch (error) {
                 alert(`Error opening form: ${error.message}`);
             }
         }
 
-        function downloadForm(filename) {
+        function downloadForm(formId, filename) {
             const link = document.createElement('a');
-            link.href = `/api/download-form/${filename}`;
+            link.href = `/api/download-form/${formId}`;
             link.download = filename;
             document.body.appendChild(link);
             link.click();
