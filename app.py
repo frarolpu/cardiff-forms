@@ -346,29 +346,7 @@ def save_form():
             'success': False,
             'message': f'Server error: {str(e)}'
         }), 500
-            log_error(f"Response generation error: {str(e)}")
-            return jsonify({
-                'success': True,
-                'message': f'Form {section} saved successfully',
-                'filename': filename
-            }), 200
-    
-    except Exception as e:
-        import traceback
-        error_msg = f"Unexpected save error: {str(e)}\n{traceback.format_exc()}"
-        log_error(error_msg)
-        print(error_msg, file=sys.stderr)
-        try:
-            return jsonify({
-                'success': False,
-                'message': str(e),
-                'error_type': type(e).__name__
-            }), 500
-        except:
-            # If even error response fails, return plain text JSON
-            return '{"success": false, "message": "Internal server error"}', 500
 
-@app.route('/api/saved-forms', methods=['GET'])
 @app.route('/get-saved-forms', methods=['GET'])
 def get_saved_forms():
     try:
