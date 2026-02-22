@@ -12,11 +12,20 @@ import base64
 
 app = Flask(__name__)
 
-# Database connection
-DATABASE_URL = os.environ.get('DATABASE_URL')
-
 # Error log file
 ERROR_LOG = Path('pdf_errors.log')
+
+def log_error(message):
+    """Write error to log file"""
+    try:
+        with open(ERROR_LOG, 'a') as f:
+            timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            f.write(f"[{timestamp}] {message}\n")
+    except:
+        pass
+
+# Database connection
+DATABASE_URL = os.environ.get('DATABASE_URL')
 
 def get_db_connection():
     """Get database connection"""
@@ -87,15 +96,6 @@ def handle_error(error):
         'message': f'Server error: {str(error)}',
         'error_type': type(error).__name__
     }), 500
-
-def log_error(message):
-    """Write error to log file"""
-    try:
-        with open(ERROR_LOG, 'a') as f:
-            timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-            f.write(f"[{timestamp}] {message}\n")
-    except:
-        pass
 
 @app.route('/')
 def index():
