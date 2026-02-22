@@ -279,7 +279,6 @@ def create_pdf(form_data):
         raise
 
 @app.route('/api/save-form', methods=['POST'])
-@app.route('/api/save-form', methods=['POST'])
 def save_form():
     """Save submitted form as PDF in database"""
     try:
