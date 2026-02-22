@@ -478,8 +478,8 @@
                     <td><small>${form.filename}</small></td>
                     <td>
                         <div class="actions">
-                            <button class="btn-view" onclick="viewForm(${form.id})">View</button>
-                            <button class="btn-download" onclick="downloadForm(${form.id}, '${form.filename}')">Download</button>
+                            <button class="btn-view" onclick="viewForm('${form.filename}')">View</button>
+                            <button class="btn-download" onclick="downloadForm('${form.filename}')">Download</button>
                         </div>
                     </td>
                 </tr>
@@ -519,18 +519,18 @@
             }
         }
 
-        async function viewForm(formId) {
+        async function viewForm(filename) {
             try {
-                // Simply open the PDF in a new window
-                window.open(`/api/download-form/${formId}`, '_blank');
+                // Simply open the PDF in a new window using filename
+                window.open(`/api/download-form/${filename}`, '_blank');
             } catch (error) {
                 alert(`Error opening form: ${error.message}`);
             }
         }
 
-        function downloadForm(formId, filename) {
+        function downloadForm(filename) {
             const link = document.createElement('a');
-            link.href = `/api/download-form/${formId}`;
+            link.href = `/api/download-form/${filename}`;
             link.download = filename;
             document.body.appendChild(link);
             link.click();
