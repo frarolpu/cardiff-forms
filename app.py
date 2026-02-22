@@ -26,9 +26,12 @@ def log_error(message):
 
 # Database connection
 DATABASE_URL = os.environ.get('DATABASE_URL')
+USE_DATABASE = DATABASE_URL is not None and len(DATABASE_URL) > 0
 
 def get_db_connection():
     """Get database connection"""
+    if not USE_DATABASE:
+        return None
     try:
         conn = psycopg2.connect(DATABASE_URL)
         return conn
@@ -305,23 +308,40 @@ def save_form():
         pdf_buffer = create_pdf(data)
         pdf_data = pdf_buffer.getvalue()
         
-        # Save to database
-        conn = get_db_connection()
-        if not conn:
-            return jsonify({
-                'success': False,
-                'message': 'Database connection failed'
-            }), 500
+        # Try to save to database first if configured
+        if USE_DATABASE:
+            conn = get_db_connection()
+            if conn:
+                try:
+                    cursor = conn.cursor()
+                    cursor.execute(
+                        'INSERT INTO saved_forms (section, filename, pdf_data) VALUES (%s, %s, %s)',
+                        (section, filename, pdf_data)
+                    )
+                    conn.commit()
+                    cursor.close()
+                    conn.close()
+                    
+                    # Return success response
+                    response = jsonify({
+                        'success': True,
+                        'message': f'Form {section} saved successfully',
+                        'filename': filename
+                    })
+                    response.status_code = 200
+                    return response
+                except Exception as e:
+                    log_error(f"Database insert error: {str(e)}")
+                    conn.close()
         
+        # Fallback: save to filesystem if database unavailable or disabled
         try:
-            cursor = conn.cursor()
-            cursor.execute(
-                'INSERT INTO saved_forms (section, filename, pdf_data) VALUES (%s, %s, %s)',
-                (section, filename, pdf_data)
-            )
-            conn.commit()
-            cursor.close()
-            conn.close()
+            saved_forms_dir = Path('saved_forms')
+            saved_forms_dir.mkdir(exist_ok=True)
+            pdf_path = saved_forms_dir / filename
+            
+            with open(pdf_path, 'wb') as f:
+                f.write(pdf_data)
             
             # Return success response
             response = jsonify({
@@ -332,11 +352,10 @@ def save_form():
             response.status_code = 200
             return response
         except Exception as e:
-            log_error(f"Database insert error: {str(e)}")
-            conn.close()
+            log_error(f"Filesystem save error: {str(e)}")
             return jsonify({
                 'success': False,
-                'message': f'Error saving to database: {str(e)}'
+                'message': f'Error saving form: {str(e)}'
             }), 500
     except Exception as e:
         log_error(f"Unexpected save error: {str(e)}")
@@ -348,31 +367,51 @@ def save_form():
 @app.route('/get-saved-forms', methods=['GET'])
 def get_saved_forms():
     try:
-        conn = get_db_connection()
-        if not conn:
-            return jsonify({
-                'success': False,
-                'message': 'Database connection failed'
-            }), 500
-        
-        cursor = conn.cursor(cursor_factory=RealDictCursor)
-        cursor.execute(
-            'SELECT id, filename, section, created_at FROM saved_forms ORDER BY created_at DESC'
-        )
-        rows = cursor.fetchall()
-        cursor.close()
-        conn.close()
-        
         saved_forms = []
-        for row in rows:
-            saved_forms.append({
-                'id': row['id'],
-                'filename': row['filename'],
-                'section': row['section'],
-                'created_at': row['created_at'].isoformat() if row['created_at'] else None,
-                'equipment': 'N/A',
-                'inspector': 'N/A'
-            })
+        
+        # Try database first if configured
+        if USE_DATABASE:
+            conn = get_db_connection()
+            if conn:
+                try:
+                    cursor = conn.cursor(cursor_factory=RealDictCursor)
+                    cursor.execute(
+                        'SELECT id, filename, section, created_at FROM saved_forms ORDER BY created_at DESC'
+                    )
+                    rows = cursor.fetchall()
+                    cursor.close()
+                    conn.close()
+                    
+                    for row in rows:
+                        saved_forms.append({
+                            'id': row['id'],
+                            'filename': row['filename'],
+                            'section': row['section'],
+                            'created_at': row['created_at'].isoformat() if row['created_at'] else None,
+                            'equipment': 'N/A',
+                            'inspector': 'N/A'
+                        })
+                    
+                    return jsonify({
+                        'success': True,
+                        'forms': saved_forms,
+                        'count': len(saved_forms)
+                    }), 200
+                except Exception as db_err:
+                    log_error(f"Database query error: {str(db_err)}")
+        
+        # Fallback: read from filesystem
+        saved_forms_dir = Path('saved_forms')
+        if saved_forms_dir.exists():
+            for idx, pdf_file in enumerate(sorted(saved_forms_dir.glob('*.pdf'), reverse=True)):
+                saved_forms.append({
+                    'id': idx + 1,
+                    'filename': pdf_file.name,
+                    'section': pdf_file.stem.split('_')[0] if '_' in pdf_file.stem else 'N/A',
+                    'created_at': datetime.fromtimestamp(pdf_file.stat().st_mtime).isoformat(),
+                    'equipment': 'N/A',
+                    'inspector': 'N/A'
+                })
         
         return jsonify({
             'success': True,
@@ -387,35 +426,46 @@ def get_saved_forms():
             'message': str(e)
         }), 500
 
-@app.route('/api/download-form/<int:form_id>', methods=['GET'])
-def download_form(form_id):
+@app.route('/api/download-form/<form_identifier>', methods=['GET'])
+def download_form(form_identifier):
     try:
-        conn = get_db_connection()
-        if not conn:
-            return jsonify({
-                'success': False,
-                'message': 'Database connection failed'
-            }), 500
+        # Try to use as database ID if it's a number
+        if form_identifier.isdigit() and USE_DATABASE:
+            conn = get_db_connection()
+            if conn:
+                try:
+                    cursor = conn.cursor(cursor_factory=RealDictCursor)
+                    cursor.execute(
+                        'SELECT filename, pdf_data FROM saved_forms WHERE id = %s',
+                        (int(form_identifier),)
+                    )
+                    row = cursor.fetchone()
+                    cursor.close()
+                    conn.close()
+                    
+                    if row:
+                        return send_file(
+                            BytesIO(row['pdf_data']),
+                            as_attachment=True,
+                            download_name=row['filename'],
+                            mimetype='application/pdf'
+                        )
+                except Exception as db_err:
+                    log_error(f"Database query error: {str(db_err)}")
         
-        cursor = conn.cursor(cursor_factory=RealDictCursor)
-        cursor.execute(
-            'SELECT filename, pdf_data FROM saved_forms WHERE id = %s',
-            (form_id,)
-        )
-        row = cursor.fetchone()
-        cursor.close()
-        conn.close()
+        # Fallback: treat as filename and read from filesystem
+        saved_forms_dir = Path('saved_forms')
+        pdf_path = saved_forms_dir / form_identifier
         
-        if not row:
-            return jsonify({'success': False, 'message': 'Form not found'}), 404
+        if pdf_path.exists() and pdf_path.suffix == '.pdf':
+            return send_file(
+                pdf_path,
+                as_attachment=True,
+                download_name=form_identifier,
+                mimetype='application/pdf'
+            )
         
-        # Return PDF file
-        return send_file(
-            BytesIO(row['pdf_data']),
-            as_attachment=True,
-            download_name=row['filename'],
-            mimetype='application/pdf'
-        )
+        return jsonify({'success': False, 'message': 'Form not found'}), 404
     
     except Exception as e:
         log_error(f"Download form error: {str(e)}")
