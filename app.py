@@ -144,9 +144,9 @@ def create_pdf(form_data):
         if form_data.get('frequencies'):
             info_items.append(("Frequencies:", ', '.join(form_data.get('frequencies', []))))
         
-        # Set column widths
+        # Set column widths using effective page width
         col1_width = 50
-        col2_width = pdf.w - col1_width - 20
+        col2_width = pdf.epw - col1_width - 2
         
         for label, value in info_items:
             pdf.set_font("Arial", "B", 9)
@@ -164,16 +164,15 @@ def create_pdf(form_data):
             pdf.cell(0, 10, "Tasks Performed", 0, 1)
             pdf.set_font("Arial", "", 9)
             
-            # Set left margin and available width for task text wrapping
-            left_margin = pdf.l_margin
-            available_width = pdf.w - (left_margin * 2) - 2
+            # Use effective page width for task text wrapping
+            available_width = pdf.epw - 2
             
             for task in tasks:
                 # Use checkbox representation
                 checkbox = 'X' if task.get('completed') else '_'
                 step_text = str(task.get('step', ''))
                 # Use multi_cell for text wrapping, aligned left
-                pdf.set_x(left_margin)
+                pdf.set_x(pdf.l_margin)
                 pdf.multi_cell(available_width, 6, f"[{checkbox}] {step_text}", align='L')
             
             pdf.ln(1)
