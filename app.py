@@ -116,6 +116,21 @@ def create_pdf(form_data):
     try:
         pdf = FPDF()
         pdf.add_page()
+        
+        # Add header logo image (centered)
+        try:
+            # Image dimensions: width=150mm, height will scale proportionally
+            logo_path = Path('Logos Combined.jpg')
+            if logo_path.exists():
+                # Center the image
+                page_width = pdf.w
+                img_width = 150
+                left_margin = (page_width - img_width) / 2
+                pdf.image(str(logo_path), x=left_margin, w=img_width)
+                pdf.ln(15)  # Add space after logo
+        except Exception as e:
+            log_error(f"Logo image error: {str(e)}")
+        
         pdf.set_font("Arial", "B", 16)
         
         # Initialize temp file list for photos

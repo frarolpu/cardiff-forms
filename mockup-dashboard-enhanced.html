@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maintenance Dashboard - Enhanced</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        header h1 {
+            color: #333;
+            font-size: 28px;
+        }
+        
+        .status-badges {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .badge {
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .badge.active {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .badge.warning {
+            background: #FF9800;
+            color: white;
+        }
+        
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+        }
+        
+        .card h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 20px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        /* Túnel Map */
+        .tunnel-map {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .tunnel-visual {
+            background: linear-gradient(90deg, #ddd 0%, #999 50%, #ddd 100%);
+            border-radius: 50px;
+            height: 80px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .section-marker {
+            position: absolute;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+            border-right: 2px solid rgba(255,255,255,0.5);
+        }
+        
+        .section-marker.section-1 {
+            left: 0%;
+            width: 25%;
+            background: rgba(76, 175, 80, 0.3);
+        }
+        
+        .section-marker.section-2 {
+            left: 25%;
+            width: 25%;
+            background: rgba(255, 152, 0, 0.3);
+        }
+        
+        .section-marker.section-3 {
+            left: 50%;
+            width: 25%;
+            background: rgba(255, 193, 7, 0.3);
+        }
+        
+        .section-marker.section-4 {
+            left: 75%;
+            width: 25%;
+            background: rgba(0, 150, 136, 0.3);
+        }
+        
+        .incident-item {
+            background: #f5f5f5;
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 4px solid #667eea;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .incident-item.critical {
+            border-left-color: #F44336;
+            background: #FFEBEE;
+        }
+        
+        .incident-item.warning {
+            border-left-color: #FF9800;
+            background: #FFF3E0;
+        }
+        
+        .incident-item.resolved {
+            border-left-color: #4CAF50;
+            background: #E8F5E9;
+        }
+        
+        .incident-info h3 {
+            color: #333;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        
+        .incident-info p {
+            color: #666;
+            font-size: 12px;
+        }
+        
+        .incident-status {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        .status-critical {
+            background: #F44336;
+            color: white;
+        }
+        
+        .status-warning {
+            background: #FF9800;
+            color: white;
+        }
+        
+        .status-resolved {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .stat-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .stat-box .number {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .stat-box .label {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+        
+        .full-width {
+            grid-column: 1 / -1;
+        }
+        
+        @media (max-width: 1024px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🛣️ Cardiff Tunnel Maintenance Dashboard</h1>
+            <div class="status-badges">
+                <div class="badge active">✓ All Systems OK</div>
+                <div class="badge warning">⚠ 2 Pending Actions</div>
+            </div>
+        </header>
+        
+        <div class="main-grid">
+            <!-- Tunnel Status Card -->
+            <div class="card">
+                <h2>Tunnel Status Overview</h2>
+                
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="number">4</div>
+                        <div class="label">Sections</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="number">12</div>
+                        <div class="label">Inspections</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="number">3</div>
+                        <div class="label">This Month</div>
+                    </div>
+                </div>
+                
+                <h3 style="margin-top: 20px; margin-bottom: 10px; color: #333;">Tunnel Sections</h3>
+                <div class="tunnel-map">
+                    <div class="tunnel-visual">
+                        <div class="section-marker section-1">Section 2.1</div>
+                        <div class="section-marker section-2">Section 2.45</div>
+                        <div class="section-marker section-3">Section 2.5</div>
+                        <div class="section-marker section-4">Section 2.7</div>
+                    </div>
+                </div>
+                <p style="color: #999; font-size: 12px; margin-top: 10px;">← Start • End →</p>
+            </div>
+            
+            <!-- Incidents Register -->
+            <div class="card">
+                <h2>Corrective Incidents Register</h2>
+                
+                <div class="incident-item critical">
+                    <div class="incident-info">
+                        <h3>Drainage Blockage - Section 2.45</h3>
+                        <p>Reported: 20/02/2026 | Inspector: John M.</p>
+                    </div>
+                    <span class="incident-status status-critical">CRITICAL</span>
+                </div>
+                
+                <div class="incident-item warning">
+                    <div class="incident-info">
+                        <h3>Paint Wear - Section 2.5</h3>
+                        <p>Reported: 18/02/2026 | Inspector: Sarah K.</p>
+                    </div>
+                    <span class="incident-status status-warning">IN PROGRESS</span>
+                </div>
+                
+                <div class="incident-item resolved">
+                    <div class="incident-info">
+                        <h3>Lighting Repair - Section 2.1</h3>
+                        <p>Reported: 15/02/2026 | Resolved: 19/02/2026</p>
+                    </div>
+                    <span class="incident-status status-resolved">RESOLVED</span>
+                </div>
+                
+                <div class="incident-item resolved">
+                    <div class="incident-info">
+                        <h3>Ventilation Check - Section 2.7</h3>
+                        <p>Reported: 10/02/2026 | Resolved: 17/02/2026</p>
+                    </div>
+                    <span class="incident-status status-resolved">RESOLVED</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Recent Reports -->
+        <div class="card full-width">
+            <h2>Recent Maintenance Reports (Last 7 Days)</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 15px;">
+                <div style="background: #E3F2FD; padding: 15px; border-radius: 8px; border-left: 4px solid #2196F3;">
+                    <strong style="color: #1565C0;">Routine Inspection</strong><br>
+                    <small style="color: #666;">Section 2.1 - 22/02/2026</small><br>
+                    <small style="color: #999;">Inspector: Michael R.</small>
+                </div>
+                <div style="background: #FCE4EC; padding: 15px; border-radius: 8px; border-left: 4px solid #E91E63;">
+                    <strong style="color: #C2185B;">Preventive Maintenance</strong><br>
+                    <small style="color: #666;">Section 2.45 - 21/02/2026</small><br>
+                    <small style="color: #999;">Inspector: Emma S.</small>
+                </div>
+                <div style="background: #E8F5E9; padding: 15px; border-radius: 8px; border-left: 4px solid #4CAF50;">
+                    <strong style="color: #2E7D32;">Corrective Work</strong><br>
+                    <small style="color: #666;">Section 2.5 - 20/02/2026</small><br>
+                    <small style="color: #999;">Inspector: David L.</small>
+                </div>
+                <div style="background: #FFF3E0; padding: 15px; border-radius: 8px; border-left: 4px solid #FF9800;">
+                    <strong style="color: #E65100;">Emergency Response</strong><br>
+                    <small style="color: #666;">Section 2.7 - 19/02/2026</small><br>
+                    <small style="color: #999;">Inspector: Lisa T.</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

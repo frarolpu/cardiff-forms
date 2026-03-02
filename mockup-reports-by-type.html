@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports by Closure Type</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        header h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+        
+        .filter-bar {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            padding: 10px 20px;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .filter-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+        
+        .filter-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .closure-type {
+            margin-bottom: 30px;
+        }
+        
+        .closure-type-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+        
+        .closure-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-right: 15px;
+            color: white;
+        }
+        
+        .closure-icon.routine {
+            background: #2196F3;
+        }
+        
+        .closure-icon.preventive {
+            background: #4CAF50;
+        }
+        
+        .closure-icon.corrective {
+            background: #FF9800;
+        }
+        
+        .closure-icon.emergency {
+            background: #F44336;
+        }
+        
+        .closure-title {
+            flex: 1;
+        }
+        
+        .closure-title h2 {
+            color: #333;
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+        
+        .closure-title p {
+            color: #999;
+            font-size: 13px;
+        }
+        
+        .closure-count {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .reports-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .report-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-top: 4px solid #ddd;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+        
+        .report-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+        
+        .report-card.routine {
+            border-top-color: #2196F3;
+        }
+        
+        .report-card.preventive {
+            border-top-color: #4CAF50;
+        }
+        
+        .report-card.corrective {
+            border-top-color: #FF9800;
+        }
+        
+        .report-card.emergency {
+            border-top-color: #F44336;
+        }
+        
+        .report-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 12px;
+        }
+        
+        .report-title {
+            font-weight: bold;
+            color: #333;
+            font-size: 16px;
+            flex: 1;
+        }
+        
+        .report-date {
+            color: #999;
+            font-size: 12px;
+            white-space: nowrap;
+            margin-left: 10px;
+        }
+        
+        .report-section {
+            background: #f5f5f5;
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            font-size: 13px;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        .report-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: #666;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #eee;
+        }
+        
+        .report-inspector {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .report-inspector::before {
+            content: "👤";
+            font-size: 14px;
+        }
+        
+        .view-more {
+            color: #667eea;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        
+        .view-more:hover {
+            text-decoration: underline;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            background: white;
+            border-radius: 10px;
+        }
+        
+        .empty-state p {
+            color: #999;
+            font-size: 14px;
+        }
+        
+        .stats-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+        
+        .stat-card .number {
+            font-size: 32px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+        
+        .stat-card .label {
+            color: #999;
+            font-size: 13px;
+        }
+        
+        @media (max-width: 768px) {
+            .closure-type-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .closure-count {
+                align-self: flex-start;
+                margin-top: 10px;
+            }
+            
+            .reports-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .filter-bar {
+                flex-direction: column;
+            }
+            
+            .filter-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📊 Maintenance Reports by Closure Type</h1>
+            <div class="filter-bar">
+                <button class="filter-btn active">All Types</button>
+                <button class="filter-btn">Routine</button>
+                <button class="filter-btn">Preventive</button>
+                <button class="filter-btn">Corrective</button>
+                <button class="filter-btn">Emergency</button>
+            </div>
+        </header>
+        
+        <!-- Summary Stats -->
+        <div class="stats-summary">
+            <div class="stat-card">
+                <div class="number">45</div>
+                <div class="label">Total Reports</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">15</div>
+                <div class="label">This Month</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">3</div>
+                <div class="label">Pending</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">2.45 avg</div>
+                <div class="label">Days to Close</div>
+            </div>
+        </div>
+        
+        <!-- Routine Reports -->
+        <div class="closure-type">
+            <div class="closure-type-header">
+                <div class="closure-icon routine">🔍</div>
+                <div class="closure-title">
+                    <h2>Routine Inspection</h2>
+                    <p>Regular scheduled maintenance and inspections</p>
+                </div>
+                <div class="closure-count">18 Reports</div>
+            </div>
+            
+            <div class="reports-grid">
+                <div class="report-card routine">
+                    <div class="report-header">
+                        <span class="report-title">Monthly Inspection</span>
+                        <span class="report-date">22/02/2026</span>
+                    </div>
+                    <div class="report-section">Section 2.1</div>
+                    <div class="report-details">
+                        <span class="report-inspector">Michael R.</span>
+                        <span class="view-more">View →</span>
+                    </div>
+                </div>
+                
+                <div class="report-card routine">
+                    <div class="report-header">
+                        <span class="report-title">Quarterly Check</span>
+                        <span class="report-date">20/02/2026</span>
+                    </div>
+                    <div class="report-section">Section 2.7</div>
+                    <div class="report-details">
+                        <span class="report-inspector">Sarah K.</span>
+                        <span class="view-more">View →</span>
+                    </div>
+                </div>
+                
+                <div class="report-card routine">
+                    <div class="report-header">
+                        <span class="report-title">Safety Audit</span>
+                        <span class="report-date">18/02/2026</span>
+                    </div>
+                    <div class="report-section">Section 2.45</div>
+                    <div class="report-details">
+                        <span class="report-inspector">John M.</span>
+                        <span class="view-more">View →</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Preventive Reports -->
+        <div class="closure-type">
+            <div class="closure-type-header">
+                <div class="closure-icon preventive">⚙️</div>
+                <div class="closure-title">
+                    <h2>Preventive Maintenance</h2>
+                    <p>Planned maintenance to prevent future issues</p>
+                </div>
+                <div class="closure-count">12 Reports</div>
+            </div>
+            
+            <div class="reports-grid">
+                <div class="report-card preventive">
+                    <div class="report-header">
+                        <span class="report-title">Ventilation Filter Change</span>
+                        <span class="report-date">21/02/2026</span>
+                    </div>
+                    <div class="report-section">Section 2.5</div>
+                    <div class="report-details">
+                        <span class="report-inspector">Emma S.</span>
+                        <span class="view-more">View →</span>
+                    </div>
+                </div>
+                
+                <div class="report-card preventive">
+                    <div class="report-header">
+                        <span class="report-title">Drainage System Cleaning</span>
+                        <span class="report-date">19/02/2026</span>
+                    </div>
+                    <div class="report-section">Section 2.1</div>
+                    <div class="report-details">
+                        <span class="report-inspector">David L.</span>
+                        <span class="view-more">View →</span>
+                    </div>
+                </div>
+                
+                <div class="report-card preventive">
+                    <div class="report-header">
+                        <span class="report-title">Lighting Maintenance</span>
+                        <span class="report-date">17/02/2026</span>
+                    </div>
+                    <div class="report-section">Section 2.45</div>
+                    <div class="report-details">
+                        <span class="report-inspector">Lisa T.</span>
+                        <span class="view-more">View →</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Corrective Reports -->
+        <div class="closure-type">
+            <div class="closure-icon corrective">🔧</div>
+            <div class="closure-type-header">
+                <div class="closure-icon corrective" style="margin-right: 15px;">🔧</div>
+                <div class="closure-title">
+                    <h2>Corrective Work</h2>
+                    <p>Repairs and fixes for identified issues</p>
+                </div>
+                <div class="closure-count">10 Reports</div>
+            </div>
+            
+            <div class="reports-grid">
+                <div class="report-card corrective">
+                    <div class="report-header">
+                        <span class="report-title">Paint Wear Repair</span>
+                        <span class="report-date">20/02/2026</span>
+                    </div>
+                    <div class="report-section">Section 2.5</div>
+                    <div class="report-details">
+                        <span class="report-inspector">Robert C.</span>
+                        <span class="view-more">View →</span>
+                    </div>
+                </div>
+                
+                <div class="report-card corrective">
+                    <div class="report-header">
+                        <span class="report-title">Drainage Blockage Fix</span>
+                        <span class="report-date">19/02/2026</span>
+                    </div>
+                    <div class="report-section">Section 2.45</div>
+                    <div class="report-details">
+                        <span class="report-inspector">Marcus J.</span>
+                        <span class="view-more">View →</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Emergency Reports -->
+        <div class="closure-type">
+            <div class="closure-type-header">
+                <div class="closure-icon emergency">🚨</div>
+                <div class="closure-title">
+                    <h2>Emergency Response</h2>
+                    <p>Urgent repairs for critical safety issues</p>
+                </div>
+                <div class="closure-count">5 Reports</div>
+            </div>
+            
+            <div class="reports-grid">
+                <div class="report-card emergency">
+                    <div class="report-header">
+                        <span class="report-title">Structural Crack Assessment</span>
+                        <span class="report-date">15/02/2026</span>
+                    </div>
+                    <div class="report-section">Section 2.7</div>
+                    <div class="report-details">
+                        <span class="report-inspector">Dr. Helen M.</span>
+                        <span class="view-more">View →</span>
+                    </div>
+                </div>
+                
+                <div class="report-card emergency">
+                    <div class="report-header">
+                        <span class="report-title">Flooding Mitigation</span>
+                        <span class="report-date">12/02/2026</span>
+                    </div>
+                    <div class="report-section">Section 2.1</div>
+                    <div class="report-details">
+                        <span class="report-inspector">Emergency Team</span>
+                        <span class="view-more">View →</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

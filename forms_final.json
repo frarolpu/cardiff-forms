@@ -57,8 +57,7 @@
       "FIRE PUMPING STATION"
     ],
     "frequencies": [
-      "6 MONTHLY",
-      "ANNUALLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -103,7 +102,7 @@
       },
       {
         "step": "11",
-        "description": "Services ACB's in accordance with the manufacturer\u00e2\u20ac\u2122s instructions - Volume 2"
+        "description": "Services ACB's in accordance with the manufacturerâ€™s instructions - Volume 2"
       }
     ]
   },
@@ -116,7 +115,6 @@
       "SERVICE BUILDING"
     ],
     "frequencies": [
-      "3 MONTHLY",
       "6 MONTHLY"
     ],
     "tasks": [
@@ -200,7 +198,6 @@
       "SERVICE BUILDING"
     ],
     "frequencies": [
-      "3 MONTHLY",
       "6 MONTHLY"
     ],
     "tasks": [
@@ -284,8 +281,7 @@
       "FIRE PUMPING STATION"
     ],
     "frequencies": [
-      "6 MONTHLY",
-      "ANNUALLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -322,7 +318,7 @@
       },
       {
         "step": "9",
-        "description": "Record the running current Fan     EF5\u00e2\u20ac\u00a6\u00e2\u20ac\u00a6\u00e2\u20ac\u00a6\u00e2\u20ac\u00a6. Amps"
+        "description": "Record the running current Fan     EF5â€¦â€¦â€¦â€¦. Amps"
       }
     ]
   },
@@ -335,8 +331,7 @@
       "FIRE PUMPING STATION"
     ],
     "frequencies": [
-      "6 MONTHLY",
-      "ANNUALLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -373,7 +368,7 @@
       },
       {
         "step": "9",
-        "description": "Record the running current Fan     EF1\u00e2\u20ac\u00a6\u00e2\u20ac\u00a6\u00e2\u20ac\u00a6\u00e2\u20ac\u00a6. Amps        EF2\u00e2\u20ac\u00a6\u00e2\u20ac\u00a6\u00e2\u20ac\u00a6\u00e2\u20ac\u00a6\u00e2\u20ac\u00a6Amps"
+        "description": "Record the running current Fan     EF1â€¦â€¦â€¦â€¦. Amps        EF2â€¦â€¦â€¦â€¦â€¦Amps"
       }
     ]
   },
@@ -386,8 +381,7 @@
       "COUNTY HALL"
     ],
     "frequencies": [
-      "MONTHLY",
-      "3 MONTHLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -432,7 +426,6 @@
       "EASTBOUND BORE"
     ],
     "frequencies": [
-      "MONTHLY",
       "6 MONTHLY"
     ],
     "tasks": [
@@ -479,8 +472,7 @@
       "FIRE PUMPING STATION"
     ],
     "frequencies": [
-      "MONTHLY",
-      "ANNUALLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -526,8 +518,7 @@
       "FIRE PUMPING STATION"
     ],
     "frequencies": [
-      "MONTHLY",
-      "ANNUALLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -561,8 +552,7 @@
       "COUNTY HALL"
     ],
     "frequencies": [
-      "WEEKLY",
-      "3 MONTHLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -607,7 +597,6 @@
       "WESTBOUND BORE"
     ],
     "frequencies": [
-      "WEEKLY",
       "6 MONTHLY"
     ],
     "tasks": [
@@ -654,8 +643,7 @@
       "FIRE PUMPING STATION"
     ],
     "frequencies": [
-      "WEEKLY",
-      "ANNUALLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -701,8 +689,7 @@
       "FIRE PUMPING STATION"
     ],
     "frequencies": [
-      "WEEKLY",
-      "ANNUALLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -736,13 +723,12 @@
       "COUNTY HALL"
     ],
     "frequencies": [
-      "MONTHLY",
-      "3 MONTHLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
         "step": "1",
-        "description": "Check operation of fireman\u00e2\u20ac\u2122s socket outlets"
+        "description": "Check operation of firemanâ€™s socket outlets"
       },
       {
         "step": "2",
@@ -787,8 +773,7 @@
       "COUNTY HALL"
     ],
     "frequencies": [
-      "MONTHLY",
-      "3 MONTHLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -814,13 +799,12 @@
       "FIRE PUMPING STATION"
     ],
     "frequencies": [
-      "MONTHLY",
-      "ANNUALLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
         "step": "1",
-        "description": "Check operation of fireman\u00e2\u20ac\u2122s socket outlets"
+        "description": "Check operation of firemanâ€™s socket outlets"
       },
       {
         "step": "2",
@@ -865,8 +849,7 @@
       "FIRE PUMPING STATION"
     ],
     "frequencies": [
-      "MONTHLY",
-      "ANNUALLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -900,13 +883,12 @@
       "COUNTY HALL"
     ],
     "frequencies": [
-      "WEEKLY",
-      "3 MONTHLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
         "step": "1",
-        "description": "Check operation of fireman\u00e2\u20ac\u2122s socket outlets"
+        "description": "Check operation of firemanâ€™s socket outlets"
       },
       {
         "step": "2",
@@ -951,8 +933,7 @@
       "COUNTY HALL"
     ],
     "frequencies": [
-      "WEEKLY",
-      "3 MONTHLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -978,13 +959,12 @@
       "FIRE PUMPING STATION"
     ],
     "frequencies": [
-      "WEEKLY",
-      "ANNUALLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
         "step": "1",
-        "description": "Check operation of fireman\u00e2\u20ac\u2122s socket outlets"
+        "description": "Check operation of firemanâ€™s socket outlets"
       },
       {
         "step": "2",
@@ -1029,8 +1009,7 @@
       "FIRE PUMPING STATION"
     ],
     "frequencies": [
-      "WEEKLY",
-      "ANNUALLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -1064,8 +1043,7 @@
       "FIRE PUMPING STATION"
     ],
     "frequencies": [
-      "3 MONTHLY",
-      "ANNUALLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -1090,7 +1068,7 @@
       },
       {
         "step": "6",
-        "description": "Operate all manual valves through full range of travel to check operation. Lubricate as necessary \u00e2\u20ac\u201c Reset"
+        "description": "Operate all manual valves through full range of travel to check operation. Lubricate as necessary â€“ Reset"
       },
       {
         "step": "7",
@@ -1106,8 +1084,7 @@
       "FIRE PUMPING STATION"
     ],
     "frequencies": [
-      "6 MONTHLY",
-      "ANNUALLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -1153,8 +1130,7 @@
       "FIRE PUMPING STATION"
     ],
     "frequencies": [
-      "3 MONTHLY",
-      "ANNUALLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -1257,8 +1233,7 @@
       "COUNTY HALL"
     ],
     "frequencies": [
-      "MONTHLY",
-      "3 MONTHLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -1295,7 +1270,6 @@
       "EASTBOUND BORE"
     ],
     "frequencies": [
-      "MONTHLY",
       "3 YEARLY"
     ],
     "tasks": [
@@ -1338,8 +1312,7 @@
       "COUNTY HALL"
     ],
     "frequencies": [
-      "WEEKLY",
-      "3 MONTHLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -1376,7 +1349,6 @@
       "WESTBOUND BORE"
     ],
     "frequencies": [
-      "WEEKLY",
       "3 YEARLY"
     ],
     "tasks": [
@@ -1419,8 +1391,7 @@
       "COUNTY HALL"
     ],
     "frequencies": [
-      "MONTHLY",
-      "3 MONTHLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -1457,7 +1428,6 @@
       "EASTBOUND BORE"
     ],
     "frequencies": [
-      "MONTHLY",
       "3 YEARLY"
     ],
     "tasks": [
@@ -1496,8 +1466,7 @@
       "COUNTY HALL"
     ],
     "frequencies": [
-      "WEEKLY",
-      "3 MONTHLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -1534,7 +1503,6 @@
       "WESTBOUND BORE"
     ],
     "frequencies": [
-      "WEEKLY",
       "3 YEARLY"
     ],
     "tasks": [
@@ -1639,7 +1607,6 @@
       "SERVICE BUILDING"
     ],
     "frequencies": [
-      "3 MONTHLY",
       "6 MONTHLY"
     ],
     "tasks": [
@@ -1874,8 +1841,7 @@
       "COUNTY HALL"
     ],
     "frequencies": [
-      "MONTHLY",
-      "3 MONTHLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -1913,8 +1879,7 @@
       "COUNTY HALL"
     ],
     "frequencies": [
-      "WEEKLY",
-      "3 MONTHLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -1952,8 +1917,7 @@
       "COUNTY HALL"
     ],
     "frequencies": [
-      "MONTHLY",
-      "3 MONTHLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -2007,8 +1971,7 @@
       "COUNTY HALL"
     ],
     "frequencies": [
-      "WEEKLY",
-      "3 MONTHLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -2062,8 +2025,7 @@
       "FIRE PUMPING STATION"
     ],
     "frequencies": [
-      "6 MONTHLY",
-      "ANNUALLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -2097,8 +2059,7 @@
       "COUNTY HALL"
     ],
     "frequencies": [
-      "WEEKLY",
-      "3 MONTHLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -2132,8 +2093,7 @@
       "COUNTY HALL"
     ],
     "frequencies": [
-      "MONTHLY",
-      "3 MONTHLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -2167,8 +2127,7 @@
       "COUNTY HALL"
     ],
     "frequencies": [
-      "WEEKLY",
-      "3 MONTHLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -2194,8 +2153,7 @@
       "COUNTY HALL"
     ],
     "frequencies": [
-      "MONTHLY",
-      "3 MONTHLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -2221,8 +2179,7 @@
       "FIRE PUMPING STATION"
     ],
     "frequencies": [
-      "WEEKLY",
-      "ANNUALLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -2256,8 +2213,7 @@
       "FIRE PUMPING STATION"
     ],
     "frequencies": [
-      "MONTHLY",
-      "ANNUALLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -2291,7 +2247,6 @@
       "SERVICE BUILDING"
     ],
     "frequencies": [
-      "3 MONTHLY",
       "6 MONTHLY"
     ],
     "tasks": [
@@ -2367,8 +2322,7 @@
       "FIRE PUMPING STATION"
     ],
     "frequencies": [
-      "6 MONTHLY",
-      "ANNUALLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -2414,7 +2368,6 @@
       "SERVICE BUILDING"
     ],
     "frequencies": [
-      "3 MONTHLY",
       "6 MONTHLY"
     ],
     "tasks": [
@@ -2490,8 +2443,7 @@
       "FIRE PUMPING STATION"
     ],
     "frequencies": [
-      "6 MONTHLY",
-      "ANNUALLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -2537,8 +2489,7 @@
       "COUNTY HALL"
     ],
     "frequencies": [
-      "WEEKLY",
-      "3 MONTHLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -2580,8 +2531,7 @@
       "COUNTY HALL"
     ],
     "frequencies": [
-      "MONTHLY",
-      "3 MONTHLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -2622,7 +2572,6 @@
       "WESTBOUND BORE"
     ],
     "frequencies": [
-      "WEEKLY",
       "6 MONTHLY"
     ],
     "tasks": [
@@ -2664,7 +2613,6 @@
       "EASTBOUND BORE"
     ],
     "frequencies": [
-      "MONTHLY",
       "6 MONTHLY"
     ],
     "tasks": [
@@ -2707,8 +2655,7 @@
       "FIRE PUMPING STATION"
     ],
     "frequencies": [
-      "WEEKLY",
-      "ANNUALLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -2750,8 +2697,7 @@
       "FIRE PUMPING STATION"
     ],
     "frequencies": [
-      "MONTHLY",
-      "ANNUALLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -2793,8 +2739,7 @@
       "COUNTY HALL"
     ],
     "frequencies": [
-      "MONTHLY",
-      "3 MONTHLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -2828,8 +2773,7 @@
       "COUNTY HALL"
     ],
     "frequencies": [
-      "WEEKLY",
-      "3 MONTHLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -2863,8 +2807,7 @@
       "COUNTY HALL"
     ],
     "frequencies": [
-      "MONTHLY",
-      "3 MONTHLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -2902,8 +2845,7 @@
       "COUNTY HALL"
     ],
     "frequencies": [
-      "WEEKLY",
-      "3 MONTHLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -2941,8 +2883,7 @@
       "FIRE PUMPING STATION"
     ],
     "frequencies": [
-      "MONTHLY",
-      "ANNUALLY"
+      "3 YEARLY"
     ],
     "tasks": [
       {
@@ -2980,8 +2921,7 @@
       "COUNTY HALL"
     ],
     "frequencies": [
-      "MONTHLY",
-      "3 MONTHLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -3011,8 +2951,7 @@
       "COUNTY HALL"
     ],
     "frequencies": [
-      "WEEKLY",
-      "3 MONTHLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -3042,8 +2981,7 @@
       "COUNTY HALL"
     ],
     "frequencies": [
-      "MONTHLY",
-      "3 MONTHLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -3093,8 +3031,7 @@
       "COUNTY HALL"
     ],
     "frequencies": [
-      "WEEKLY",
-      "3 MONTHLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -3144,8 +3081,7 @@
       "COUNTY HALL"
     ],
     "frequencies": [
-      "MONTHLY",
-      "3 MONTHLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -3170,7 +3106,6 @@
       "EASTBOUND BORE"
     ],
     "frequencies": [
-      "MONTHLY",
       "3 YEARLY"
     ],
     "tasks": [
@@ -3201,8 +3136,7 @@
       "COUNTY HALL"
     ],
     "frequencies": [
-      "WEEKLY",
-      "3 MONTHLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -3227,7 +3161,6 @@
       "WESTBOUND BORE"
     ],
     "frequencies": [
-      "WEEKLY",
       "3 YEARLY"
     ],
     "tasks": [
@@ -3258,8 +3191,7 @@
       "COUNTY HALL"
     ],
     "frequencies": [
-      "MONTHLY",
-      "3 MONTHLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -3284,7 +3216,6 @@
       "EASTBOUND BORE"
     ],
     "frequencies": [
-      "MONTHLY",
       "3 YEARLY"
     ],
     "tasks": [
@@ -3319,8 +3250,7 @@
       "COUNTY HALL"
     ],
     "frequencies": [
-      "WEEKLY",
-      "3 MONTHLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -3345,7 +3275,6 @@
       "WESTBOUND BORE"
     ],
     "frequencies": [
-      "WEEKLY",
       "3 YEARLY"
     ],
     "tasks": [
@@ -3380,8 +3309,7 @@
       "COUNTY HALL"
     ],
     "frequencies": [
-      "MONTHLY",
-      "3 MONTHLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -3410,7 +3338,7 @@
       },
       {
         "step": "7",
-        "description": "Carry Out routine maintenance of radio control equipment within the service building in accordance with the manufacturer\u00e2\u20ac\u2122s recommendations. \nThis item is only required at 6 Monthly intervals"
+        "description": "Carry Out routine maintenance of radio control equipment within the service building in accordance with the manufacturerâ€™s recommendations. \nThis item is only required at 6 Monthly intervals"
       }
     ]
   },
@@ -3423,8 +3351,7 @@
       "COUNTY HALL"
     ],
     "frequencies": [
-      "WEEKLY",
-      "3 MONTHLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -3462,8 +3389,7 @@
       "COUNTY HALL"
     ],
     "frequencies": [
-      "MONTHLY",
-      "3 MONTHLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -3493,8 +3419,7 @@
       "COUNTY HALL"
     ],
     "frequencies": [
-      "WEEKLY",
-      "3 MONTHLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -3561,8 +3486,7 @@
       "COUNTY HALL"
     ],
     "frequencies": [
-      "MONTHLY",
-      "3 MONTHLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -3584,8 +3508,7 @@
       "COUNTY HALL"
     ],
     "frequencies": [
-      "WEEKLY",
-      "3 MONTHLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -3607,8 +3530,7 @@
       "FIRE PUMPING STATION"
     ],
     "frequencies": [
-      "MONTHLY",
-      "ANNUALLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -3638,8 +3560,7 @@
       "FIRE PUMPING STATION"
     ],
     "frequencies": [
-      "WEEKLY",
-      "ANNUALLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -3669,8 +3590,7 @@
       "FIRE PUMPING STATION"
     ],
     "frequencies": [
-      "6 MONTHLY",
-      "ANNUALLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -3700,13 +3620,12 @@
       "COUNTY HALL"
     ],
     "frequencies": [
-      "MONTHLY",
-      "3 MONTHLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
         "step": "1",
-        "description": "Ensure that all electrical connections are tight and that the contactors within the fan\u00e2\u20ac\u2122s starters are in good order"
+        "description": "Ensure that all electrical connections are tight and that the contactors within the fanâ€™s starters are in good order"
       },
       {
         "step": "2",
@@ -3755,13 +3674,12 @@
       "COUNTY HALL"
     ],
     "frequencies": [
-      "WEEKLY",
-      "3 MONTHLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
         "step": "1",
-        "description": "Ensure that all electrical connections are tight and that the contactors within the fan\u00e2\u20ac\u2122s starters are in good order"
+        "description": "Ensure that all electrical connections are tight and that the contactors within the fanâ€™s starters are in good order"
       },
       {
         "step": "2",
@@ -3810,13 +3728,12 @@
       "FIRE PUMPING STATION"
     ],
     "frequencies": [
-      "MONTHLY",
-      "ANNUALLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
         "step": "1",
-        "description": "Ensure that all electrical connections are tight and that the contactors within the fan\u00e2\u20ac\u2122s starters are in good order"
+        "description": "Ensure that all electrical connections are tight and that the contactors within the fanâ€™s starters are in good order"
       },
       {
         "step": "2",
@@ -3865,8 +3782,7 @@
       "FIRE PUMPING STATION"
     ],
     "frequencies": [
-      "MONTHLY",
-      "ANNUALLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -3896,13 +3812,12 @@
       "FIRE PUMPING STATION"
     ],
     "frequencies": [
-      "WEEKLY",
-      "ANNUALLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
         "step": "1",
-        "description": "Ensure that all electrical connections are tight and that the contactors within the fan\u00e2\u20ac\u2122s starters are in good order"
+        "description": "Ensure that all electrical connections are tight and that the contactors within the fanâ€™s starters are in good order"
       },
       {
         "step": "2",
@@ -3951,8 +3866,7 @@
       "FIRE PUMPING STATION"
     ],
     "frequencies": [
-      "WEEKLY",
-      "ANNUALLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -3982,8 +3896,7 @@
       "COUNTY HALL"
     ],
     "frequencies": [
-      "MONTHLY",
-      "3 MONTHLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -4037,8 +3950,7 @@
       "COUNTY HALL"
     ],
     "frequencies": [
-      "WEEKLY",
-      "3 MONTHLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -4087,7 +3999,6 @@
       "EASTBOUND BORE"
     ],
     "frequencies": [
-      "MONTHLY",
       "6 MONTHLY"
     ],
     "tasks": [
@@ -4161,7 +4072,6 @@
       "WESTBOUND BORE"
     ],
     "frequencies": [
-      "WEEKLY",
       "6 MONTHLY"
     ],
     "tasks": [
@@ -4235,7 +4145,6 @@
       "EASTBOUND BORE"
     ],
     "frequencies": [
-      "MONTHLY",
       "3 YEARLY"
     ],
     "tasks": [
@@ -4249,7 +4158,7 @@
       },
       {
         "step": "3",
-        "description": "Re-Torque all fixings associated with the fan and ensure fan doesn\u00e2\u20ac\u2122t encroach into the traffic window"
+        "description": "Re-Torque all fixings associated with the fan and ensure fan doesnâ€™t encroach into the traffic window"
       },
       {
         "step": "4",
@@ -4269,7 +4178,6 @@
       "WESTBOUND BORE"
     ],
     "frequencies": [
-      "WEEKLY",
       "3 YEARLY"
     ],
     "tasks": [
@@ -4283,7 +4191,7 @@
       },
       {
         "step": "3",
-        "description": "Re-Torque all fixings associated with the fan and ensure fan doesn\u00e2\u20ac\u2122t encroach into the traffic window"
+        "description": "Re-Torque all fixings associated with the fan and ensure fan doesnâ€™t encroach into the traffic window"
       },
       {
         "step": "4",
@@ -4303,7 +4211,6 @@
       "SERVICE BUILDING"
     ],
     "frequencies": [
-      "6 MONTHLY",
       "3 YEARLY"
     ],
     "tasks": [
@@ -4346,8 +4253,7 @@
       "COUNTY HALL"
     ],
     "frequencies": [
-      "MONTHLY",
-      "3 MONTHLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -4364,7 +4270,6 @@
       "EASTBOUND BORE"
     ],
     "frequencies": [
-      "MONTHLY",
       "3 YEARLY"
     ],
     "tasks": [
@@ -4407,8 +4312,7 @@
       "COUNTY HALL"
     ],
     "frequencies": [
-      "WEEKLY",
-      "3 MONTHLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -4425,7 +4329,6 @@
       "WESTBOUND BORE"
     ],
     "frequencies": [
-      "WEEKLY",
       "3 YEARLY"
     ],
     "tasks": [
@@ -4509,8 +4412,7 @@
       "FIRE PUMPING STATION"
     ],
     "frequencies": [
-      "3 MONTHLY",
-      "ANNUALLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -4528,7 +4430,6 @@
       "VARIOUS"
     ],
     "frequencies": [
-      "ANNUALLY",
       "3 YEARLY"
     ],
     "tasks": [
@@ -4571,7 +4472,6 @@
       "SERVICE BUILDING"
     ],
     "frequencies": [
-      "3 MONTHLY",
       "6 MONTHLY"
     ],
     "tasks": [
@@ -4590,7 +4490,6 @@
       "VARIOUS"
     ],
     "frequencies": [
-      "6 MONTHLY",
       "3 YEARLY"
     ],
     "tasks": [
@@ -4633,7 +4532,6 @@
       "SERVICE BUILDING"
     ],
     "frequencies": [
-      "3 MONTHLY",
       "6 MONTHLY"
     ],
     "tasks": [
@@ -4655,7 +4553,6 @@
       "SERVICE BUILDING"
     ],
     "frequencies": [
-      "6 MONTHLY",
       "3 YEARLY"
     ],
     "tasks": [
@@ -4690,8 +4587,7 @@
       "COUNTY HALL"
     ],
     "frequencies": [
-      "MONTHLY",
-      "3 MONTHLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -4712,7 +4608,6 @@
       "EASTBOUND BORE"
     ],
     "frequencies": [
-      "MONTHLY",
       "3 YEARLY"
     ],
     "tasks": [
@@ -4747,8 +4642,7 @@
       "COUNTY HALL"
     ],
     "frequencies": [
-      "WEEKLY",
-      "3 MONTHLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -4769,7 +4663,6 @@
       "WESTBOUND BORE"
     ],
     "frequencies": [
-      "WEEKLY",
       "3 YEARLY"
     ],
     "tasks": [
@@ -4804,8 +4697,7 @@
       "FIRE PUMPING STATION"
     ],
     "frequencies": [
-      "3 MONTHLY",
-      "ANNUALLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -4826,7 +4718,6 @@
       "FIRE PUMPING STATION"
     ],
     "frequencies": [
-      "ANNUALLY",
       "3 YEARLY"
     ],
     "tasks": [
@@ -4894,8 +4785,7 @@
       "VARIOUS"
     ],
     "frequencies": [
-      "ANNUALLY",
-      "5 YEARLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -4945,8 +4835,7 @@
       "SUMP PUMPING STATION"
     ],
     "frequencies": [
-      "6 MONTHLY",
-      "ANNUALLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -4988,8 +4877,7 @@
       "SUMP PUMPING STATION"
     ],
     "frequencies": [
-      "6 MONTHLY",
-      "ANNUALLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -5031,9 +4919,7 @@
       "SUMP PUMPING STATION"
     ],
     "frequencies": [
-      "6 WEEKLY",
-      "6 MONTHLY",
-      "ANNUALLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -5067,9 +4953,7 @@
       "SUMP PUMPING STATION"
     ],
     "frequencies": [
-      "MONTHLY",
-      "6 MONTHLY",
-      "ANNUALLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -5104,10 +4988,7 @@
       "SUMP PUMPING STATION"
     ],
     "frequencies": [
-      "MONTHLY",
-      "3 MONTHLY",
-      "6 MONTHLY",
-      "ANNUALLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -5138,10 +5019,7 @@
       "SUMP PUMPING STATION"
     ],
     "frequencies": [
-      "6 WEEKLY",
-      "3 MONTHLY",
-      "6 MONTHLY",
-      "ANNUALLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -5171,9 +5049,7 @@
       "SUMP PUMPING STATION"
     ],
     "frequencies": [
-      "MONTHLY",
-      "6 MONTHLY",
-      "ANNUALLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -5219,9 +5095,7 @@
       "SUMP PUMPING STATION"
     ],
     "frequencies": [
-      "6 WEEKLY",
-      "6 MONTHLY",
-      "ANNUALLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -5268,10 +5142,7 @@
       "SUMP PUMPING STATION"
     ],
     "frequencies": [
-      "MONTHLY",
-      "3 MONTHLY",
-      "6 MONTHLY",
-      "ANNUALLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -5314,10 +5185,7 @@
       "SUMP PUMPING STATION"
     ],
     "frequencies": [
-      "6 WEEKLY",
-      "3 MONTHLY",
-      "6 MONTHLY",
-      "ANNUALLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -5359,9 +5227,7 @@
       "SUMP PUMPING STATION"
     ],
     "frequencies": [
-      "MONTHLY",
-      "6 MONTHLY",
-      "ANNUALLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -5403,9 +5269,7 @@
       "SUMP PUMPING STATION"
     ],
     "frequencies": [
-      "6 WEEKLY",
-      "6 MONTHLY",
-      "ANNUALLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -5448,10 +5312,7 @@
       "SUMP PUMPING STATION"
     ],
     "frequencies": [
-      "MONTHLY",
-      "3 MONTHLY",
-      "6 MONTHLY",
-      "ANNUALLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -5490,10 +5351,7 @@
       "SUMP PUMPING STATION"
     ],
     "frequencies": [
-      "6 WEEKLY",
-      "*3 MONTHLY",
-      "6 MONTHLY",
-      "ANNUALLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -5530,8 +5388,7 @@
       "SUMP PUMPING STATION"
     ],
     "frequencies": [
-      "6 MONTHLY",
-      "ANNUALLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -5570,10 +5427,7 @@
       "SUMP PUMPING STATION"
     ],
     "frequencies": [
-      "MONTHLY",
-      "3 MONTHLY",
-      "6 MONTHLY",
-      "ANNUALLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -5607,9 +5461,7 @@
       "SUMP PUMPING STATION"
     ],
     "frequencies": [
-      "MONTHLY",
-      "6 MONTHLY",
-      "ANNUALLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -5643,8 +5495,7 @@
       "SUMP PUMPING STATION"
     ],
     "frequencies": [
-      "MONTHLY",
-      "Annual"
+      "3 YEARLY"
     ],
     "tasks": [
       {
@@ -5679,10 +5530,7 @@
       "SUMP PUMPING STATION"
     ],
     "frequencies": [
-      "6 WEEKLY",
-      "3 MONTHLY",
-      "6 MONTHLY",
-      "ANNUALLY"
+      "3 YEARLY"
     ],
     "tasks": [
       {
@@ -5716,9 +5564,7 @@
       "SUMP PUMPING STATION"
     ],
     "frequencies": [
-      "6 WEEKLY",
-      "6 MONTHLY",
-      "ANNUALLY"
+      "3 YEARLY"
     ],
     "tasks": [
       {
@@ -5752,8 +5598,7 @@
       "SUMP PUMPING STATION"
     ],
     "frequencies": [
-      "6 WEEKLY",
-      "ANNUALLY"
+      "3 YEARLY"
     ],
     "tasks": [
       {
@@ -5787,9 +5632,6 @@
       "SUMP PUMPING STATION"
     ],
     "frequencies": [
-      "MONTHLY",
-      "6 MONTHLY",
-      "ANNUALLY",
       "3 YEARLY"
     ],
     "tasks": [
@@ -5808,9 +5650,6 @@
       "SUMP PUMPING STATION"
     ],
     "frequencies": [
-      "6 WEEKLY",
-      "6 MONTHLY",
-      "ANNUALLY",
       "3 YEARLY"
     ],
     "tasks": [
@@ -5830,10 +5669,7 @@
       "SUMP PUMPING STATION"
     ],
     "frequencies": [
-      "MONTHLY",
-      "3 MONTHLY",
-      "6 MONTHLY",
-      "ANNUALLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -5867,9 +5703,7 @@
       "SUMP PUMPING STATION"
     ],
     "frequencies": [
-      "MONTHLY",
-      "6 MONTHLY",
-      "ANNUALLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -5903,10 +5737,7 @@
       "SUMP PUMPING STATION"
     ],
     "frequencies": [
-      "MONTHLY",
-      "6 MONTHLY",
-      "ANNUALLY",
-      "3YEARLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -5933,10 +5764,7 @@
       "SUMP PUMPING STATION"
     ],
     "frequencies": [
-      "6 WEEKLY",
-      "3 MONTHLY",
-      "6 MONTHLY",
-      "ANNUALLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -5970,9 +5798,7 @@
       "SUMP PUMPING STATION"
     ],
     "frequencies": [
-      "6 WEEKLY",
-      "6 MONTHLY",
-      "ANNUALLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -6006,10 +5832,7 @@
       "SUMP PUMPING STATION"
     ],
     "frequencies": [
-      "6 WEEKLY",
-      "6 MONTHLY",
-      "ANNUALLY",
-      "3YEARLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -6036,10 +5859,7 @@
       "SUMP PUMPING STATION"
     ],
     "frequencies": [
-      "MONTHLY",
-      "3 MONTHLY",
-      "6 MONTHLY",
-      "ANNUALLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -6073,9 +5893,7 @@
       "SUMP PUMPING STATION"
     ],
     "frequencies": [
-      "MONTHLY",
-      "6 MONTHLY",
-      "ANNUALLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -6118,10 +5936,7 @@
       "SUMP PUMPING STATION"
     ],
     "frequencies": [
-      "6 WEEKLY",
-      "3 MONTHLY",
-      "6 MONTHLY",
-      "ANNUALLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -6155,9 +5970,7 @@
       "SUMP PUMPING STATION"
     ],
     "frequencies": [
-      "6 WEEKLY",
-      "6 MONTHLY",
-      "ANNUALLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -6200,10 +6013,7 @@
       "SUMP PUMPING STATION"
     ],
     "frequencies": [
-      "MONTHLY",
-      "3 MONTHLY",
-      "6 MONTHLY",
-      "ANNUALLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -6233,9 +6043,7 @@
       "SUMP PUMPING STATION"
     ],
     "frequencies": [
-      "MONTHLY",
-      "6 MONTHLY",
-      "ANNUALLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -6274,10 +6082,7 @@
       "SUMP PUMPING STATION"
     ],
     "frequencies": [
-      "6 WEEKLY",
-      "3 MONTHLY",
-      "6 MONTHLY",
-      "ANNUALLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
@@ -6307,9 +6112,7 @@
       "SUMP PUMPING STATION"
     ],
     "frequencies": [
-      "6 WEEKLY",
-      "6 MONTHLY",
-      "ANNUALLY"
+      "6 MONTHLY"
     ],
     "tasks": [
       {
