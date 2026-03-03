@@ -520,20 +520,16 @@
         "description": "Check all cable markers are in place and legible"
       },
       {
-        "step": "12",
+        "step": "13",
         "description": "Operate panel circuit breakers/switches in turn to ensure correct operation."
       },
       {
-        "step": "13",
+        "step": "14",
         "description": "Isolate supplies in conjunction with CCC and implement a thorough check on security of terminations"
       },
       {
-        "step": "14",
-        "description": "Clean panel exterior with proprietary stainless steel cleaning agent."
-      },
-      {
         "step": "15",
-        "description": "Final inspection and documentation review"
+        "description": "Clean panel exterior with proprietary stainless steel cleaning agent."
       }
     ],
     "is_matrix": true,

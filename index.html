@@ -1207,6 +1207,8 @@
 
             // Handle matrix forms (multiple EDPs)
             const edpSection = document.getElementById('edpSelectorSection');
+            const taskList = document.getElementById('taskList');
+            
             if (form.is_matrix && form.edps && form.edps.length > 0) {
                 edpSection.style.display = 'block';
                 
@@ -1219,6 +1221,10 @@
                     option.textContent = edp.name;
                     select.appendChild(option);
                 });
+                
+                // Clear tasks - show placeholder message instead
+                taskList.innerHTML = '<p style="color: #999; padding: 20px; text-align: center;">Select an EDP to view tasks</p>';
+                window.selectedEDP = null;  // Reset selected EDP
             } else {
                 edpSection.style.display = 'none';
                 // Load tasks directly for non-matrix forms
