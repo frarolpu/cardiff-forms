@@ -985,6 +985,17 @@
                                     </div>
                                 </div>
 
+                            <!-- EDP SELECTOR (for matrix forms) -->
+                            <div class="form-section" id="edpSelectorSection" style="display: none;">
+                                <h2>Select EDP</h2>
+                                <div class="form-group">
+                                    <label class="field-required">Choose EDP to Inspect</label>
+                                    <select id="edpSelector" required onchange="updateTasksForEDP(this.value)">
+                                        <option value="">-- Select an EDP --</option>
+                                    </select>
+                                </div>
+                            </div>
+
                             <!-- TASKS -->
                             <div class="form-section">
                                 <h2>Tasks to Perform</h2>
@@ -1191,8 +1202,28 @@
 
             document.getElementById('sectionInfo').innerHTML = infoHTML;
 
-            // Load tasks
-            loadTasks(form.tasks);
+            // Store current form globally
+            window.currentForm = form;
+
+            // Handle matrix forms (multiple EDPs)
+            const edpSection = document.getElementById('edpSelectorSection');
+            if (form.is_matrix && form.edps && form.edps.length > 0) {
+                edpSection.style.display = 'block';
+                
+                // Populate EDP selector
+                const select = document.getElementById('edpSelector');
+                select.innerHTML = '<option value="">-- Select an EDP --</option>';
+                form.edps.forEach(edp => {
+                    const option = document.createElement('option');
+                    option.value = edp.id;
+                    option.textContent = edp.name;
+                    select.appendChild(option);
+                });
+            } else {
+                edpSection.style.display = 'none';
+                // Load tasks directly for non-matrix forms
+                loadTasks(form.tasks);
+            }
 
             // Set current dates
             const today = new Date().toISOString().split('T')[0];
@@ -1204,6 +1235,21 @@
             setTimeout(() => {
                 initializeSignaturePads();
             }, 0);
+        }
+
+        function updateTasksForEDP(edpId) {
+            if (!edpId) {
+                document.getElementById('taskList').innerHTML = '<p style="color: #999; padding: 20px; text-align: center;">Select an EDP to view tasks</p>';
+                // Clear stored EDP
+                window.selectedEDP = null;
+                return;
+            }
+            
+            // Store selected EDP
+            window.selectedEDP = edpId;
+            
+            // Load tasks for all EDPs (same tasks for each)
+            loadTasks(window.currentForm.tasks);
         }
 
         function loadTasks(tasks) {
@@ -1391,6 +1437,12 @@
             const cleanedForms = allForms.filter(f => f.tasks.length > 0);
             const form = cleanedForms[currentFormIndex];
             
+            // Validate matrix forms
+            if (form.is_matrix && !window.selectedEDP) {
+                showError('Please select an EDP before saving');
+                return;
+            }
+            
             // Collect task completions
             const tasks = [];
             document.querySelectorAll('.task-checkbox').forEach(checkbox => {
@@ -1413,6 +1465,7 @@
                 inspector: document.getElementById('inspector').value,
                 comments: document.getElementById('comments').value,
                 tasks: tasks,
+                edp: window.selectedEDP || null,  // Add selected EDP if matrix form
                 signatures: {
                     engineer: document.getElementById('engineerName').value || document.getElementById('inspector').value,
                     engineerInitials: document.getElementById('engineerInitials').value,

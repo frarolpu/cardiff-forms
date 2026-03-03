@@ -156,6 +156,10 @@ def create_pdf(form_data):
             ("Drawing Reference:", form_data.get('drawing_ref', '')),
         ]
         
+        # Add EDP if this is a matrix form
+        if form_data.get('edp'):
+            info_items.insert(3, ("EDP:", form_data.get('edp', '')))
+        
         if form_data.get('locations'):
             info_items.append(("Locations:", ', '.join(form_data.get('locations', []))))
         
@@ -314,10 +318,15 @@ def save_form():
                 'message': f'Invalid JSON: {str(e)}'
             }), 400
         
-        # Create filename with timestamp and section number
+        # Create filename with timestamp and section number (include EDP if matrix form)
         section = data.get('section', 'unknown')
+        edp = data.get('edp')  # Get EDP if present (matrix forms
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        filename = f"{section}_{timestamp}.pdf"
+        
+        if edp:
+            filename = f"{section}_{edp}_{timestamp}.pdf"
+        else:
+            filename = f"{section}_{timestamp}.pdf"
         
         # Generate PDF
         pdf_buffer = create_pdf(data)

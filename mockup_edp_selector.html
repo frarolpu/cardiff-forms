@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mockup - Formulario 2.5.3 con Selector de EDP</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e8eef5 0%, #f4f6fb 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+        }
+
+        .header {
+            margin-bottom: 30px;
+            border-bottom: 3px solid #0a2463;
+            padding-bottom: 20px;
+        }
+
+        .header h1 {
+            color: #0a2463;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .form-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 15px;
+            font-size: 0.95em;
+            color: #555;
+        }
+
+        .info-item {
+            display: flex;
+            gap: 10px;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #0a2463;
+            min-width: 100px;
+        }
+
+        /* SELECTOR DE EDP */
+        .edp-selector-container {
+            background: linear-gradient(135deg, #f0f4ff 0%, #fafbff 100%);
+            border: 2px solid #0a2463;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .edp-selector-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #0a2463;
+            font-size: 1.1em;
+        }
+
+        .edp-selector {
+            width: 100%;
+            padding: 12px 15px;
+            font-size: 1em;
+            border: 2px solid #0a2463;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #333;
+        }
+
+        .edp-selector:hover {
+            background: #f9f9f9;
+            box-shadow: 0 2px 8px rgba(10, 36, 99, 0.2);
+        }
+
+        .edp-selector:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(10, 36, 99, 0.1);
+            border-color: #1a3a7d;
+        }
+
+        /* TAREAS */
+        .tasks-container {
+            margin-top: 30px;
+        }
+
+        .tasks-header {
+            background: #0a2463;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px 8px 0 0;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        .tasks-list {
+            background: white;
+            border: 2px solid #0a2463;
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            overflow: hidden;
+        }
+
+        .task-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            padding: 18px 20px;
+            border-bottom: 1px solid #e5e5e5;
+            transition: background 0.2s ease;
+        }
+
+        .task-item:last-child {
+            border-bottom: none;
+        }
+
+        .task-item:hover {
+            background: #f9f9f9;
+        }
+
+        .task-checkbox {
+            width: 22px;
+            height: 22px;
+            margin-top: 2px;
+            cursor: pointer;
+            accent-color: #0a2463;
+            flex-shrink: 0;
+        }
+
+        .task-content {
+            flex: 1;
+        }
+
+        .task-step {
+            font-weight: 600;
+            color: #0a2463;
+            margin-bottom: 5px;
+            font-size: 0.95em;
+        }
+
+        .task-description {
+            color: #555;
+            line-height: 1.5;
+            font-size: 0.95em;
+        }
+
+        /* BOTONES */
+        .actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid #e5e5e5;
+        }
+
+        button {
+            padding: 12px 30px;
+            font-size: 1em;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #0a2463 0%, #1a3a7d 100%);
+            color: white;
+            min-width: 140px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(10, 36, 99, 0.3);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #0a2463;
+            border: 2px solid #0a2463;
+            min-width: 140px;
+        }
+
+        .btn-secondary:hover {
+            background: #0a2463;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* BADGE */
+        .edp-info-badge {
+            display: inline-block;
+            background: #0a2463;
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            margin-left: 10px;
+        }
+
+        .counter {
+            display: inline-block;
+            background: #28a745;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            margin-left: 5px;
+            font-weight: 600;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .form-info {
+                grid-template-columns: 1fr;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📋 Formulario 2.5.3</h1>
+            <div class="form-info">
+                <div class="info-item">
+                    <span class="info-label">Equipo:</span>
+                    <span>TUNNEL DISTRIBUTION</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Referencia:</span>
+                    <span>B15/1 - 15/3 & 15/8</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Localización:</span>
+                    <span>Eastbound Bore, Fire Pumping Station</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Frecuencia:</span>
+                    <span>6 MONTHLY</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- SELECTOR DE EDP -->
+        <div class="edp-selector-container">
+            <label for="edp-select" class="edp-selector-label">
+                🎯 Seleccionar EDP a Inspeccionar:
+            </label>
+            <select id="edp-select" class="edp-selector" onchange="updateTasksDisplay(this.value)">
+                <option value="">-- Selecciona un EDP --</option>
+                <option value="EDP-01">EDP-01 - Panel Distribución Zona A</option>
+                <option value="EDP-02">EDP-02 - Panel Distribución Zona B</option>
+                <option value="EDP-03">EDP-03 - Panel Distribución Zona C</option>
+                <option value="EDP-04">EDP-04 - Panel Control Ventilación</option>
+                <option value="EDP-05">EDP-05 - Panel Iluminación Zona 1</option>
+                <option value="EDP-06">EDP-06 - Panel Iluminación Zona 2</option>
+                <option value="EDP-07">EDP-07 - Panel Iluminación Zona 3</option>
+                <option value="EDP-08">EDP-08 - Panel Seguridad Este</option>
+                <option value="EDP-09">EDP-09 - Panel Seguridad Oeste</option>
+                <option value="EDP-10">EDP-10 - Panel Comunicaciones</option>
+                <option value="EDP-11">EDP-11 - Panel Bombeo Incendios</option>
+                <option value="EDP-12">EDP-12 - Panel Drenaje</option>
+                <option value="EDP-13">EDP-13 - Panel Monitoreo Ambiental</option>
+                <option value="EDP-14">EDP-14 - Panel Emergencia Central</option>
+            </select>
+        </div>
+
+        <!-- TAREAS PARA EDP SELECCIONADO -->
+        <div class="tasks-container">
+            <div class="tasks-header">
+                ✅ Tareas a Completar <span id="edp-badge" class="edp-info-badge" style="display:none;"></span>
+                <span class="counter" id="progress">0/15</span>
+            </div>
+
+            <div class="tasks-list" id="tasks-list">
+                <!-- Las tareas se rellenarán dinámicamente aquí -->
+            </div>
+        </div>
+
+        <!-- BOTONES DE ACCIÓN -->
+        <div class="actions">
+            <button class="btn-secondary" onclick="clearTasks()">🔄 Limpiar Selección</button>
+            <button class="btn-primary" onclick="saveForms()">💾 Guardar Inspección</button>
+        </div>
+    </div>
+
+    <script>
+        // Datos simulados
+        const edps = {
+            "EDP-01": "Panel Distribución Zona A",
+            "EDP-02": "Panel Distribución Zona B",
+            "EDP-03": "Panel Distribución Zona C",
+            "EDP-04": "Panel Control Ventilación",
+            "EDP-05": "Panel Iluminación Zona 1",
+            "EDP-06": "Panel Iluminación Zona 2",
+            "EDP-07": "Panel Iluminación Zona 3",
+            "EDP-08": "Panel Seguridad Este",
+            "EDP-09": "Panel Seguridad Oeste",
+            "EDP-10": "Panel Comunicaciones",
+            "EDP-11": "Panel Bombeo Incendios",
+            "EDP-12": "Panel Drenaje",
+            "EDP-13": "Panel Monitoreo Ambiental",
+            "EDP-14": "Panel Emergencia Central"
+        };
+
+        const tasks = [
+            "Check distribution panel to ensure that it is free from obvious faults",
+            "Check all electrical connections including earth bonding and test the latter",
+            "Clean interiors and check for signs of overheating and condensation",
+            "Check the heater/thermostat is operational at 15°C",
+            "Check the operation and lubricate interlocks along with hinges",
+            "Check tunnel low temperature thermostats function correctly",
+            "Check that earth connections are secure and tight",
+            "Carry out functional tests on RCD units using proprietary testing equipment",
+            "Inspect cable entry points for damage or debris",
+            "Verify all labeling and documentation is current",
+            "Test emergency shutdown procedures",
+            "Check voltage and amperage readings",
+            "Inspect for signs of corrosion or moisture ingress",
+            "Verify all safety seals are intact",
+            "Document any anomalies or required maintenance"
+        ];
+
+        function updateTasksDisplay(edpId) {
+            const badge = document.getElementById('edp-badge');
+            const tasksList = document.getElementById('tasks-list');
+
+            if (!edpId) {
+                tasksList.innerHTML = '<div style="padding: 20px; text-align: center; color: #999;">Selecciona un EDP para ver sus tareas</div>';
+                badge.style.display = 'none';
+                return;
+            }
+
+            badge.textContent = edpId;
+            badge.style.display = 'inline-block';
+
+            let html = '';
+            tasks.forEach((task, index) => {
+                html += `
+                    <div class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="task-${index}" onchange="updateProgress()">
+                        <div class="task-content">
+                            <div class="task-step">Paso ${index + 1}</div>
+                            <div class="task-description">${task}</div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            tasksList.innerHTML = html;
+            updateProgress();
+        }
+
+        function updateProgress() {
+            const checkboxes = document.querySelectorAll('.task-checkbox:checked').length;
+            document.getElementById('progress').textContent = `${checkboxes}/15`;
+        }
+
+        function clearTasks() {
+            document.getElementById('edp-select').value = '';
+            document.getElementById('tasks-list').innerHTML = '';
+            document.getElementById('edp-badge').style.display = 'none';
+            document.getElementById('progress').textContent = '0/15';
+        }
+
+        function saveForms() {
+            const edpId = document.getElementById('edp-select').value;
+            if (!edpId) {
+                alert('Por favor selecciona un EDP primero');
+                return;
+            }
+
+            const checkedTasks = Array.from(document.querySelectorAll('.task-checkbox:checked')).length;
+            if (checkedTasks === 0) {
+                alert('Por favor completa al menos una tarea');
+                return;
+            }
+
+            alert(`✅ Inspección de ${edpId} guardada!\n\nTareas completadas: ${checkedTasks}/15`);
+        }
+    </script>
+</body>
+</html>
