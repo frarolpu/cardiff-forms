@@ -991,7 +991,7 @@
                                 <div class="form-group">
                                     <label class="field-required">Choose EDP to Inspect</label>
                                     <select id="edpSelector" required onchange="updateTasksForEDP(this.value)">
-                                        <option value="">-- Select an EDP --</option>
+                                        <option value="">-- Select an EDP/EP/VP/FAN --</option>
                                     </select>
                                 </div>
                             </div>
@@ -1212,9 +1212,16 @@
             if (form.is_matrix && form.edps && form.edps.length > 0) {
                 edpSection.style.display = 'block';
                 
-                // Populate EDP selector
+                // Determine selector type from first item
+                const firstId = form.edps[0].id;
+                let selectorLabel = 'EDP';
+                if (firstId.startsWith('EP-')) selectorLabel = 'EP';
+                else if (firstId.startsWith('VP-')) selectorLabel = 'VP';
+                else if (firstId.startsWith('FAN-')) selectorLabel = 'FAN ID';
+                
+                // Populate selector
                 const select = document.getElementById('edpSelector');
-                select.innerHTML = '<option value="">-- Select an EDP --</option>';
+                select.innerHTML = `<option value="">-- Select an ${selectorLabel} --</option>`;
                 form.edps.forEach(edp => {
                     const option = document.createElement('option');
                     option.value = edp.id;
@@ -1223,7 +1230,7 @@
                 });
                 
                 // Clear tasks - show placeholder message instead
-                taskList.innerHTML = '<p style="color: #999; padding: 20px; text-align: center;">Select an EDP to view tasks</p>';
+                taskList.innerHTML = `<p style="color: #999; padding: 20px; text-align: center;">Select an ${selectorLabel} to view tasks</p>`;
                 window.selectedEDP = null;  // Reset selected EDP
             } else {
                 edpSection.style.display = 'none';
@@ -1245,7 +1252,14 @@
 
         function updateTasksForEDP(edpId) {
             if (!edpId) {
-                document.getElementById('taskList').innerHTML = '<p style="color: #999; padding: 20px; text-align: center;">Select an EDP to view tasks</p>';
+                // Determine selector type from first item
+                const firstId = window.currentForm.edps[0].id;
+                let selectorLabel = 'EDP';
+                if (firstId.startsWith('EP-')) selectorLabel = 'EP';
+                else if (firstId.startsWith('VP-')) selectorLabel = 'VP';
+                else if (firstId.startsWith('FAN-')) selectorLabel = 'FAN ID';
+                
+                document.getElementById('taskList').innerHTML = `<p style="color: #999; padding: 20px; text-align: center;">Select an ${selectorLabel} to view tasks</p>`;
                 // Clear stored EDP
                 window.selectedEDP = null;
                 return;
@@ -1445,7 +1459,13 @@
             
             // Validate matrix forms
             if (form.is_matrix && !window.selectedEDP) {
-                showError('Please select an EDP before saving');
+                // Determine selector type for error message
+                const firstId = window.currentForm.edps[0].id;
+                let selectorLabel = 'EDP';
+                if (firstId.startsWith('EP-')) selectorLabel = 'EP';
+                else if (firstId.startsWith('VP-')) selectorLabel = 'VP';
+                else if (firstId.startsWith('FAN-')) selectorLabel = 'FAN ID';
+                showError(`Please select an ${selectorLabel} before saving`);
                 return;
             }
             
