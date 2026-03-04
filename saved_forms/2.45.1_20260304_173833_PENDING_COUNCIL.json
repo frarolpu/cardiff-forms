@@ -1,0 +1,56 @@
+{
+  "section": "2.45.1",
+  "equipment": "Audible & Visual Escape",
+  "drawing_ref": "",
+  "locations": [
+    "EASTBOUND BORE",
+    "COUNTY HALL",
+    "SUMP PUMPING STATION"
+  ],
+  "frequencies": [
+    "6 MONTHLY"
+  ],
+  "inspectionDate": "2026-03-04",
+  "inspector": "Matchtech",
+  "comments": "Matchech",
+  "engineer_comments": "Matchech",
+  "supervisor_comments": "SICE",
+  "council_comments": "",
+  "tasks": [
+    {
+      "completed": true,
+      "step": "Carry out visual inspection of chaser lighting at each Emergency door position and check for damage.\nCarry out repair / replacement to damaged units as necessary."
+    },
+    {
+      "completed": true,
+      "step": "Manually operate the system at each door position. Ensure that:\nEach arrow functions and is sequential.\nStrobe lighting on sign operates and sign is illuminated.\nAudible sound and white noise alert are operational"
+    },
+    {
+      "completed": false,
+      "step": "Replace any defective components necessary to bring the system back into full service."
+    },
+    {
+      "completed": false,
+      "step": "Inspect control panel for signs of water ingress and security of all connections and components."
+    },
+    {
+      "completed": false,
+      "step": "Operate door from EPCMS and log door checked."
+    }
+  ],
+  "edp": null,
+  "status": "pending_council",
+  "signatures": {
+    "engineer": "Matchtec",
+    "engineerInitials": "M",
+    "engineerDate": "2026-03-04",
+    "supervisor": "SICE",
+    "supervisorInitials": "S",
+    "supervisorDate": "2026-03-04",
+    "council": "",
+    "councilInitials": "",
+    "councilDate": ""
+  },
+  "photos": [],
+  "timestamp": "2026-03-04T17:38:33.645Z"
+}

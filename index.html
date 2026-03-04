@@ -2145,21 +2145,27 @@
                 }
             }
             
-            // Handle supervisor comments separately - greyed out during new form, editable when pending
+            // Handle supervisor comments separately - greyed out during new form, editable when supervisor pending, visible but read-only for council
             const supervisorCommentsField = document.getElementById('supervisorComments');
             if (supervisorCommentsField) {
-                if (isReadOnly && !isPendingFormOpen) {
-                    // During new form creation: supervisor comments should be greyed out
-                    supervisorCommentsField.disabled = true;
-                    supervisorCommentsField.style.background = '#f0f0f0';
-                    supervisorCommentsField.style.cursor = 'not-allowed';
-                    supervisorCommentsField.style.opacity = '0.7';
-                } else if (isReadOnly && isPendingFormOpen) {
+                if (isReadOnly && isPendingFormOpen) {
                     // During pending form (supervisor review): supervisor comments should be ENABLED
                     supervisorCommentsField.disabled = false;
                     supervisorCommentsField.style.background = 'white';
                     supervisorCommentsField.style.cursor = 'text';
                     supervisorCommentsField.style.opacity = '1';
+                } else if (isReadOnly && isPendingCouncilFormOpen) {
+                    // During council review: supervisor comments should be VISIBLE but READ-ONLY
+                    supervisorCommentsField.disabled = true;
+                    supervisorCommentsField.style.background = '#f5f5f5';
+                    supervisorCommentsField.style.cursor = 'default';
+                    supervisorCommentsField.style.opacity = '1';
+                } else if (isReadOnly && !isPendingFormOpen && !isPendingCouncilFormOpen) {
+                    // During new form creation: supervisor comments should be greyed out
+                    supervisorCommentsField.disabled = true;
+                    supervisorCommentsField.style.background = '#f0f0f0';
+                    supervisorCommentsField.style.cursor = 'not-allowed';
+                    supervisorCommentsField.style.opacity = '0.7';
                 } else {
                     // Not read-only (engineer creating form): supervisor comments disabled
                     supervisorCommentsField.disabled = true;
@@ -2513,14 +2519,22 @@
             document.getElementById('inspectionDate').value = today;
             document.getElementById('engineerDate').value = today;
             document.getElementById('supervisorDate').value = today;
+            document.getElementById('councilDate').value = today;
             
             // Reset workflow state after save
             isPendingFormOpen = false;
+            isPendingCouncilFormOpen = false;
             formStatus = 'new';
             updateFormStatusDisplay();
             setSupervisorState(false);
+            setCouncilState(false);
             setEngineerSectionReadOnly(false); // Enable engineer fields for next form
             setupSupervisorInputListeners();
+            
+            // Hide form and show welcome message
+            document.getElementById('noFormSelected').style.display = 'block';
+            document.getElementById('formContainer').style.display = 'none';
+            currentFormIndex = -1;
         }
 
         function downloadJSON(data) {
@@ -2546,8 +2560,8 @@
         }
 
         async function saveFormToRepository() {
-            // Check if we're saving a pending form (supervisor completing it) or a new form (engineer creating it)
-            if (!isPendingFormOpen && currentFormIndex === -1) {
+            // Check if we're saving a pending form (supervisor completing it), council form, or a new form (engineer creating it)
+            if (!isPendingFormOpen && !isPendingCouncilFormOpen && currentFormIndex === -1) {
                 showError('No form selected');
                 return;
             }
@@ -2555,7 +2569,19 @@
             let form;
             let isCompletingPending = false;
             
-            if (isPendingFormOpen) {
+            if (isPendingCouncilFormOpen) {
+                // We're completing a council form - use the stored council form data
+                form = window.pendingCouncilFormData || {
+                    section: 'Unknown',
+                    equipment: 'Unknown',
+                    drawing_ref: '',
+                    locations: [],
+                    frequencies: [],
+                    tasks: [],
+                    is_matrix: false,
+                    edp: null
+                };
+            } else if (isPendingFormOpen) {
                 // We're completing a pending form - use the stored form data
                 isCompletingPending = true;
                 form = window.pendingFormData || {
@@ -2602,10 +2628,10 @@
             // Collect task completions
             let tasks = [];
             
-            if (isPendingFormOpen) {
-                // For pending forms, PRESERVE the original tasks from the engineer
+            if (isPendingFormOpen || isPendingCouncilFormOpen) {
+                // For pending forms (supervisor or council), PRESERVE the original tasks from the engineer
                 // These are stored in the form data that was loaded
-                // Just re-collect the checkbox states in case supervisor viewed them
+                // Just re-collect the checkbox states in case they viewed them
                 document.querySelectorAll('.task-checkbox').forEach(checkbox => {
                     checkbox.disabled = true; // Ensure they stay disabled
                 });
