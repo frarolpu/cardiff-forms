@@ -54,6 +54,7 @@ def init_db():
                 filename VARCHAR(255),
                 status VARCHAR(20) DEFAULT 'complete',
                 pdf_data BYTEA,
+                form_data JSONB,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         ''')
@@ -343,8 +344,8 @@ def save_form():
                 try:
                     cursor = conn.cursor()
                     cursor.execute(
-                        'INSERT INTO saved_forms (section, filename, status, pdf_data) VALUES (%s, %s, %s, %s)',
-                        (section, filename, status, pdf_data)
+                        'INSERT INTO saved_forms (section, filename, status, pdf_data, form_data) VALUES (%s, %s, %s, %s, %s)',
+                        (section, filename, status, pdf_data, json.dumps(data))
                     )
                     conn.commit()
                     cursor.close()
@@ -513,6 +514,52 @@ def get_pending_forms():
     
     except Exception as e:
         log_error(f"Get pending forms error: {str(e)}")
+        return jsonify({
+            'success': False,
+            'message': str(e)
+        }), 500
+
+@app.route('/api/load-pending-form/<form_id>', methods=['GET'])
+def load_pending_form(form_id):
+    """Load pending form data for editing by supervisor"""
+    try:
+        # Try database first if configured
+        if USE_DATABASE:
+            conn = get_db_connection()
+            if conn:
+                try:
+                    cursor = conn.cursor(cursor_factory=RealDictCursor)
+                    cursor.execute(
+                        'SELECT form_data, filename, status FROM saved_forms WHERE id = %s AND status = %s',
+                        (int(form_id), 'pending')
+                    )
+                    row = cursor.fetchone()
+                    cursor.close()
+                    conn.close()
+                    
+                    if row:
+                        form_data = json.loads(row['form_data'])
+                        return jsonify({
+                            'success': True,
+                            'data': form_data,
+                            'filename': row['filename'],
+                            'status': row['status']
+                        }), 200
+                    else:
+                        return jsonify({
+                            'success': False,
+                            'message': 'Form not found or not pending'
+                        }), 404
+                except Exception as db_err:
+                    log_error(f"Database query error: {str(db_err)}")
+        
+        return jsonify({
+            'success': False,
+            'message': 'Form not found'
+        }), 404
+    
+    except Exception as e:
+        log_error(f"Load pending form error: {str(e)}")
         return jsonify({
             'success': False,
             'message': str(e)
