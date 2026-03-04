@@ -1218,6 +1218,9 @@
                 if (firstId.startsWith('EP-')) selectorLabel = 'EP';
                 else if (firstId.startsWith('VP-')) selectorLabel = 'VP';
                 else if (firstId.startsWith('FAN-')) selectorLabel = 'FAN ID';
+                else if (firstId.startsWith('EB-') || firstId.startsWith('WB-') || 
+                         firstId.startsWith('CC-') || firstId.startsWith('Leck-')) 
+                    selectorLabel = 'Sign';
                 
                 // Update section title and label
                 const sectionH2 = edpSection.querySelector('h2');
@@ -1265,6 +1268,9 @@
                 if (firstId.startsWith('EP-')) selectorLabel = 'EP';
                 else if (firstId.startsWith('VP-')) selectorLabel = 'VP';
                 else if (firstId.startsWith('FAN-')) selectorLabel = 'FAN ID';
+                else if (firstId.startsWith('EB-') || firstId.startsWith('WB-') || 
+                         firstId.startsWith('CC-') || firstId.startsWith('Leck-')) 
+                    selectorLabel = 'Sign';
                 
                 document.getElementById('taskList').innerHTML = `<p style="color: #999; padding: 20px; text-align: center;">Select an ${selectorLabel} to view tasks</p>`;
                 // Clear stored EDP
@@ -1472,6 +1478,9 @@
                 if (firstId.startsWith('EP-')) selectorLabel = 'EP';
                 else if (firstId.startsWith('VP-')) selectorLabel = 'VP';
                 else if (firstId.startsWith('FAN-')) selectorLabel = 'FAN ID';
+                else if (firstId.startsWith('EB-') || firstId.startsWith('WB-') || 
+                         firstId.startsWith('CC-') || firstId.startsWith('Leck-')) 
+                    selectorLabel = 'Sign';
                 showError(`Please select an ${selectorLabel} before saving`);
                 return;
             }
