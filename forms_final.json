@@ -107,6 +107,159 @@
     ]
   },
   {
+    "section": "2.1.5",
+    "equipment": "SWITCHBOARD / MAINS FAILURE TEST",
+    "drawing_ref": "B8/1 to B8/6",
+    "locations": [
+      "WESTBOUND BORE",
+      "EASTBOUND BORE",
+      "COUNTY HALL",
+      "SERVICE BUILDING",
+      "FIRE PUMPING STATION"
+    ],
+    "frequencies": [
+      "WEEKLY",
+      "MONTHLY",
+      "3 MONTHLY",
+      "6 MONTHLY",
+      "ANNUALLY",
+      "YEARLY"
+    ],
+    "tasks": [
+      {
+        "step": "1",
+        "description": "Position personal as following:\nNOTE: ALL ISOLATION WORKS WILL BE UNDER THE CONTROL OF THE SUPPLY AUTHORITIES’ ISOLATION SYSTEM OF WORKS\n1 – Supply Authority engineer in HV switch room (Contractor to arrange. CCC will cover costs direct with supply authority)\n\n1 - Generator room\n\n1 -  switch room\n\n1 - Control room"
+      },
+      {
+        "step": "2",
+        "description": "Check loading and note values (Raise manually loads if required - ventilation fans and lighting stages)"
+      },
+      {
+        "step": "3",
+        "description": "Begin tripping HV supplies via Supply Authority"
+      },
+      {
+        "step": "4",
+        "description": "Trip HV1 and check LV switchboard couples through"
+      },
+      {
+        "step": "5",
+        "description": "Re-instate HV1 and check system reverts to normal"
+      },
+      {
+        "step": "6",
+        "description": "Repeat e) & f) for HV2"
+      },
+      {
+        "step": "7",
+        "description": "Trip both HV supplies HV1 and HV2"
+      },
+      {
+        "step": "8",
+        "description": "Check that all systems fail apart from emergency lighting arid computer supplies (UPS Backed)"
+      },
+      {
+        "step": "9",
+        "description": "Check LV1 and LV2 trip and both generators 'run up' to supply  switchboard to\n serve the following:\n1 Lighting Stages 2 Ventilation Fans               3 Sump Pump & Fire Pump Supplies\n\n4 UPS Supplies   5 Trip & Close Supplies      6 Fire Protection Supplies"
+      },
+      {
+        "step": "10",
+        "description": "Continued on sheet 2"
+      },
+      {
+        "step": "11",
+        "description": "Check correct configuration of switchboards"
+      },
+      {
+        "step": "12",
+        "description": "Check EPCMS for any anomalies"
+      },
+      {
+        "step": "13",
+        "description": "Allow generators to run up approx. 1 hour and check engine for any problems"
+      },
+      {
+        "step": "14",
+        "description": "Request Supply Authority to re-energise HV1 & HV2 supplies"
+      },
+      {
+        "step": "15",
+        "description": "Ensure that generators and mains synchronise to provide no-break supplies"
+      },
+      {
+        "step": "16",
+        "description": "Check that mains recover, and generators revert to run down period"
+      },
+      {
+        "step": "17",
+        "description": "Confirm correct configuration of the switchboard as system will now be back to normal"
+      },
+      {
+        "step": "18",
+        "description": "Check all systems for any failures/alarms and attend as necessary"
+      }
+    ],
+    "is_matrix": true,
+    "edps": [
+      {
+        "id": "EDP-01",
+        "name": "EDP-01"
+      },
+      {
+        "id": "EDP-02",
+        "name": "EDP-02"
+      },
+      {
+        "id": "EDP-03",
+        "name": "EDP-03"
+      },
+      {
+        "id": "EDP-04",
+        "name": "EDP-04"
+      },
+      {
+        "id": "EDP-05",
+        "name": "EDP-05"
+      },
+      {
+        "id": "EDP-06",
+        "name": "EDP-06"
+      },
+      {
+        "id": "EDP-07",
+        "name": "EDP-07"
+      },
+      {
+        "id": "EDP-08",
+        "name": "EDP-08"
+      },
+      {
+        "id": "EDP-09",
+        "name": "EDP-09"
+      },
+      {
+        "id": "EDP-10",
+        "name": "EDP-10"
+      },
+      {
+        "id": "EDP-11",
+        "name": "EDP-11"
+      },
+      {
+        "id": "EDP-12",
+        "name": "EDP-12"
+      },
+      {
+        "id": "EDP-13",
+        "name": "EDP-13"
+      },
+      {
+        "id": "EDP-14",
+        "name": "EDP-14"
+      }
+    ]
+  },
+  {
     "section": "2.2.1",
     "equipment": "HV TRANSFORMER NO. 1",
     "drawing_ref": "B7/1 to B7/2",
