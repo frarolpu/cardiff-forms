@@ -1263,6 +1263,15 @@
                                 </div>
                             </div>
 
+                            <!-- MATERIALS USED -->
+                            <div class="form-section">
+                                <h2>Materials Used</h2>
+                                <div class="form-group">
+                                    <label>List all materials and parts used during maintenance</label>
+                                    <textarea id="materialsUsed" placeholder="Record materials, equipment, and parts used..."></textarea>
+                                </div>
+                            </div>
+
                             <!-- PHOTOS -->
                             <div class="form-section">
                                 <h2>Photos</h2>
@@ -1552,6 +1561,7 @@
                     'inspectionDate': 'inspectionDate',
                     'inspector': 'inspector',
                     'engineerComments': ['comments', 'engineer_comments'],
+                    'materialsUsed': ['materials_used', 'materialsUsed'],
                     'comments': 'comments',  // Legacy fallback
                     'engineerName': ['signatures.engineer', 'engineer_name', 'engineerName'],
                     'engineerInitials': ['signatures.engineerInitials', 'engineer_initials', 'engineerInitials'],
@@ -1680,6 +1690,7 @@
                     'inspectionDate': 'inspectionDate',
                     'inspector': 'inspector',
                     'engineerComments': ['comments', 'engineer_comments'],
+                    'materialsUsed': ['materials_used', 'materialsUsed'],
                     'supervisorComments': ['supervisor_comments'],
                     'councilComments': ['council_comments'],
                     'engineerName': ['signatures.engineer', 'engineer_name', 'engineerName'],
@@ -1762,6 +1773,14 @@
                         input.style.cursor = 'default';
                         input.style.opacity = '1';
                     });
+                }
+                
+                // Make materials used read-only for council phase
+                const materialsField = document.getElementById('materialsUsed');
+                if (materialsField) {
+                    materialsField.disabled = true;
+                    materialsField.style.background = '#f5f5f5';
+                    materialsField.style.cursor = 'default';
                 }
                 
                 // Enable photo upload for council if needed
@@ -2098,6 +2117,7 @@
         function setEngineerSectionReadOnly(isReadOnly) {
             // Disable all fields that the engineer would fill (inspection date, inspector, comments, tasks)
             // NOTE: photoInput is NOT included - supervisor may add additional photos
+            // NOTE: materialsUsed is NOT included - supervisor can edit materials used
             const engineerFields = [
                 'inspectionDate', 
                 'inspector', 
@@ -2551,6 +2571,7 @@
             document.getElementById('engineerComments').value = '';
             document.getElementById('supervisorComments').value = '';
             document.getElementById('councilComments').value = '';
+            document.getElementById('materialsUsed').value = '';
             
             // Reset workflow state after save
             isPendingFormOpen = false;
@@ -2709,6 +2730,7 @@
                 engineer_comments: document.getElementById('engineerComments').value,
                 supervisor_comments: document.getElementById('supervisorComments').value,
                 council_comments: document.getElementById('councilComments').value,
+                materials_used: document.getElementById('materialsUsed').value,
                 tasks: tasks,
                 edp: window.selectedEDP || null,
                 status: formStatus,

@@ -205,6 +205,7 @@ def create_pdf(form_data):
         engineer_comments = form_data.get('engineer_comments') or form_data.get('comments', '')
         supervisor_comments = form_data.get('supervisor_comments', '')
         council_comments = form_data.get('council_comments', '')
+        materials_used = form_data.get('materials_used', '')
         
         if engineer_comments or supervisor_comments or council_comments:
             pdf.ln(3)
@@ -235,6 +236,15 @@ def create_pdf(form_data):
                 council_comments_text = str(council_comments)[:300]
                 pdf.multi_cell(0, 7, council_comments_text)
                 pdf.ln(3)
+        
+        # Materials Used section
+        if materials_used:
+            pdf.set_font("Arial", "B", 12)
+            pdf.cell(0, 10, "Materials Used", 0, 1)
+            pdf.set_font("Arial", "", 9)
+            materials_text = str(materials_used)[:500]
+            pdf.multi_cell(0, 7, materials_text)
+            pdf.ln(3)
         
         # Photos section
         photos = form_data.get('photos', [])
