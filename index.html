@@ -1681,6 +1681,7 @@
                     'inspector': 'inspector',
                     'engineerComments': ['comments', 'engineer_comments'],
                     'supervisorComments': ['supervisor_comments'],
+                    'councilComments': ['council_comments'],
                     'engineerName': ['signatures.engineer', 'engineer_name', 'engineerName'],
                     'engineerInitials': ['signatures.engineerInitials', 'engineer_initials', 'engineerInitials'],
                     'engineerDate': ['signatures.engineerDate', 'engineer_date', 'engineerDate'],
@@ -1714,9 +1715,9 @@
                     }
                 });
                 
-                // Clear council fields (to be filled by council)
-                const councilFields = ['councilName', 'councilInitials', 'councilDate', 'councilComments'];
-                councilFields.forEach(fieldId => {
+                // Clear ONLY council fields (to be filled by council)
+                const councilOnlyFields = ['councilName', 'councilInitials', 'councilDate'];
+                councilOnlyFields.forEach(fieldId => {
                     const element = document.getElementById(fieldId);
                     if (element) {
                         if (fieldId === 'councilDate') {
@@ -1726,6 +1727,16 @@
                         }
                     }
                 });
+                
+                // Ensure supervisor data is properly set from formData
+                if (formData.supervisor_comments) {
+                    document.getElementById('supervisorComments').value = formData.supervisor_comments;
+                }
+                if (formData.signatures && formData.signatures.supervisor) {
+                    document.getElementById('supervisorName').value = formData.signatures.supervisor || '';
+                    document.getElementById('supervisorInitials').value = formData.signatures.supervisorInitials || '';
+                    document.getElementById('supervisorDate').value = formData.signatures.supervisorDate || '';
+                }
                 
                 // Set form as pending council
                 isPendingCouncilFormOpen = true;
@@ -1737,6 +1748,21 @@
                 
                 // Protect all other sections (council only fills council section)
                 setEngineerSectionReadOnly(true);
+                
+                // Make supervisor box visible and read-only for council to see
+                const supervisorBox = document.getElementById('supervisorBox');
+                if (supervisorBox) {
+                    supervisorBox.classList.remove('disabled');
+                    supervisorBox.classList.add('active');
+                    // Make supervisor signature fields read-only but visible
+                    const supervisorInputs = supervisorBox.querySelectorAll('input');
+                    supervisorInputs.forEach(input => {
+                        input.disabled = true;
+                        input.style.background = '#f5f5f5';
+                        input.style.cursor = 'default';
+                        input.style.opacity = '1';
+                    });
+                }
                 
                 // Enable photo upload for council if needed
                 const photoInput = document.getElementById('photoInput');
@@ -2520,6 +2546,11 @@
             document.getElementById('engineerDate').value = today;
             document.getElementById('supervisorDate').value = today;
             document.getElementById('councilDate').value = today;
+            
+            // Ensure comment fields are initialized
+            document.getElementById('engineerComments').value = '';
+            document.getElementById('supervisorComments').value = '';
+            document.getElementById('councilComments').value = '';
             
             // Reset workflow state after save
             isPendingFormOpen = false;
