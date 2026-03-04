@@ -597,9 +597,9 @@ def get_pending_forms():
         # Fallback: read from filesystem (look for files with _PENDING_SUPERVISOR suffix)
         saved_forms_dir = Path('saved_forms')
         if saved_forms_dir.exists():
-            for idx, pdf_file in enumerate(sorted(saved_forms_dir.glob('*_PENDING_SUPERVISOR.pdf'), reverse=True)):
+            for pdf_file in sorted(saved_forms_dir.glob('*_PENDING_SUPERVISOR.pdf'), reverse=True):
                 pending_forms.append({
-                    'id': idx + 1,
+                    'id': pdf_file.stem,
                     'filename': pdf_file.name,
                     'section': pdf_file.stem.split('_')[0] if '_' in pdf_file.stem else 'N/A',
                     'status': 'pending_supervisor',
@@ -648,12 +648,12 @@ def load_pending_form(form_id):
                 except Exception as db_err:
                     log_error(f"Database query error: {str(db_err)}")
         
-        # Fallback: load from filesystem using form_id as the JSON filename
+        # Fallback: load from filesystem using form_id (filename stem) to locate the correct file
         try:
             saved_forms_dir = Path('saved_forms')
             
-            # Search for PENDING_SUPERVISOR or PENDING_COUNCIL JSON files
-            for json_file in saved_forms_dir.glob('*_PENDING_*.json'):
+            # Search for PENDING_SUPERVISOR or PENDING_COUNCIL JSON files matching the form_id
+            for json_file in saved_forms_dir.glob(f'{form_id}_PENDING_*.json'):
                 try:
                     with open(json_file, 'r') as f:
                         form_data = json.load(f)
@@ -721,9 +721,9 @@ def get_council_forms():
         # Fallback: read from filesystem (look for files with _PENDING_COUNCIL suffix)
         saved_forms_dir = Path('saved_forms')
         if saved_forms_dir.exists():
-            for idx, pdf_file in enumerate(sorted(saved_forms_dir.glob('*_PENDING_COUNCIL.pdf'), reverse=True)):
+            for pdf_file in sorted(saved_forms_dir.glob('*_PENDING_COUNCIL.pdf'), reverse=True):
                 council_forms.append({
-                    'id': idx + 1,
+                    'id': pdf_file.stem,
                     'filename': pdf_file.name,
                     'section': pdf_file.stem.split('_')[0] if '_' in pdf_file.stem else 'N/A',
                     'status': 'pending_council',
