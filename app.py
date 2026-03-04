@@ -52,6 +52,7 @@ def init_db():
                 id SERIAL PRIMARY KEY,
                 section VARCHAR(50),
                 filename VARCHAR(255),
+                status VARCHAR(20) DEFAULT 'complete',
                 pdf_data BYTEA,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
@@ -320,13 +321,16 @@ def save_form():
         
         # Create filename with timestamp and section number (include EDP if matrix form)
         section = data.get('section', 'unknown')
-        edp = data.get('edp')  # Get EDP if present (matrix forms
+        edp = data.get('edp')  # Get EDP if present (matrix forms)
+        status = data.get('status', 'complete')  # Get status ('pending' or 'complete')
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
         
+        # Build filename with status indicator
+        status_suffix = f"_{status.upper()}" if status == 'pending' else ""
         if edp:
-            filename = f"{section}_{edp}_{timestamp}.pdf"
+            filename = f"{section}_{edp}_{timestamp}{status_suffix}.pdf"
         else:
-            filename = f"{section}_{timestamp}.pdf"
+            filename = f"{section}_{timestamp}{status_suffix}.pdf"
         
         # Generate PDF
         pdf_buffer = create_pdf(data)
@@ -339,8 +343,8 @@ def save_form():
                 try:
                     cursor = conn.cursor()
                     cursor.execute(
-                        'INSERT INTO saved_forms (section, filename, pdf_data) VALUES (%s, %s, %s)',
-                        (section, filename, pdf_data)
+                        'INSERT INTO saved_forms (section, filename, status, pdf_data) VALUES (%s, %s, %s, %s)',
+                        (section, filename, status, pdf_data)
                     )
                     conn.commit()
                     cursor.close()
@@ -349,8 +353,9 @@ def save_form():
                     # Return success response
                     response = jsonify({
                         'success': True,
-                        'message': f'Form {section} saved successfully',
-                        'filename': filename
+                        'message': f'Form {section} saved successfully as {status}',
+                        'filename': filename,
+                        'status': status
                     })
                     response.status_code = 200
                     return response
@@ -370,8 +375,9 @@ def save_form():
             # Return success response
             response = jsonify({
                 'success': True,
-                'message': f'Form {section} saved successfully',
-                'filename': filename
+                'message': f'Form {section} saved successfully as {status}',
+                'filename': filename,
+                'status': status
             })
             response.status_code = 200
             return response
@@ -445,6 +451,68 @@ def get_saved_forms():
     
     except Exception as e:
         log_error(f"Get saved forms error: {str(e)}")
+        return jsonify({
+            'success': False,
+            'message': str(e)
+        }), 500
+
+@app.route('/api/pending-forms', methods=['GET'])
+def get_pending_forms():
+    """Get list of pending forms awaiting supervisor signature"""
+    try:
+        pending_forms = []
+        
+        # Try database first if configured
+        if USE_DATABASE:
+            conn = get_db_connection()
+            if conn:
+                try:
+                    cursor = conn.cursor(cursor_factory=RealDictCursor)
+                    cursor.execute(
+                        'SELECT id, filename, section, status, created_at FROM saved_forms WHERE status = %s ORDER BY created_at DESC',
+                        ('pending',)
+                    )
+                    rows = cursor.fetchall()
+                    cursor.close()
+                    conn.close()
+                    
+                    for row in rows:
+                        pending_forms.append({
+                            'id': row['id'],
+                            'filename': row['filename'],
+                            'section': row['section'],
+                            'status': row['status'],
+                            'created_at': row['created_at'].isoformat() if row['created_at'] else None
+                        })
+                    
+                    return jsonify({
+                        'success': True,
+                        'forms': pending_forms,
+                        'count': len(pending_forms)
+                    }), 200
+                except Exception as db_err:
+                    log_error(f"Database query error: {str(db_err)}")
+        
+        # Fallback: read from filesystem (look for files with _PENDING suffix)
+        saved_forms_dir = Path('saved_forms')
+        if saved_forms_dir.exists():
+            for idx, pdf_file in enumerate(sorted(saved_forms_dir.glob('*_PENDING.pdf'), reverse=True)):
+                pending_forms.append({
+                    'id': idx + 1,
+                    'filename': pdf_file.name,
+                    'section': pdf_file.stem.split('_')[0] if '_' in pdf_file.stem else 'N/A',
+                    'status': 'pending',
+                    'created_at': datetime.fromtimestamp(pdf_file.stat().st_mtime).isoformat()
+                })
+        
+        return jsonify({
+            'success': True,
+            'forms': pending_forms,
+            'count': len(pending_forms)
+        }), 200
+    
+    except Exception as e:
+        log_error(f"Get pending forms error: {str(e)}")
         return jsonify({
             'success': False,
             'message': str(e)

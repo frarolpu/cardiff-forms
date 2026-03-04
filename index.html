@@ -902,6 +902,163 @@
             margin-top: 5px;
         }
 
+        /* Disabled section styles */
+        .signature-box.disabled {
+            opacity: 0.5;
+            background: #f0f0f0;
+            pointer-events: none;
+        }
+
+        .signature-box.disabled input {
+            background: #e8e8e8;
+            cursor: not-allowed;
+            border-color: #ccc;
+        }
+
+        .signature-box.disabled label {
+            color: #999;
+        }
+
+        .signature-box.active {
+            opacity: 1;
+            background: #fafafa;
+            pointer-events: auto;
+        }
+
+        .signature-box.active input {
+            background: white;
+            cursor: text;
+        }
+
+        /* Password Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 10px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .modal-content h2 {
+            color: #1a1f3a;
+            margin-bottom: 20px;
+            font-size: 22px;
+        }
+
+        .modal-content p {
+            color: #666;
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+
+        .modal-password-group {
+            margin-bottom: 25px;
+        }
+
+        .modal-password-group label {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 14px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .modal-password-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #d4d9e3;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            background: white;
+            transition: all 0.2s;
+        }
+
+        .modal-password-group input:focus {
+            outline: none;
+            border-color: #0084ff;
+            background: #f0f7ff;
+            box-shadow: 0 0 0 4px rgba(0, 132, 255, 0.1);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 25px;
+        }
+
+        .modal-actions button {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s;
+        }
+
+        .modal-actions .btn-cancel {
+            background: white;
+            color: #0084ff;
+            border: 2px solid #0084ff;
+        }
+
+        .modal-actions .btn-cancel:hover {
+            background: #f0f7ff;
+        }
+
+        .modal-actions .btn-unlock {
+            background: linear-gradient(135deg, #0084ff 0%, #005ce6 100%);
+            color: white;
+            box-shadow: 0 3px 12px rgba(0, 132, 255, 0.3);
+        }
+
+        .modal-actions .btn-unlock:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 132, 255, 0.4);
+        }
+
+        .form-status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 15px;
+        }
+
+        .form-status-badge.pending {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .form-status-badge.complete {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
         @media print {
             body {
                 background: white;
@@ -1028,8 +1185,9 @@
                             <!-- APPROVAL / INITIALS -->
                             <div class="form-section">
                                 <h2>Approval</h2>
+                                <div id="formStatusBadge"></div>
                                 <div class="signature-row">
-                                    <div class="signature-box">
+                                    <div class="signature-box active" id="engineerBox">
                                         <h3>Maintenance Engineer</h3>
                                         <div class="form-row">
                                             <div class="form-group" style="flex: 1;">
@@ -1047,7 +1205,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="signature-box">
+                                    <div class="signature-box disabled" id="supervisorBox">
                                         <h3>Contractor Supervisor</h3>
                                         <div class="form-row">
                                             <div class="form-group" style="flex: 1;">
@@ -1079,10 +1237,28 @@
         </div>
     </div>
 
+    <!-- Password Modal for Supervisor Access -->
+    <div class="modal-overlay" id="passwordModal">
+        <div class="modal-content">
+            <h2>Supervisor Access</h2>
+            <p>Enter the password to complete this form as Supervisor.</p>
+            <div class="modal-password-group">
+                <label for="supervisorPassword">Password</label>
+                <input type="password" id="supervisorPassword" placeholder="Enter password" />
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-cancel" onclick="closeSupervisorModal()">Cancel</button>
+                <button type="button" class="btn-unlock" onclick="validateSupervisorPassword()">Unlock</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         let allForms = [];
         let currentFormIndex = -1;
         let photos = [];
+        let formStatus = 'new'; // 'new', 'pending', or 'complete'
+        let isPendingFormOpen = false; // Track if we're editing a pending form
 
         // Load form data
         async function loadForms() {
@@ -1258,7 +1434,85 @@
             setTimeout(() => {
                 initializeSignaturePads();
             }, 0);
+
+            // Update form status display
+            updateFormStatusDisplay();
+            
+            // Set initial supervisor state (disabled for new forms)
+            setSupervisorState(isPendingFormOpen);
         }
+
+        // Update form status badge
+        function updateFormStatusDisplay() {
+            const badge = document.getElementById('formStatusBadge');
+            if (isPendingFormOpen) {
+                badge.innerHTML = '<div class="form-status-badge pending">📋 PENDING - Awaiting Supervisor</div>';
+            } else {
+                badge.innerHTML = '<div class="form-status-badge pending">✏️ NEW - Engineer Signing</div>';
+            }
+        }
+
+        // Enable/disable supervisor section
+        function setSupervisorState(isEnabled) {
+            const supervisorBox = document.getElementById('supervisorBox');
+            const supervisorInputs = supervisorBox.querySelectorAll('input');
+            
+            if (isEnabled) {
+                supervisorBox.classList.remove('disabled');
+                supervisorBox.classList.add('active');
+                supervisorInputs.forEach(input => {
+                    input.disabled = false;
+                });
+            } else {
+                supervisorBox.classList.add('disabled');
+                supervisorBox.classList.remove('active');
+                supervisorInputs.forEach(input => {
+                    input.disabled = true;
+                });
+            }
+        }
+
+        // Show supervisor password modal
+        function showSupervisorModal() {
+            const modal = document.getElementById('passwordModal');
+            modal.classList.add('active');
+            document.getElementById('supervisorPassword').focus();
+        }
+
+        // Close supervisor modal
+        function closeSupervisorModal() {
+            const modal = document.getElementById('passwordModal');
+            modal.classList.remove('active');
+            document.getElementById('supervisorPassword').value = '';
+        }
+
+        // Validate supervisor password
+        function validateSupervisorPassword() {
+            const password = document.getElementById('supervisorPassword').value;
+            const correctPassword = 'Sice2026!';
+            
+            if (password === correctPassword) {
+                setSupervisorState(true);
+                closeSupervisorModal();
+                isPendingFormOpen = true;
+                updateFormStatusDisplay();
+                showSuccess('✓ Supervisor access unlocked');
+            } else {
+                showError('❌ Incorrect password');
+                document.getElementById('supervisorPassword').value = '';
+            }
+        }
+
+        // Handle Supervisor box click to unlock
+        document.addEventListener('DOMContentLoaded', function() {
+            const supervisorBox = document.getElementById('supervisorBox');
+            supervisorBox.addEventListener('click', function(e) {
+                if (!isPendingFormOpen && e.target.tagName === 'INPUT') {
+                    e.preventDefault();
+                    showSupervisorModal();
+                }
+            });
+        });
 
         function updateTasksForEDP(edpId) {
             if (!edpId) {
@@ -1484,6 +1738,16 @@
                 showError(`Please select an ${selectorLabel} before saving`);
                 return;
             }
+
+            // Validate that Engineer has signed
+            const engineerName = document.getElementById('engineerName').value;
+            const engineerInitials = document.getElementById('engineerInitials').value;
+            const engineerDate = document.getElementById('engineerDate').value;
+            
+            if (!engineerName || !engineerInitials || !engineerDate) {
+                showError('Engineer signature (name, initials, date) is required');
+                return;
+            }
             
             // Collect task completions
             const tasks = [];
@@ -1495,6 +1759,16 @@
                     completed: checkbox.checked
                 });
             });
+
+            // Determine form status
+            const supervisorName = document.getElementById('supervisorName').value;
+            const supervisorInitials = document.getElementById('supervisorInitials').value;
+            const supervisorDate = document.getElementById('supervisorDate').value;
+            
+            let formStatus = 'pending'; // Default: Engineer only signed
+            if (supervisorName && supervisorInitials && supervisorDate) {
+                formStatus = 'complete'; // Both signed
+            }
             
             // Collect all form data
             const formData = {
@@ -1508,13 +1782,14 @@
                 comments: document.getElementById('comments').value,
                 tasks: tasks,
                 edp: window.selectedEDP || null,  // Add selected EDP if matrix form
+                status: formStatus,  // 'pending' or 'complete'
                 signatures: {
-                    engineer: document.getElementById('engineerName').value || document.getElementById('inspector').value,
-                    engineerInitials: document.getElementById('engineerInitials').value,
-                    engineerDate: document.getElementById('engineerDate').value,
-                    supervisor: document.getElementById('supervisorName').value,
-                    supervisorInitials: document.getElementById('supervisorInitials').value,
-                    supervisorDate: document.getElementById('supervisorDate').value
+                    engineer: engineerName,
+                    engineerInitials: engineerInitials,
+                    engineerDate: engineerDate,
+                    supervisor: supervisorName,
+                    supervisorInitials: supervisorInitials,
+                    supervisorDate: supervisorDate
                 },
                 photos: photos,
                 timestamp: new Date().toISOString()
@@ -1545,7 +1820,11 @@
 
                 const result = await response.json();
                 if (result.success) {
-                    showSuccess(`✓ Form saved! Filename: ${result.filename}`);
+                    if (formStatus === 'pending') {
+                        showSuccess(`✓ Form saved as PENDING! Ready for Supervisor signature. Filename: ${result.filename}`);
+                    } else {
+                        showSuccess(`✓ Form COMPLETED and saved! Filename: ${result.filename}`);
+                    }
                     resetForm();
                 } else {
                     showError(`Failed to save: ${result.message || 'Unknown error'}`);
