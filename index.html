@@ -1219,6 +1219,13 @@
                 else if (firstId.startsWith('VP-')) selectorLabel = 'VP';
                 else if (firstId.startsWith('FAN-')) selectorLabel = 'FAN ID';
                 
+                // Update section title and label
+                const sectionH2 = edpSection.querySelector('h2');
+                if (sectionH2) sectionH2.textContent = `Select ${selectorLabel}`;
+                
+                const sectionLabel = edpSection.querySelector('label');
+                if (sectionLabel) sectionLabel.textContent = `Choose ${selectorLabel} to Inspect`;
+                
                 // Populate selector
                 const select = document.getElementById('edpSelector');
                 select.innerHTML = `<option value="">-- Select an ${selectorLabel} --</option>`;
