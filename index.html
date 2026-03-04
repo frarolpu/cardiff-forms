@@ -1389,9 +1389,9 @@
         let formStatus = 'new'; // 'new', 'pending', or 'complete'
         let isPendingFormOpen = false; // Track if we're editing a pending form (supervisor completing)
         let isPendingCouncilFormOpen = false; // Track if we're editing a council form
-        let window.pendingFormData = null;
-        let window.pendingFormTasks = [];
-        let window.pendingCouncilFormData = null;
+        window.pendingFormData = null;
+        window.pendingFormTasks = [];
+        window.pendingCouncilFormData = null;
 
         // Load form data
         async function loadForms() {
