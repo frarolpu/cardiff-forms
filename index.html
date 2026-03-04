@@ -1489,6 +1489,30 @@
             document.getElementById('supervisorPassword').value = '';
         }
 
+        // Close modal when clicking outside
+        document.getElementById('passwordModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeSupervisorModal();
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const modal = document.getElementById('passwordModal');
+                if (modal.classList.contains('active')) {
+                    closeSupervisorModal();
+                }
+            }
+        });
+
+        // Allow Enter key to submit password
+        document.getElementById('supervisorPassword').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                validateSupervisorPassword();
+            }
+        });
+
         // Validate supervisor password
         function validateSupervisorPassword() {
             const password = document.getElementById('supervisorPassword').value;
@@ -1697,6 +1721,13 @@
             document.getElementById('inspectionDate').value = today;
             document.getElementById('engineerDate').value = today;
             document.getElementById('supervisorDate').value = today;
+            
+            // Reset workflow state after save
+            isPendingFormOpen = false;
+            formStatus = 'new';
+            updateFormStatusDisplay();
+            setSupervisorState(false);
+            setupSupervisorInputListeners();
         }
 
         function downloadJSON(data) {
