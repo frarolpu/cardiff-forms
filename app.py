@@ -201,11 +201,12 @@ def create_pdf(form_data):
             
             pdf.ln(1)
         
-        # Comments - Engineer and Supervisor sections
+        # Comments - Engineer, Supervisor, and Council sections
         engineer_comments = form_data.get('engineer_comments') or form_data.get('comments', '')
         supervisor_comments = form_data.get('supervisor_comments', '')
+        council_comments = form_data.get('council_comments', '')
         
-        if engineer_comments or supervisor_comments:
+        if engineer_comments or supervisor_comments or council_comments:
             pdf.ln(3)
             
             # Engineer Comments
@@ -224,6 +225,15 @@ def create_pdf(form_data):
                 pdf.set_font("Arial", "", 9)
                 sup_comments_text = str(supervisor_comments)[:300]
                 pdf.multi_cell(0, 7, sup_comments_text)
+                pdf.ln(3)
+            
+            # Council Comments
+            if council_comments:
+                pdf.set_font("Arial", "B", 12)
+                pdf.cell(0, 10, "Council Approval Comments", 0, 1)
+                pdf.set_font("Arial", "", 9)
+                council_comments_text = str(council_comments)[:300]
+                pdf.multi_cell(0, 7, council_comments_text)
                 pdf.ln(3)
         
         # Photos section
@@ -270,14 +280,16 @@ def create_pdf(form_data):
         pdf.cell(0, 10, "Approval", 0, 1)
         pdf.ln(5)
         
-        sig_col_width = (pdf.w - 20) / 2
+        sig_col_width = (pdf.w - 20) / 3
         
         # Names with initials
-        pdf.set_font("Arial", "B", 9)
+        pdf.set_font("Arial", "B", 8)
         eng_name = form_data.get('signatures', {}).get('engineer', '')
         eng_initials = form_data.get('signatures', {}).get('engineerInitials', '')
         sup_name = form_data.get('signatures', {}).get('supervisor', '')
         sup_initials = form_data.get('signatures', {}).get('supervisorInitials', '')
+        council_name = form_data.get('signatures', {}).get('council', '')
+        council_initials = form_data.get('signatures', {}).get('councilInitials', '')
         
         eng_text = f"Engineer: {eng_name}"
         if eng_initials:
@@ -285,16 +297,22 @@ def create_pdf(form_data):
         sup_text = f"Supervisor: {sup_name}"
         if sup_initials:
             sup_text += f" ({sup_initials})"
+        council_text = f"Council: {council_name}"
+        if council_initials:
+            council_text += f" ({council_initials})"
             
         pdf.cell(sig_col_width, 6, eng_text, 0, 0)
-        pdf.cell(sig_col_width, 6, sup_text, 0, 1)
+        pdf.cell(sig_col_width, 6, sup_text, 0, 0)
+        pdf.cell(sig_col_width, 6, council_text, 0, 1)
         
         # Dates
-        pdf.set_font("Arial", "", 8)
+        pdf.set_font("Arial", "", 7)
         eng_date = form_data.get('signatures', {}).get('engineerDate', '')
         sup_date = form_data.get('signatures', {}).get('supervisorDate', '')
+        council_date = form_data.get('signatures', {}).get('councilDate', '')
         pdf.cell(sig_col_width, 5, f"Date: {eng_date}", 0, 0)
-        pdf.cell(sig_col_width, 5, f"Date: {sup_date}", 0, 1)
+        pdf.cell(sig_col_width, 5, f"Date: {sup_date}", 0, 0)
+        pdf.cell(sig_col_width, 5, f"Date: {council_date}", 0, 1)
         
         # Footer
         pdf.ln(10)
@@ -339,11 +357,16 @@ def save_form():
         # Create filename with timestamp and section number (include EDP if matrix form)
         section = data.get('section', 'unknown')
         edp = data.get('edp')  # Get EDP if present (matrix forms)
-        status = data.get('status', 'complete')  # Get status ('pending' or 'complete')
+        status = data.get('status', 'complete')  # Get status ('pending_supervisor', 'pending_council', or 'complete')
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
         
         # Build filename with status indicator
-        status_suffix = f"_{status.upper()}" if status == 'pending' else ""
+        # For filenames: pending_supervisor -> _PENDING_SUPERVISOR, pending_council -> _PENDING_COUNCIL, complete -> no suffix
+        if status == 'complete':
+            status_suffix = ""
+        else:
+            status_suffix = f"_{status.upper()}"
+        
         if edp:
             filename = f"{section}_{edp}_{timestamp}{status_suffix}.pdf"
         else:
@@ -365,14 +388,17 @@ def save_form():
         except Exception as json_err:
             log_error(f"Warning: Could not save JSON file: {str(json_err)}")
         
-        # If form is being completed, delete the old PENDING version
+        # If form is being completed, delete the old pending versions
         if status == 'complete':
             try:
                 saved_forms_dir = Path('saved_forms')
-                # Delete PENDING PDF and JSON files for this section
-                for pending_file in saved_forms_dir.glob(f'{section}_*_PENDING.*'):
+                # Delete all PENDING_SUPERVISOR and PENDING_COUNCIL files for this section
+                for pending_file in saved_forms_dir.glob(f'{section}_*_PENDING_*.pdf'):
                     pending_file.unlink()
                     log_error(f"Deleted interim PENDING form: {pending_file.name}")
+                for pending_file in saved_forms_dir.glob(f'{section}_*_PENDING_*.json'):
+                    pending_file.unlink()
+                    log_error(f"Deleted interim PENDING JSON: {pending_file.name}")
             except Exception as cleanup_err:
                 log_error(f"Warning: Could not delete PENDING files: {str(cleanup_err)}")
         
@@ -386,6 +412,7 @@ def save_form():
                         'INSERT INTO saved_forms (section, filename, status, pdf_data, form_data) VALUES (%s, %s, %s, %s, %s)',
                         (section, filename, status, pdf_data, json.dumps(data))
                     )
+                    log_error(f"Saved to database: {filename} with status {status}")
                     conn.commit()
                     cursor.close()
                     conn.close()
@@ -463,8 +490,9 @@ def get_saved_forms():
                                 if 'signatures' in form_data:
                                     engineer_name = form_data['signatures'].get('engineer', 'N/A')
                                     supervisor_name = form_data['signatures'].get('supervisor', 'N/A')
+                                    council_name = form_data['signatures'].get('council', 'N/A')
                             except:
-                                pass
+                                council_name = 'N/A'
                         
                         saved_forms.append({
                             'id': row['id'],
@@ -472,7 +500,8 @@ def get_saved_forms():
                             'section': row['section'],
                             'created_at': row['created_at'].isoformat() if row['created_at'] else None,
                             'engineer': engineer_name,
-                            'supervisor': supervisor_name
+                            'supervisor': supervisor_name,
+                            'council': council_name
                         })
                     
                     return jsonify({
@@ -487,9 +516,10 @@ def get_saved_forms():
         saved_forms_dir = Path('saved_forms')
         if saved_forms_dir.exists():
             for idx, pdf_file in enumerate(sorted(saved_forms_dir.glob('*.pdf'), reverse=True)):
-                # Try to load JSON data for engineer/supervisor names
+                # Try to load JSON data for engineer/supervisor/council names
                 engineer_name = 'N/A'
                 supervisor_name = 'N/A'
+                council_name = 'N/A'
                 
                 json_file = saved_forms_dir / pdf_file.name.replace('.pdf', '.json')
                 if json_file.exists():
@@ -499,6 +529,7 @@ def get_saved_forms():
                             if 'signatures' in form_data:
                                 engineer_name = form_data['signatures'].get('engineer', 'N/A')
                                 supervisor_name = form_data['signatures'].get('supervisor', 'N/A')
+                                council_name = form_data['signatures'].get('council', 'N/A')
                     except:
                         pass
                 
@@ -508,7 +539,8 @@ def get_saved_forms():
                     'section': pdf_file.stem.split('_')[0] if '_' in pdf_file.stem else 'N/A',
                     'created_at': datetime.fromtimestamp(pdf_file.stat().st_mtime).isoformat(),
                     'engineer': engineer_name,
-                    'supervisor': supervisor_name
+                    'supervisor': supervisor_name,
+                    'council': council_name
                 })
         
         return jsonify({
@@ -526,7 +558,7 @@ def get_saved_forms():
 
 @app.route('/api/pending-forms', methods=['GET'])
 def get_pending_forms():
-    """Get list of pending forms awaiting supervisor signature"""
+    """Get list of pending forms for supervisor signature"""
     try:
         pending_forms = []
         
@@ -536,9 +568,10 @@ def get_pending_forms():
             if conn:
                 try:
                     cursor = conn.cursor(cursor_factory=RealDictCursor)
+                    # Get forms waiting for supervisor signature (pending_supervisor status)
                     cursor.execute(
                         'SELECT id, filename, section, status, created_at FROM saved_forms WHERE status = %s ORDER BY created_at DESC',
-                        ('pending',)
+                        ('pending_supervisor',)
                     )
                     rows = cursor.fetchall()
                     cursor.close()
@@ -561,15 +594,15 @@ def get_pending_forms():
                 except Exception as db_err:
                     log_error(f"Database query error: {str(db_err)}")
         
-        # Fallback: read from filesystem (look for files with _PENDING suffix)
+        # Fallback: read from filesystem (look for files with _PENDING_SUPERVISOR suffix)
         saved_forms_dir = Path('saved_forms')
         if saved_forms_dir.exists():
-            for idx, pdf_file in enumerate(sorted(saved_forms_dir.glob('*_PENDING.pdf'), reverse=True)):
+            for idx, pdf_file in enumerate(sorted(saved_forms_dir.glob('*_PENDING_SUPERVISOR.pdf'), reverse=True)):
                 pending_forms.append({
                     'id': idx + 1,
                     'filename': pdf_file.name,
                     'section': pdf_file.stem.split('_')[0] if '_' in pdf_file.stem else 'N/A',
-                    'status': 'pending',
+                    'status': 'pending_supervisor',
                     'created_at': datetime.fromtimestamp(pdf_file.stat().st_mtime).isoformat()
                 })
         
@@ -588,7 +621,7 @@ def get_pending_forms():
 
 @app.route('/api/load-pending-form/<form_id>', methods=['GET'])
 def load_pending_form(form_id):
-    """Load pending form data for editing by supervisor"""
+    """Load pending form data for editing by supervisor or council"""
     try:
         # Try database first if configured
         if USE_DATABASE:
@@ -597,8 +630,8 @@ def load_pending_form(form_id):
                 try:
                     cursor = conn.cursor(cursor_factory=RealDictCursor)
                     cursor.execute(
-                        'SELECT form_data, filename, status FROM saved_forms WHERE id = %s AND status = %s',
-                        (int(form_id), 'pending')
+                        'SELECT form_data, filename, status FROM saved_forms WHERE id = %s AND (status = %s OR status = %s)',
+                        (int(form_id), 'pending_supervisor', 'pending_council')
                     )
                     row = cursor.fetchone()
                     cursor.close()
@@ -619,16 +652,16 @@ def load_pending_form(form_id):
         try:
             saved_forms_dir = Path('saved_forms')
             
-            # Search for any PENDING JSON file
-            for json_file in saved_forms_dir.glob('*_PENDING.json'):
+            # Search for PENDING_SUPERVISOR or PENDING_COUNCIL JSON files
+            for json_file in saved_forms_dir.glob('*_PENDING_*.json'):
                 try:
                     with open(json_file, 'r') as f:
                         form_data = json.load(f)
                     return jsonify({
                         'success': True,
                         'data': form_data,
-                        'filename': json_file.stem.replace('_PENDING', '') + '.pdf',
-                        'status': 'pending'
+                        'filename': json_file.stem.replace('_PENDING_SUPERVISOR', '').replace('_PENDING_COUNCIL', '') + '.pdf',
+                        'status': 'pending_supervisor' if '_PENDING_SUPERVISOR' in json_file.name else 'pending_council'
                     }), 200
                 except Exception as read_err:
                     log_error(f"Error reading {json_file}: {read_err}")
@@ -643,6 +676,68 @@ def load_pending_form(form_id):
     
     except Exception as e:
         log_error(f"Load pending form error: {str(e)}")
+        return jsonify({
+            'success': False,
+            'message': str(e)
+        }), 500
+
+@app.route('/api/council-forms', methods=['GET'])
+def get_council_forms():
+    """Get list of pending forms awaiting council signature"""
+    try:
+        council_forms = []
+        
+        # Try database first if configured
+        if USE_DATABASE:
+            conn = get_db_connection()
+            if conn:
+                try:
+                    cursor = conn.cursor(cursor_factory=RealDictCursor)
+                    cursor.execute(
+                        'SELECT id, filename, section, status, created_at FROM saved_forms WHERE status = %s ORDER BY created_at DESC',
+                        ('pending_council',)
+                    )
+                    rows = cursor.fetchall()
+                    cursor.close()
+                    conn.close()
+                    
+                    for row in rows:
+                        council_forms.append({
+                            'id': row['id'],
+                            'filename': row['filename'],
+                            'section': row['section'],
+                            'status': row['status'],
+                            'created_at': row['created_at'].isoformat() if row['created_at'] else None
+                        })
+                    
+                    return jsonify({
+                        'success': True,
+                        'forms': council_forms,
+                        'count': len(council_forms)
+                    }), 200
+                except Exception as db_err:
+                    log_error(f"Database query error: {str(db_err)}")
+        
+        # Fallback: read from filesystem (look for files with _PENDING_COUNCIL suffix)
+        saved_forms_dir = Path('saved_forms')
+        if saved_forms_dir.exists():
+            for idx, pdf_file in enumerate(sorted(saved_forms_dir.glob('*_PENDING_COUNCIL.pdf'), reverse=True)):
+                council_forms.append({
+                    'id': idx + 1,
+                    'filename': pdf_file.name,
+                    'section': pdf_file.stem.split('_')[0] if '_' in pdf_file.stem else 'N/A',
+                    'status': 'pending_council',
+                    'created_at': datetime.fromtimestamp(pdf_file.stat().st_mtime).isoformat()
+                })
+        
+        return jsonify({
+            'success': True,
+            'forms': council_forms,
+            'count': len(council_forms)
+        }), 200
+    
+    except Exception as e:
+        log_error(f"Get council forms error: {str(e)}")
         return jsonify({
             'success': False,
             'message': str(e)

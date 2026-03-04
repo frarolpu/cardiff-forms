@@ -1154,9 +1154,15 @@
             <!-- Tab buttons -->
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px; font-size: 12px;">
                 <button id="tabAllForms" class="sidebar-tab active" onclick="switchTab('all')">All Forms</button>
-                <button id="tabPendingForms" class="sidebar-tab" onclick="switchTab('pending')">
-                    <span>Pending</span>
-                    <span id="pendingCount" style="display: none; margin-left: 4px; background: #ff6b6b; padding: 2px 6px; border-radius: 12px; font-size: 10px;">0</span>
+                <button id="tabPendingSupervisor" class="sidebar-tab" onclick="switchTab('pending-supervisor')">
+                    <span>Pending Supervisor</span>
+                    <span id="pendingSupervisorCount" style="display: none; margin-left: 4px; background: #ff6b6b; padding: 2px 6px; border-radius: 12px; font-size: 10px;">0</span>
+                </button>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px; font-size: 12px;">
+                <button id="tabPendingCouncil" class="sidebar-tab" onclick="switchTab('pending-council')">
+                    <span>Pending Council</span>
+                    <span id="pendingCouncilCount" style="display: none; margin-left: 4px; background: #a78bfa; padding: 2px 6px; border-radius: 12px; font-size: 10px;">0</span>
                 </button>
             </div>
             
@@ -1170,8 +1176,11 @@
             <!-- All forms list -->
             <ul class="form-list" id="formList"></ul>
             
-            <!-- Pending forms list (hidden by default) -->
-            <ul class="form-list" id="pendingFormList" style="display: none;"></ul>
+            <!-- Pending supervisor forms list (hidden by default) -->
+            <ul class="form-list" id="pendingSupervisorList" style="display: none;"></ul>
+            
+            <!-- Pending council forms list (hidden by default) -->
+            <ul class="form-list" id="pendingCouncilList" style="display: none;"></ul>
         </div>
 
         <!-- MAIN CONTENT -->
@@ -1243,6 +1252,10 @@
                                     <label>Contractor Supervisor Comments</label>
                                     <textarea id="supervisorComments" placeholder="Supervisor notes and observations..."></textarea>
                                 </div>
+                                <div class="form-group">
+                                    <label>Council Approval Comments</label>
+                                    <textarea id="councilComments" placeholder="Council approval notes..."></textarea>
+                                </div>
                                 <!-- Legacy comments field for backward compatibility -->
                                 <div class="form-group" style="display: none;">
                                     <label>Comments</label>
@@ -1304,6 +1317,24 @@
                                             <input type="date" id="supervisorDate">
                                         </div>
                                     </div>
+
+                                    <div class="signature-box disabled" id="councilBox">
+                                        <h3>Council Approval</h3>
+                                        <div class="form-row">
+                                            <div class="form-group" style="flex: 1;">
+                                                <label>Name</label>
+                                                <input type="text" id="councilName" placeholder="Full name">
+                                            </div>
+                                            <div class="form-group" style="flex: 0.5;">
+                                                <label>Initials</label>
+                                                <input type="text" id="councilInitials" placeholder="e.g. CC" maxlength="3">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Date</label>
+                                            <input type="date" id="councilDate">
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -1335,12 +1366,32 @@
         </div>
     </div>
 
+    <!-- Password Modal for Council Access -->
+    <div class="modal-overlay" id="councilPasswordModal">
+        <div class="modal-content">
+            <h2>Council Approval</h2>
+            <p>Enter the password to provide Council approval for this form.</p>
+            <div class="modal-password-group">
+                <label for="councilPassword">Password</label>
+                <input type="password" id="councilPassword" placeholder="Enter password" />
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-cancel" onclick="closeCouncilModal()">Cancel</button>
+                <button type="button" class="btn-unlock" onclick="validateCouncilPassword()">Unlock</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         let allForms = [];
         let currentFormIndex = -1;
         let photos = [];
         let formStatus = 'new'; // 'new', 'pending', or 'complete'
-        let isPendingFormOpen = false; // Track if we're editing a pending form
+        let isPendingFormOpen = false; // Track if we're editing a pending form (supervisor completing)
+        let isPendingCouncilFormOpen = false; // Track if we're editing a council form
+        let window.pendingFormData = null;
+        let window.pendingFormTasks = [];
+        let window.pendingCouncilFormData = null;
 
         // Load form data
         async function loadForms() {
@@ -1351,12 +1402,14 @@
                 
                 // Also load pending forms count
                 loadPendingForms();
+                loadCouncilForms();
                 
                 // Set today's date for inspection and approval dates
                 const today = new Date().toISOString().split('T')[0];
                 document.getElementById('inspectionDate').value = today;
                 document.getElementById('engineerDate').value = today;
                 document.getElementById('supervisorDate').value = today;
+                document.getElementById('councilDate').value = today;
             } catch (error) {
                 console.error('Error loading forms:', error);
                 showError('Error loading forms');
@@ -1370,10 +1423,10 @@
                 const result = await response.json();
                 
                 if (result.success && result.forms) {
-                    populatePendingFormList(result.forms);
+                    populatePendingSupervisorFormList(result.forms);
                     
                     // Update count badge
-                    const countBadge = document.getElementById('pendingCount');
+                    const countBadge = document.getElementById('pendingSupervisorCount');
                     if (result.count > 0) {
                         countBadge.textContent = result.count;
                         countBadge.style.display = 'inline-block';
@@ -1386,8 +1439,8 @@
             }
         }
 
-        function populatePendingFormList(forms) {
-            const pendingList = document.getElementById('pendingFormList');
+        function populatePendingSupervisorFormList(forms) {
+            const pendingList = document.getElementById('pendingSupervisorList');
             pendingList.innerHTML = '';
             
             forms.forEach(form => {
@@ -1405,16 +1458,70 @@
                     </div>
                 `;
                 
-                li.onclick = () => loadPendingFormForCompletion(form.id, form.filename);
+                li.onclick = () => loadPendingFormForSupervisorCompletion(form.id, form.filename);
                 pendingList.appendChild(li);
             });
         }
 
         // Load a pending form for supervisor to complete
-        async function loadPendingFormForCompletion(formId, filename) {
+        async function loadPendingFormForSupervisorCompletion(formId, filename) {
             // First, require password BEFORE loading the form
             window.pendingFormToLoad = { formId, filename };
             showSupervisorPasswordModal();
+        }
+
+        // Load council forms from backend
+        async function loadCouncilForms() {
+            try {
+                const response = await fetch('/api/council-forms');
+                const result = await response.json();
+                
+                if (result.success && result.forms) {
+                    populatePendingCouncilFormList(result.forms);
+                    
+                    // Update count badge
+                    const countBadge = document.getElementById('pendingCouncilCount');
+                    if (result.count > 0) {
+                        countBadge.textContent = result.count;
+                        countBadge.style.display = 'inline-block';
+                    } else {
+                        countBadge.style.display = 'none';
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading council forms:', error);
+            }
+        }
+
+        function populatePendingCouncilFormList(forms) {
+            const councilList = document.getElementById('pendingCouncilList');
+            councilList.innerHTML = '';
+            
+            forms.forEach(form => {
+                const li = document.createElement('li');
+                li.className = 'pending-form-item';
+                
+                const createdDate = new Date(form.created_at).toLocaleDateString();
+                const createdTime = new Date(form.created_at).toLocaleTimeString();
+                
+                li.innerHTML = `
+                    <div class="pending-form-item-title">Section ${form.section}</div>
+                    <div class="pending-form-item-info">
+                        ✓ Awaiting Council Approval
+                        <br>Saved: ${createdDate} ${createdTime}
+                    </div>
+                `;
+                
+                li.onclick = () => loadPendingFormForCouncilCompletion(form.id, form.filename);
+                councilList.appendChild(li);
+            });
+        }
+
+        // Load a pending form for council to approve
+        async function loadPendingFormForCouncilCompletion(formId, filename) {
+            // First, require password BEFORE loading the form
+            window.pendingCouncilFormToLoad = { formId, filename };
+            showCouncilPasswordModal();
         }
 
         // Show password modal for pending form access
@@ -1553,25 +1660,163 @@
             }
         }
 
+        // Load council form data after password validation
+        async function loadPendingCouncilFormDataAfterPassword() {
+            try {
+                const { formId, filename } = window.pendingCouncilFormToLoad;
+                
+                let response = await fetch(`/api/load-pending-form/${formId}`);
+                let result = await response.json();
+                
+                if (!result.success) {
+                    showError('Could not load pending form: ' + result.message);
+                    return;
+                }
+                
+                const formData = result.data;
+                
+                // Populate all form fields with the form data
+                const fieldMappings = {
+                    'inspectionDate': 'inspectionDate',
+                    'inspector': 'inspector',
+                    'engineerComments': ['comments', 'engineer_comments'],
+                    'supervisorComments': ['supervisor_comments'],
+                    'engineerName': ['signatures.engineer', 'engineer_name', 'engineerName'],
+                    'engineerInitials': ['signatures.engineerInitials', 'engineer_initials', 'engineerInitials'],
+                    'engineerDate': ['signatures.engineerDate', 'engineer_date', 'engineerDate'],
+                    'supervisorName': ['signatures.supervisor', 'supervisor_name', 'supervisorName'],
+                    'supervisorInitials': ['signatures.supervisorInitials', 'supervisor_initials', 'supervisorInitials'],
+                    'supervisorDate': ['signatures.supervisorDate', 'supervisor_date', 'supervisorDate'],
+                    'section': 'section'
+                };
+                
+                // Populate fields with data
+                Object.entries(fieldMappings).forEach(([elementId, dataKeys]) => {
+                    const element = document.getElementById(elementId);
+                    if (element) {
+                        const keys = Array.isArray(dataKeys) ? dataKeys : [dataKeys];
+                        let value = '';
+                        
+                        for (const key of keys) {
+                            if (key.includes('.')) {
+                                const parts = key.split('.');
+                                let obj = formData;
+                                for (const part of parts) {
+                                    obj = obj?.[part];
+                                }
+                                value = obj || '';
+                            } else {
+                                value = formData[key] || '';
+                            }
+                            if (value) break;
+                        }
+                        element.value = value;
+                    }
+                });
+                
+                // Clear council fields (to be filled by council)
+                const councilFields = ['councilName', 'councilInitials', 'councilDate', 'councilComments'];
+                councilFields.forEach(fieldId => {
+                    const element = document.getElementById(fieldId);
+                    if (element) {
+                        if (fieldId === 'councilDate') {
+                            element.value = new Date().toISOString().split('T')[0];
+                        } else {
+                            element.value = '';
+                        }
+                    }
+                });
+                
+                // Set form as pending council
+                isPendingCouncilFormOpen = true;
+                formStatus = 'pending_council';
+                window.currentFormCouncilId = formId;
+                window.currentFormFilename = filename;
+                window.pendingCouncilFormData = formData;
+                window.pendingFormTasks = formData.tasks;
+                
+                // Protect all other sections (council only fills council section)
+                setEngineerSectionReadOnly(true);
+                
+                // Enable photo upload for council if needed
+                const photoInput = document.getElementById('photoInput');
+                if (photoInput) {
+                    photoInput.disabled = false;
+                }
+                
+                // Load tasks as read-only
+                if (formData.tasks) {
+                    loadTasks(formData.tasks);
+                    
+                    setTimeout(() => {
+                        const taskList = document.getElementById('taskList');
+                        const checkboxes = taskList.querySelectorAll('input[type="checkbox"]');
+                        
+                        checkboxes.forEach((checkbox, index) => {
+                            if (formData.tasks[index] && formData.tasks[index].completed) {
+                                checkbox.checked = true;
+                            } else {
+                                checkbox.checked = false;
+                            }
+                            checkbox.disabled = true;
+                            checkbox.style.cursor = 'not-allowed';
+                        });
+                    }, 100);
+                }
+                
+                // Update header
+                document.getElementById('formTitle').textContent = `Section ${formData.section} (PENDING COUNCIL - Complete Council Approval)`;
+                
+                let infoHTML = `<strong>Section:</strong> ${formData.section}`;
+                if (formData.equipment_name || formData.equipment) {
+                    infoHTML += ` | <strong>Equipment:</strong> ${formData.equipment_name || formData.equipment}`;
+                }
+                document.getElementById('sectionInfo').innerHTML = infoHTML;
+                
+                // Show form and hide welcome message
+                document.getElementById('noFormSelected').style.display = 'none';
+                document.getElementById('formContainer').style.display = 'block';
+                
+            } catch (error) {
+                console.error('Error loading council form:', error);
+                showError('Error loading council form: ' + error.message);
+            }
+        }
+
         // Switch between All Forms and Pending Forms
         function switchTab(tab) {
             const allFormsList = document.getElementById('formList');
-            const pendingFormsList = document.getElementById('pendingFormList');
+            const pendingSupervisorList = document.getElementById('pendingSupervisorList');
+            const pendingCouncilList = document.getElementById('pendingCouncilList');
             const tabAllBtn = document.getElementById('tabAllForms');
-            const tabPendingBtn = document.getElementById('tabPendingForms');
+            const tabPendingSupervisorBtn = document.getElementById('tabPendingSupervisor');
+            const tabPendingCouncilBtn = document.getElementById('tabPendingCouncil');
             
+            // Hide all lists
+            allFormsList.style.display = 'none';
+            pendingSupervisorList.style.display = 'none';
+            pendingCouncilList.style.display = 'none';
+            
+            // Remove active from all tabs
+            tabAllBtn.classList.remove('active');
+            tabPendingSupervisorBtn.classList.remove('active');
+            tabPendingCouncilBtn.classList.remove('active');
+            
+            // Show selected tab
             if (tab === 'all') {
                 allFormsList.style.display = 'block';
-                pendingFormsList.style.display = 'none';
                 tabAllBtn.classList.add('active');
-                tabPendingBtn.classList.remove('active');
                 document.getElementById('searchForms').style.display = 'block';
-            } else {
-                allFormsList.style.display = 'none';
-                pendingFormsList.style.display = 'block';
-                tabAllBtn.classList.remove('active');
-                tabPendingBtn.classList.add('active');
+            } else if (tab === 'pending-supervisor') {
+                pendingSupervisorList.style.display = 'block';
+                tabPendingSupervisorBtn.classList.add('active');
                 document.getElementById('searchForms').style.display = 'none';
+                loadPendingForms(); // Refresh the list
+            } else if (tab === 'pending-council') {
+                pendingCouncilList.style.display = 'block';
+                tabPendingCouncilBtn.classList.add('active');
+                document.getElementById('searchForms').style.display = 'none';
+                loadCouncilForms(); // Refresh the list
             }
         }
 
@@ -1788,6 +2033,41 @@
             }
         }
 
+        // Enable/disable council section
+        function setCouncilState(isEnabled) {
+            const councilBox = document.getElementById('councilBox');
+            const councilInputs = councilBox.querySelectorAll('input');
+            const councilCommentsField = document.getElementById('councilComments');
+            
+            if (isEnabled) {
+                councilBox.classList.remove('disabled');
+                councilBox.classList.add('active');
+                councilInputs.forEach(input => {
+                    input.disabled = false;
+                });
+                // Enable council comments
+                if (councilCommentsField) {
+                    councilCommentsField.disabled = false;
+                    councilCommentsField.style.background = 'white';
+                    councilCommentsField.style.cursor = 'text';
+                    councilCommentsField.style.opacity = '1';
+                }
+            } else {
+                councilBox.classList.add('disabled');
+                councilBox.classList.remove('active');
+                councilInputs.forEach(input => {
+                    input.disabled = true;
+                });
+                // Disable council comments
+                if (councilCommentsField) {
+                    councilCommentsField.disabled = true;
+                    councilCommentsField.style.background = '#f0f0f0';
+                    councilCommentsField.style.cursor = 'not-allowed';
+                    councilCommentsField.style.opacity = '0.7';
+                }
+            }
+        }
+
         // Make engineer section read-only (for pending forms)
         function setEngineerSectionReadOnly(isReadOnly) {
             // Disable all fields that the engineer would fill (inspection date, inspector, comments, tasks)
@@ -1888,6 +2168,24 @@
                     supervisorCommentsField.style.opacity = '0.7';
                 }
             }
+            
+            // Handle council comments separately - greyed out during normal use, editable when council form open
+            const councilCommentsField = document.getElementById('councilComments');
+            if (councilCommentsField) {
+                if (isReadOnly && isPendingCouncilFormOpen) {
+                    // During council form (council review): council comments should be ENABLED
+                    councilCommentsField.disabled = false;
+                    councilCommentsField.style.background = 'white';
+                    councilCommentsField.style.cursor = 'text';
+                    councilCommentsField.style.opacity = '1';
+                } else {
+                    // All other cases: council comments disabled
+                    councilCommentsField.disabled = true;
+                    councilCommentsField.style.background = '#f0f0f0';
+                    councilCommentsField.style.cursor = 'not-allowed';
+                    councilCommentsField.style.opacity = '0.7';
+                }
+            }
         }
 
         // Show supervisor password modal
@@ -1946,6 +2244,57 @@
             } else {
                 showError('❌ Incorrect password');
                 document.getElementById('supervisorPassword').value = '';
+            }
+        }
+
+        // ============ COUNCIL PASSWORD MODAL FUNCTIONS ============
+
+        // Show password modal for council form access
+        function showCouncilPasswordModal() {
+            const modal = document.getElementById('councilPasswordModal');
+            modal.classList.add('active');
+            document.getElementById('councilPassword').focus();
+        }
+
+        // Close council modal
+        function closeCouncilModal() {
+            const modal = document.getElementById('councilPasswordModal');
+            modal.classList.remove('active');
+            document.getElementById('councilPassword').value = '';
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('councilPasswordModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeCouncilModal();
+            }
+        });
+
+        // Allow Enter key to submit password
+        document.getElementById('councilPassword').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                validateCouncilPassword();
+            }
+        });
+
+        // Validate council password
+        function validateCouncilPassword() {
+            const password = document.getElementById('councilPassword').value;
+            const correctPassword = 'Sice2026!';
+            
+            if (password === correctPassword) {
+                // Password correct - unlock council access and load form
+                closeCouncilModal();
+                isPendingCouncilFormOpen = true;
+                setCouncilState(true);
+                updateFormStatusDisplay();
+                
+                // Now load the pending council form data
+                loadPendingCouncilFormDataAfterPassword();
+                showSuccess('✓ Council access granted');
+            } else {
+                showError('❌ Incorrect password');
+                document.getElementById('councilPassword').value = '';
             }
         }
 
@@ -2274,14 +2623,20 @@
                 });
             }
 
-            // Determine form status
+            // Determine form status based on who has signed
             const supervisorName = document.getElementById('supervisorName').value;
             const supervisorInitials = document.getElementById('supervisorInitials').value;
             const supervisorDate = document.getElementById('supervisorDate').value;
+            const councilName = document.getElementById('councilName').value;
+            const councilInitials = document.getElementById('councilInitials').value;
+            const councilDate = document.getElementById('councilDate').value;
             
-            let formStatus = 'pending'; // Default: Engineer only signed
-            if (supervisorName && supervisorInitials && supervisorDate) {
-                formStatus = 'complete'; // Both signed
+            let formStatus = 'pending_supervisor'; // Default: Engineer only signed
+            if (supervisorName && supervisorInitials && supervisorDate && !councilName) {
+                formStatus = 'pending_council'; // Engineer + Supervisor signed, awaiting council
+            }
+            if (councilName && councilInitials && councilDate) {
+                formStatus = 'complete'; // All three signed
             }
             
             // Collect all form data
@@ -2293,19 +2648,23 @@
                 frequencies: form.frequencies,
                 inspectionDate: document.getElementById('inspectionDate').value,
                 inspector: document.getElementById('inspector').value,
-                comments: document.getElementById('engineerComments').value || document.getElementById('comments').value,  // Use new field, fallback to legacy
+                comments: document.getElementById('engineerComments').value || document.getElementById('comments').value,
                 engineer_comments: document.getElementById('engineerComments').value,
                 supervisor_comments: document.getElementById('supervisorComments').value,
+                council_comments: document.getElementById('councilComments').value,
                 tasks: tasks,
-                edp: window.selectedEDP || null,  // Add selected EDP if matrix form
-                status: formStatus,  // 'pending' or 'complete'
+                edp: window.selectedEDP || null,
+                status: formStatus,
                 signatures: {
                     engineer: engineerName,
                     engineerInitials: engineerInitials,
                     engineerDate: engineerDate,
                     supervisor: supervisorName,
                     supervisorInitials: supervisorInitials,
-                    supervisorDate: supervisorDate
+                    supervisorDate: supervisorDate,
+                    council: councilName,
+                    councilInitials: councilInitials,
+                    councilDate: councilDate
                 },
                 photos: photos,
                 timestamp: new Date().toISOString()
@@ -2336,8 +2695,10 @@
 
                 const result = await response.json();
                 if (result.success) {
-                    if (formStatus === 'pending') {
-                        showSuccess(`✓ Form saved as PENDING! Ready for Supervisor signature. Filename: ${result.filename}`);
+                    if (formStatus === 'pending_supervisor') {
+                        showSuccess(`✓ Form saved as PENDING! Ready for Supervisor. Filename: ${result.filename}`);
+                    } else if (formStatus === 'pending_council') {
+                        showSuccess(`✓ Form awaiting Council Approval! Filename: ${result.filename}`);
                     } else {
                         showSuccess(`✓ Form COMPLETED and saved! Filename: ${result.filename}`);
                     }

@@ -391,7 +391,7 @@
 
         <div class="controls">
             <div class="search-box">
-                <input type="text" id="searchInput" placeholder="Search by section, engineer, or supervisor...">
+                <input type="text" id="searchInput" placeholder="Search by section, engineer, supervisor, or council...">
             </div>
             <button class="btn-refresh" onclick="loadSavedForms()">Refresh</button>
         </div>
@@ -403,6 +403,7 @@
                         <th>Section</th>
                         <th>Engineer</th>
                         <th>Supervisor</th>
+                        <th>Council</th>
                         <th>Date</th>
                         <th>File</th>
                         <th>Actions</th>
@@ -410,7 +411,7 @@
                 </thead>
                 <tbody id="formsBody">
                     <tr>
-                        <td colspan="6" class="loading">
+                        <td colspan="7" class="loading">
                             <div class="spinner"></div>
                             Loading saved forms...
                         </td>
@@ -457,7 +458,7 @@
             if (forms.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="6" class="empty-state">
+                        <td colspan="7" class="empty-state">
                             <p>No saved forms yet</p>
                         </td>
                     </tr>
@@ -474,6 +475,7 @@
                     <td><span class="section-badge">${form.section}</span></td>
                     <td>${form.engineer || 'N/A'}</td>
                     <td>${form.supervisor || 'N/A'}</td>
+                    <td>${form.council || 'N/A'}</td>
                     <td>${dateStr}</td>
                     <td><small>${form.filename}</small></td>
                     <td>
