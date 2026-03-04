@@ -1403,11 +1403,12 @@
         // Load a pending form for supervisor to complete
         async function loadPendingFormForCompletion(formId, filename) {
             try {
-                const response = await fetch(`/api/load-pending-form/${formId}`);
-                const result = await response.json();
+                // Try loading by filename first (more reliable for filesystem backend)
+                let response = await fetch(`/api/load-pending-form/${formId}`);
+                let result = await response.json();
                 
                 if (!result.success) {
-                    showError('Could not load pending form');
+                    showError('Could not load pending form: ' + result.message);
                     return;
                 }
                 

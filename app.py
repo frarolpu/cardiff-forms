@@ -337,6 +337,18 @@ def save_form():
         pdf_buffer = create_pdf(data)
         pdf_data = pdf_buffer.getvalue()
         
+        # Always save JSON file for form recovery (works with both DB and filesystem)
+        try:
+            saved_forms_dir = Path('saved_forms')
+            saved_forms_dir.mkdir(exist_ok=True)
+            json_filename = filename.replace('.pdf', '.json')
+            json_path = saved_forms_dir / json_filename
+            with open(json_path, 'w') as f:
+                json.dump(data, f, indent=2)
+            log_error(f"Saved form data to: {json_path}")
+        except Exception as json_err:
+            log_error(f"Warning: Could not save JSON file: {str(json_err)}")
+        
         # Try to save to database first if configured
         if USE_DATABASE:
             conn = get_db_connection()
@@ -545,13 +557,29 @@ def load_pending_form(form_id):
                             'filename': row['filename'],
                             'status': row['status']
                         }), 200
-                    else:
-                        return jsonify({
-                            'success': False,
-                            'message': 'Form not found or not pending'
-                        }), 404
                 except Exception as db_err:
                     log_error(f"Database query error: {str(db_err)}")
+        
+        # Fallback: load from filesystem using form_id as the JSON filename
+        try:
+            saved_forms_dir = Path('saved_forms')
+            
+            # Search for any PENDING JSON file
+            for json_file in saved_forms_dir.glob('*_PENDING.json'):
+                try:
+                    with open(json_file, 'r') as f:
+                        form_data = json.load(f)
+                    return jsonify({
+                        'success': True,
+                        'data': form_data,
+                        'filename': json_file.stem.replace('_PENDING', '') + '.pdf',
+                        'status': 'pending'
+                    }), 200
+                except Exception as read_err:
+                    log_error(f"Error reading {json_file}: {read_err}")
+                    continue
+        except Exception as fs_err:
+            log_error(f"Filesystem fallback error: {str(fs_err)}")
         
         return jsonify({
             'success': False,
