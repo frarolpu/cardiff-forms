@@ -1440,6 +1440,9 @@
             
             // Set initial supervisor state (disabled for new forms)
             setSupervisorState(isPendingFormOpen);
+            
+            // Setup listeners for supervisor inputs
+            setupSupervisorInputListeners();
         }
 
         // Update form status badge
@@ -1503,16 +1506,19 @@
             }
         }
 
-        // Handle Supervisor box click to unlock
-        document.addEventListener('DOMContentLoaded', function() {
-            const supervisorBox = document.getElementById('supervisorBox');
-            supervisorBox.addEventListener('click', function(e) {
-                if (!isPendingFormOpen && e.target.tagName === 'INPUT') {
-                    e.preventDefault();
-                    showSupervisorModal();
-                }
+        // Handle Supervisor box input focus to unlock
+        function setupSupervisorInputListeners() {
+            const supervisorInputs = document.getElementById('supervisorBox').querySelectorAll('input');
+            supervisorInputs.forEach(input => {
+                input.addEventListener('focus', function(e) {
+                    if (!isPendingFormOpen) {
+                        e.preventDefault();
+                        e.target.blur();
+                        showSupervisorModal();
+                    }
+                });
             });
-        });
+        }
 
         function updateTasksForEDP(edpId) {
             if (!edpId) {
