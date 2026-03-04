@@ -391,7 +391,7 @@
 
         <div class="controls">
             <div class="search-box">
-                <input type="text" id="searchInput" placeholder="Search by section, equipment, or inspector...">
+                <input type="text" id="searchInput" placeholder="Search by section, engineer, or supervisor...">
             </div>
             <button class="btn-refresh" onclick="loadSavedForms()">Refresh</button>
         </div>
@@ -401,8 +401,8 @@
                 <thead>
                     <tr>
                         <th>Section</th>
-                        <th>Equipment/System</th>
-                        <th>Inspector</th>
+                        <th>Engineer</th>
+                        <th>Supervisor</th>
                         <th>Date</th>
                         <th>File</th>
                         <th>Actions</th>
@@ -472,8 +472,8 @@
                 return `
                 <tr>
                     <td><span class="section-badge">${form.section}</span></td>
-                    <td><span class="equipment-badge">${form.equipment || 'N/A'}</span></td>
-                    <td>${form.inspector || 'N/A'}</td>
+                    <td>${form.engineer || 'N/A'}</td>
+                    <td>${form.supervisor || 'N/A'}</td>
                     <td>${dateStr}</td>
                     <td><small>${form.filename}</small></td>
                     <td>
@@ -557,8 +557,8 @@
             const query = e.target.value.toLowerCase();
             const filtered = allSavedForms.filter(form =>
                 form.section.toLowerCase().includes(query) ||
-                form.equipment?.toLowerCase().includes(query) ||
-                form.inspector?.toLowerCase().includes(query)
+                form.engineer?.toLowerCase().includes(query) ||
+                form.supervisor?.toLowerCase().includes(query)
             );
             displayForms(filtered);
         });

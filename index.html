@@ -1232,9 +1232,19 @@
                             </div>
 
                             <!-- COMMENTS -->
+                            <!-- COMMENTS - SEPARATE BY ROLE -->
                             <div class="form-section">
                                 <h2>Comments and Observations</h2>
                                 <div class="form-group">
+                                    <label>Maintenance Engineer Comments</label>
+                                    <textarea id="engineerComments" placeholder="Write any comments, issues or findings here..."></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label>Contractor Supervisor Comments</label>
+                                    <textarea id="supervisorComments" placeholder="Supervisor notes and observations..."></textarea>
+                                </div>
+                                <!-- Legacy comments field for backward compatibility -->
+                                <div class="form-group" style="display: none;">
                                     <label>Comments</label>
                                     <textarea id="comments" placeholder="Write any comments, issues or findings here..."></textarea>
                                 </div>
@@ -1402,7 +1412,23 @@
 
         // Load a pending form for supervisor to complete
         async function loadPendingFormForCompletion(formId, filename) {
+            // First, require password BEFORE loading the form
+            window.pendingFormToLoad = { formId, filename };
+            showSupervisorPasswordModal();
+        }
+
+        // Show password modal for pending form access
+        function showSupervisorPasswordModal() {
+            const modal = document.getElementById('passwordModal');
+            modal.classList.add('active');
+            document.getElementById('supervisorPassword').focus();
+        }
+
+        // After password is validated, load the actual form data
+        async function loadPendingFormDataAfterPassword() {
             try {
+                const { formId, filename } = window.pendingFormToLoad;
+                
                 // Try loading by filename first (more reliable for filesystem backend)
                 let response = await fetch(`/api/load-pending-form/${formId}`);
                 let result = await response.json();
@@ -1414,52 +1440,112 @@
                 
                 const formData = result.data;
                 
-                // Restore all form data
-                document.getElementById('inspectionDate').value = formData.inspectionDate || '';
-                document.getElementById('inspector').value = formData.inspector || '';
-                document.getElementById('comments').value = formData.comments || '';
+                // Dynamically populate all form fields with matching data
+                const fieldMappings = {
+                    'inspectionDate': 'inspectionDate',
+                    'inspector': 'inspector',
+                    'engineerComments': ['comments', 'engineer_comments'],
+                    'comments': 'comments',  // Legacy fallback
+                    'engineerName': ['signatures.engineer', 'engineer_name', 'engineerName'],
+                    'engineerInitials': ['signatures.engineerInitials', 'engineer_initials', 'engineerInitials'],
+                    'engineerDate': ['signatures.engineerDate', 'engineer_date', 'engineerDate'],
+                    'section': 'section',
+                    'selector': 'selector',
+                    'drg_ref': 'drg_ref',
+                    'equipment_name': 'equipment_name',
+                    'site': 'site'
+                };
                 
-                // Restore engineer signature (read-only)
-                document.getElementById('engineerName').value = formData.signatures.engineer || '';
-                document.getElementById('engineerInitials').value = formData.signatures.engineerInitials || '';
-                document.getElementById('engineerDate').value = formData.signatures.engineerDate || '';
+                // Populate fields with data
+                Object.entries(fieldMappings).forEach(([elementId, dataKeys]) => {
+                    const element = document.getElementById(elementId);
+                    if (element) {
+                        const keys = Array.isArray(dataKeys) ? dataKeys : [dataKeys];
+                        let value = '';
+                        
+                        // Try each possible key mapping
+                        for (const key of keys) {
+                            if (key.includes('.')) {
+                                // Handle nested properties like 'signatures.engineer'
+                                const parts = key.split('.');
+                                let obj = formData;
+                                for (const part of parts) {
+                                    obj = obj?.[part];
+                                }
+                                value = obj || '';
+                            } else {
+                                value = formData[key] || '';
+                            }
+                            if (value) break;
+                        }
+                        element.value = value;
+                    }
+                });
                 
                 // Clear supervisor fields (to be filled by supervisor)
-                document.getElementById('supervisorName').value = '';
-                document.getElementById('supervisorInitials').value = '';
-                document.getElementById('supervisorDate').value = new Date().toISOString().split('T')[0];
+                const supervisorFields = ['supervisorName', 'supervisorInitials', 'supervisorDate', 'supervisorComments'];
+                supervisorFields.forEach(fieldId => {
+                    const element = document.getElementById(fieldId);
+                    if (element) {
+                        if (fieldId === 'supervisorDate') {
+                            element.value = new Date().toISOString().split('T')[0];
+                        } else {
+                            element.value = '';
+                        }
+                    }
+                });
                 
                 // Set form as pending
                 isPendingFormOpen = true;
                 formStatus = 'pending';
                 window.currentFormPendingId = formId; // Store for save reference
                 window.currentFormFilename = filename;
+                window.pendingFormData = formData; // Store entire form data for save
+                window.pendingFormTasks = formData.tasks; // Store original tasks to preserve them during save
                 
-                // Update UI
-                updateFormStatusDisplay();
-                setSupervisorState(false); // Start with supervisor locked
+                // Protect engineer section (supervisor is already unlocked from password)
                 setEngineerSectionReadOnly(true); // Protect engineer section
-                setupSupervisorInputListeners();
                 
-                // Load tasks
+                // Enable photo upload for supervisor to add additional photos if needed
+                const photoInput = document.getElementById('photoInput');
+                if (photoInput) {
+                    photoInput.disabled = false;
+                }
+                
+                // Load tasks and restore their completed states
                 if (formData.tasks) {
                     loadTasks(formData.tasks);
+                    
+                    // Restore task checkbox states after rendering
+                    setTimeout(() => {
+                        const taskList = document.getElementById('taskList');
+                        const checkboxes = taskList.querySelectorAll('input[type="checkbox"]');
+                        
+                        checkboxes.forEach((checkbox, index) => {
+                            if (formData.tasks[index] && formData.tasks[index].completed) {
+                                checkbox.checked = true;
+                            } else {
+                                checkbox.checked = false;
+                            }
+                            // Disable task checkboxes since engineer already completed them
+                            checkbox.disabled = true;
+                            checkbox.style.cursor = 'not-allowed';
+                        });
+                    }, 100);
                 }
                 
                 // Update header
                 document.getElementById('formTitle').textContent = `Section ${formData.section} (PENDING - Complete Supervisor Signature)`;
                 
                 let infoHTML = `<strong>Section:</strong> ${formData.section}`;
-                if (formData.equipment) {
-                    infoHTML += ` | <strong>Equipment:</strong> ${formData.equipment}`;
+                if (formData.equipment_name || formData.equipment) {
+                    infoHTML += ` | <strong>Equipment:</strong> ${formData.equipment_name || formData.equipment}`;
                 }
                 document.getElementById('sectionInfo').innerHTML = infoHTML;
                 
                 // Show form and hide welcome message
                 document.getElementById('noFormSelected').style.display = 'none';
                 document.getElementById('formContainer').style.display = 'block';
-                
-                showSuccess(`✓ Pending form loaded. Enter password to unlock supervisor section.`);
                 
             } catch (error) {
                 console.error('Error loading pending form:', error);
@@ -1671,6 +1757,7 @@
         function setSupervisorState(isEnabled) {
             const supervisorBox = document.getElementById('supervisorBox');
             const supervisorInputs = supervisorBox.querySelectorAll('input');
+            const supervisorCommentsField = document.getElementById('supervisorComments');
             
             if (isEnabled) {
                 supervisorBox.classList.remove('disabled');
@@ -1678,32 +1765,128 @@
                 supervisorInputs.forEach(input => {
                     input.disabled = false;
                 });
+                // Enable supervisor comments
+                if (supervisorCommentsField) {
+                    supervisorCommentsField.disabled = false;
+                    supervisorCommentsField.style.background = 'white';
+                    supervisorCommentsField.style.cursor = 'text';
+                    supervisorCommentsField.style.opacity = '1';
+                }
             } else {
                 supervisorBox.classList.add('disabled');
                 supervisorBox.classList.remove('active');
                 supervisorInputs.forEach(input => {
                     input.disabled = true;
                 });
+                // Disable supervisor comments
+                if (supervisorCommentsField) {
+                    supervisorCommentsField.disabled = true;
+                    supervisorCommentsField.style.background = '#fff9e6';
+                    supervisorCommentsField.style.cursor = 'not-allowed';
+                    supervisorCommentsField.style.opacity = '0.7';
+                }
             }
         }
 
         // Make engineer section read-only (for pending forms)
         function setEngineerSectionReadOnly(isReadOnly) {
-            const engineerBox = document.getElementById('engineerBox');
-            const engineerInputs = engineerBox.querySelectorAll('input');
+            // Disable all fields that the engineer would fill (inspection date, inspector, comments, tasks)
+            // NOTE: photoInput is NOT included - supervisor may add additional photos
+            const engineerFields = [
+                'inspectionDate', 
+                'inspector', 
+                'engineerComments',
+                'comments',
+                'edpSelector',
+                'engineerName',
+                'engineerInitials', 
+                'engineerDate'
+            ];
             
             if (isReadOnly) {
-                engineerInputs.forEach(input => {
-                    input.disabled = true;
-                    input.style.background = '#f0f0f0';
-                    input.style.cursor = 'not-allowed';
+                engineerFields.forEach(fieldId => {
+                    const element = document.getElementById(fieldId);
+                    if (element) {
+                        element.disabled = true;
+                        element.style.background = '#e8e8e8';
+                        element.style.cursor = 'not-allowed';
+                        element.style.opacity = '0.7';
+                    }
                 });
+                
+                // Also disable engineer signature box styling
+                const engineerBox = document.getElementById('engineerBox');
+                if (engineerBox) {
+                    engineerBox.style.opacity = '0.7';
+                    engineerBox.style.backgroundColor = '#f5f5f5';
+                }
+                
+                // Disable all task checkboxes
+                document.querySelectorAll('#taskList input[type="checkbox"]').forEach(checkbox => {
+                    checkbox.disabled = true;
+                    checkbox.style.cursor = 'not-allowed';
+                });
+                
+                // Keep photo input ENABLED for supervisor to add more photos if needed
+                const photoInput = document.getElementById('photoInput');
+                if (photoInput) {
+                    photoInput.disabled = false;
+                    photoInput.style.cursor = 'pointer';
+                }
             } else {
-                engineerInputs.forEach(input => {
-                    input.disabled = false;
-                    input.style.background = 'white';
-                    input.style.cursor = 'text';
+                engineerFields.forEach(fieldId => {
+                    const element = document.getElementById(fieldId);
+                    if (element) {
+                        element.disabled = false;
+                        element.style.background = 'white';
+                        element.style.cursor = element.tagName === 'TEXTAREA' ? 'text' : 'auto';
+                        element.style.opacity = '1';
+                    }
                 });
+                
+                // Restore engineer signature box styling
+                const engineerBox = document.getElementById('engineerBox');
+                if (engineerBox) {
+                    engineerBox.style.opacity = '1';
+                    engineerBox.style.backgroundColor = 'white';
+                }
+                
+                // Enable all task checkboxes
+                document.querySelectorAll('#taskList input[type="checkbox"]').forEach(checkbox => {
+                    checkbox.disabled = false;
+                    checkbox.style.cursor = 'pointer';
+                });
+                
+                // Ensure photo input is enabled for engineer
+                const photoInput = document.getElementById('photoInput');
+                if (photoInput) {
+                    photoInput.disabled = false;
+                    photoInput.style.cursor = 'pointer';
+                }
+            }
+            
+            // Handle supervisor comments separately - greyed out during new form, editable when pending
+            const supervisorCommentsField = document.getElementById('supervisorComments');
+            if (supervisorCommentsField) {
+                if (isReadOnly && !isPendingFormOpen) {
+                    // During new form creation: supervisor comments should be greyed out
+                    supervisorCommentsField.disabled = true;
+                    supervisorCommentsField.style.background = '#f0f0f0';
+                    supervisorCommentsField.style.cursor = 'not-allowed';
+                    supervisorCommentsField.style.opacity = '0.7';
+                } else if (isReadOnly && isPendingFormOpen) {
+                    // During pending form (supervisor review): supervisor comments should be ENABLED
+                    supervisorCommentsField.disabled = false;
+                    supervisorCommentsField.style.background = 'white';
+                    supervisorCommentsField.style.cursor = 'text';
+                    supervisorCommentsField.style.opacity = '1';
+                } else {
+                    // Not read-only (engineer creating form): supervisor comments disabled
+                    supervisorCommentsField.disabled = true;
+                    supervisorCommentsField.style.background = '#f0f0f0';
+                    supervisorCommentsField.style.cursor = 'not-allowed';
+                    supervisorCommentsField.style.opacity = '0.7';
+                }
             }
         }
 
@@ -1751,11 +1934,15 @@
             const correctPassword = 'Sice2026!';
             
             if (password === correctPassword) {
-                setSupervisorState(true);
+                // Password correct - unlock supervisor access and load form
                 closeSupervisorModal();
                 isPendingFormOpen = true;
+                setSupervisorState(true);
                 updateFormStatusDisplay();
-                showSuccess('✓ Supervisor access unlocked');
+                
+                // Now load the pending form data
+                loadPendingFormDataAfterPassword();
+                showSuccess('✓ Supervisor access granted');
             } else {
                 showError('❌ Incorrect password');
                 document.getElementById('supervisorPassword').value = '';
@@ -1764,16 +1951,30 @@
 
         // Handle Supervisor box input focus to unlock
         function setupSupervisorInputListeners() {
-            const supervisorInputs = document.getElementById('supervisorBox').querySelectorAll('input');
-            supervisorInputs.forEach(input => {
-                input.addEventListener('focus', function(e) {
+            const supervisorBox = document.getElementById('supervisorBox');
+            if (!supervisorBox) return;
+            
+            // Include both input and textarea elements
+            const supervisorElements = supervisorBox.querySelectorAll('input, textarea');
+            supervisorElements.forEach(element => {
+                element.addEventListener('focus', function(e) {
                     if (!isPendingFormOpen) {
-                        e.preventDefault();
-                        e.target.blur();
                         showSupervisorModal();
+                        this.blur();  // Remove focus to prevent text entry
                     }
                 });
             });
+            
+            // Also set up supervisor comments field to require unlock
+            const supervisorCommentsField = document.getElementById('supervisorComments');
+            if (supervisorCommentsField) {
+                supervisorCommentsField.addEventListener('focus', function(e) {
+                    if (!isPendingFormOpen) {
+                        showSupervisorModal();
+                        this.blur();  // Remove focus to prevent text entry
+                    }
+                });
+            }
         }
 
         function updateTasksForEDP(edpId) {
@@ -1805,14 +2006,24 @@
             const taskList = document.getElementById('taskList');
             taskList.innerHTML = '';
 
-            tasks.forEach(task => {
+            if (!tasks || tasks.length === 0) {
+                taskList.innerHTML = '<p style="color: #999; padding: 20px; text-align: center;">No tasks available</p>';
+                return;
+            }
+
+            tasks.forEach((task, index) => {
                 const taskItem = document.createElement('div');
                 taskItem.className = 'task-item';
+                
+                // Handle different task formats (step can be number or full description)
+                const taskDescription = task.description || task.step;
+                const taskNumber = task.step && !isNaN(task.step) ? task.step : (index + 1);
+                
                 taskItem.innerHTML = `
-                    <input type="checkbox" class="task-checkbox" data-step="${task.step}">
+                    <input type="checkbox" class="task-checkbox" data-step="${taskNumber}">
                     <div class="task-text">
-                        <span class="task-number">${task.step}.</span>
-                        <span class="task-description">${task.description}</span>
+                        <span class="task-number">${taskNumber}.</span>
+                        <span class="task-description">${taskDescription}</span>
                     </div>
                 `;
                 taskList.appendChild(taskItem);
@@ -1986,27 +2197,47 @@
         }
 
         async function saveFormToRepository() {
-            if (currentFormIndex === -1) {
+            // Check if we're saving a pending form (supervisor completing it) or a new form (engineer creating it)
+            if (!isPendingFormOpen && currentFormIndex === -1) {
                 showError('No form selected');
                 return;
             }
 
-            const cleanedForms = allForms.filter(f => f.tasks.length > 0);
-            const form = cleanedForms[currentFormIndex];
+            let form;
+            let isCompletingPending = false;
             
-            // Validate matrix forms
-            if (form.is_matrix && !window.selectedEDP) {
-                // Determine selector type for error message
-                const firstId = window.currentForm.edps[0].id;
-                let selectorLabel = 'EDP';
-                if (firstId.startsWith('EP-')) selectorLabel = 'EP';
-                else if (firstId.startsWith('VP-')) selectorLabel = 'VP';
-                else if (firstId.startsWith('FAN-')) selectorLabel = 'FAN ID';
-                else if (firstId.startsWith('EB-') || firstId.startsWith('WB-') || 
-                         firstId.startsWith('CC-') || firstId.startsWith('Leck-')) 
-                    selectorLabel = 'Sign';
-                showError(`Please select an ${selectorLabel} before saving`);
-                return;
+            if (isPendingFormOpen) {
+                // We're completing a pending form - use the stored form data
+                isCompletingPending = true;
+                form = window.pendingFormData || {
+                    section: 'Unknown',
+                    equipment: 'Unknown',
+                    drawing_ref: '',
+                    locations: [],
+                    frequencies: [],
+                    tasks: [],
+                    is_matrix: false,
+                    edp: null
+                };
+            } else {
+                // We're creating a new form (engineer filling it) - use selected form
+                const cleanedForms = allForms.filter(f => f.tasks.length > 0);
+                form = cleanedForms[currentFormIndex];
+                
+                // Validate matrix forms
+                if (form.is_matrix && !window.selectedEDP) {
+                    // Determine selector type for error message
+                    const firstId = window.currentForm.edps[0].id;
+                    let selectorLabel = 'EDP';
+                    if (firstId.startsWith('EP-')) selectorLabel = 'EP';
+                    else if (firstId.startsWith('VP-')) selectorLabel = 'VP';
+                    else if (firstId.startsWith('FAN-')) selectorLabel = 'FAN ID';
+                    else if (firstId.startsWith('EB-') || firstId.startsWith('WB-') || 
+                             firstId.startsWith('CC-') || firstId.startsWith('Leck-')) 
+                        selectorLabel = 'Sign';
+                    showError(`Please select an ${selectorLabel} before saving`);
+                    return;
+                }
             }
 
             // Validate that Engineer has signed
@@ -2020,15 +2251,28 @@
             }
             
             // Collect task completions
-            const tasks = [];
-            document.querySelectorAll('.task-checkbox').forEach(checkbox => {
-                const taskItem = checkbox.closest('.task-item');
-                const description = taskItem.querySelector('.task-description').textContent;
-                tasks.push({
-                    step: description,
-                    completed: checkbox.checked
+            let tasks = [];
+            
+            if (isPendingFormOpen) {
+                // For pending forms, PRESERVE the original tasks from the engineer
+                // These are stored in the form data that was loaded
+                // Just re-collect the checkbox states in case supervisor viewed them
+                document.querySelectorAll('.task-checkbox').forEach(checkbox => {
+                    checkbox.disabled = true; // Ensure they stay disabled
                 });
-            });
+                // Use the tasks that were loaded from the API
+                tasks = window.pendingFormTasks || [];
+            } else {
+                // For new forms, collect task completions from checkboxes
+                document.querySelectorAll('.task-checkbox').forEach(checkbox => {
+                    const taskItem = checkbox.closest('.task-item');
+                    const description = taskItem.querySelector('.task-description').textContent;
+                    tasks.push({
+                        step: description,
+                        completed: checkbox.checked
+                    });
+                });
+            }
 
             // Determine form status
             const supervisorName = document.getElementById('supervisorName').value;
@@ -2049,7 +2293,9 @@
                 frequencies: form.frequencies,
                 inspectionDate: document.getElementById('inspectionDate').value,
                 inspector: document.getElementById('inspector').value,
-                comments: document.getElementById('comments').value,
+                comments: document.getElementById('engineerComments').value || document.getElementById('comments').value,  // Use new field, fallback to legacy
+                engineer_comments: document.getElementById('engineerComments').value,
+                supervisor_comments: document.getElementById('supervisorComments').value,
                 tasks: tasks,
                 edp: window.selectedEDP || null,  // Add selected EDP if matrix form
                 status: formStatus,  // 'pending' or 'complete'

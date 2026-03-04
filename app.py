@@ -201,14 +201,30 @@ def create_pdf(form_data):
             
             pdf.ln(1)
         
-        # Comments
-        if form_data.get('comments'):
-            pdf.set_font("Arial", "B", 12)
-            pdf.cell(0, 10, "Comments", 0, 1)
-            pdf.set_font("Arial", "", 9)
-            comments = form_data.get('comments', '')[:300]
-            pdf.multi_cell(0, 7, comments)
+        # Comments - Engineer and Supervisor sections
+        engineer_comments = form_data.get('engineer_comments') or form_data.get('comments', '')
+        supervisor_comments = form_data.get('supervisor_comments', '')
+        
+        if engineer_comments or supervisor_comments:
             pdf.ln(3)
+            
+            # Engineer Comments
+            if engineer_comments:
+                pdf.set_font("Arial", "B", 12)
+                pdf.cell(0, 10, "Maintenance Engineer Comments", 0, 1)
+                pdf.set_font("Arial", "", 9)
+                eng_comments_text = str(engineer_comments)[:300]
+                pdf.multi_cell(0, 7, eng_comments_text)
+                pdf.ln(3)
+            
+            # Supervisor Comments
+            if supervisor_comments:
+                pdf.set_font("Arial", "B", 12)
+                pdf.cell(0, 10, "Contractor Supervisor Comments", 0, 1)
+                pdf.set_font("Arial", "", 9)
+                sup_comments_text = str(supervisor_comments)[:300]
+                pdf.multi_cell(0, 7, sup_comments_text)
+                pdf.ln(3)
         
         # Photos section
         photos = form_data.get('photos', [])
@@ -349,6 +365,17 @@ def save_form():
         except Exception as json_err:
             log_error(f"Warning: Could not save JSON file: {str(json_err)}")
         
+        # If form is being completed, delete the old PENDING version
+        if status == 'complete':
+            try:
+                saved_forms_dir = Path('saved_forms')
+                # Delete PENDING PDF and JSON files for this section
+                for pending_file in saved_forms_dir.glob(f'{section}_*_PENDING.*'):
+                    pending_file.unlink()
+                    log_error(f"Deleted interim PENDING form: {pending_file.name}")
+            except Exception as cleanup_err:
+                log_error(f"Warning: Could not delete PENDING files: {str(cleanup_err)}")
+        
         # Try to save to database first if configured
         if USE_DATABASE:
             conn = get_db_connection()
@@ -419,20 +446,33 @@ def get_saved_forms():
                 try:
                     cursor = conn.cursor(cursor_factory=RealDictCursor)
                     cursor.execute(
-                        'SELECT id, filename, section, created_at FROM saved_forms ORDER BY created_at DESC'
+                        'SELECT id, filename, section, created_at, form_data FROM saved_forms ORDER BY created_at DESC'
                     )
                     rows = cursor.fetchall()
                     cursor.close()
                     conn.close()
                     
                     for row in rows:
+                        # Extract engineer and supervisor names from form_data JSON
+                        engineer_name = 'N/A'
+                        supervisor_name = 'N/A'
+                        
+                        if row['form_data']:
+                            try:
+                                form_data = json.loads(row['form_data']) if isinstance(row['form_data'], str) else row['form_data']
+                                if 'signatures' in form_data:
+                                    engineer_name = form_data['signatures'].get('engineer', 'N/A')
+                                    supervisor_name = form_data['signatures'].get('supervisor', 'N/A')
+                            except:
+                                pass
+                        
                         saved_forms.append({
                             'id': row['id'],
                             'filename': row['filename'],
                             'section': row['section'],
                             'created_at': row['created_at'].isoformat() if row['created_at'] else None,
-                            'equipment': 'N/A',
-                            'inspector': 'N/A'
+                            'engineer': engineer_name,
+                            'supervisor': supervisor_name
                         })
                     
                     return jsonify({
@@ -447,13 +487,28 @@ def get_saved_forms():
         saved_forms_dir = Path('saved_forms')
         if saved_forms_dir.exists():
             for idx, pdf_file in enumerate(sorted(saved_forms_dir.glob('*.pdf'), reverse=True)):
+                # Try to load JSON data for engineer/supervisor names
+                engineer_name = 'N/A'
+                supervisor_name = 'N/A'
+                
+                json_file = saved_forms_dir / pdf_file.name.replace('.pdf', '.json')
+                if json_file.exists():
+                    try:
+                        with open(json_file, 'r') as f:
+                            form_data = json.load(f)
+                            if 'signatures' in form_data:
+                                engineer_name = form_data['signatures'].get('engineer', 'N/A')
+                                supervisor_name = form_data['signatures'].get('supervisor', 'N/A')
+                    except:
+                        pass
+                
                 saved_forms.append({
                     'id': idx + 1,
                     'filename': pdf_file.name,
                     'section': pdf_file.stem.split('_')[0] if '_' in pdf_file.stem else 'N/A',
                     'created_at': datetime.fromtimestamp(pdf_file.stat().st_mtime).isoformat(),
-                    'equipment': 'N/A',
-                    'inspector': 'N/A'
+                    'engineer': engineer_name,
+                    'supervisor': supervisor_name
                 })
         
         return jsonify({
