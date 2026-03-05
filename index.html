@@ -1164,6 +1164,10 @@
                     <span>Pending Council</span>
                     <span id="pendingCouncilCount" style="display: none; margin-left: 4px; background: #a78bfa; padding: 2px 6px; border-radius: 12px; font-size: 10px;">0</span>
                 </button>
+                <button id="tabPausedReports" class="sidebar-tab" onclick="switchTab('paused')">
+                    <span>Paused Reports</span>
+                    <span id="pausedReportsCount" style="display: none; margin-left: 4px; background: #fbbf24; padding: 2px 6px; border-radius: 12px; font-size: 10px;">0</span>
+                </button>
             </div>
             
             <div class="sidebar-search">
@@ -1181,6 +1185,9 @@
             
             <!-- Pending council forms list (hidden by default) -->
             <ul class="form-list" id="pendingCouncilList" style="display: none;"></ul>
+            
+            <!-- Paused forms list (hidden by default) -->
+            <ul class="form-list" id="pausedFormsList" style="display: none;"></ul>
         </div>
 
         <!-- MAIN CONTENT -->
@@ -1272,17 +1279,30 @@
                                 </div>
                             </div>
 
-                            <!-- PHOTOS -->
+                            <!-- PHOTOS - BEFORE AND AFTER INSPECTION -->
                             <div class="form-section">
-                                <h2>Photos</h2>
+                                <h2>Inspection Photos</h2>
+                                
+                                <!-- BEFORE Inspection Photos -->
                                 <div class="form-group">
-                                    <label>Add Photos</label>
-                                    <div class="photo-upload" onclick="document.getElementById('photoInput').click()">
-                                        <p><strong>Click to add photos</strong></p>
-                                        <p class="info-text">or drag images here</p>
+                                    <label><strong>BEFORE Inspection Photos</strong></label>
+                                    <div class="photo-upload" onclick="document.getElementById('beforePhotoInput').click()" style="background: #fff3cd; border: 2px dashed #ffc107;">
+                                        <p><strong>Click to add BEFORE photos</strong></p>
+                                        <p class="info-text">Photos taken before maintenance work</p>
                                     </div>
-                                    <input type="file" id="photoInput" multiple accept="image/*">
-                                    <div class="photo-gallery" id="photoGallery"></div>
+                                    <input type="file" id="beforePhotoInput" multiple accept="image/*">
+                                    <div class="photo-gallery" id="beforePhotoGallery"></div>
+                                </div>
+                                
+                                <!-- AFTER Inspection Photos -->
+                                <div class="form-group">
+                                    <label><strong>AFTER Inspection Photos</strong></label>
+                                    <div class="photo-upload" onclick="document.getElementById('afterPhotoInput').click()" style="background: #d4edda; border: 2px dashed #28a745;">
+                                        <p><strong>Click to add AFTER photos</strong></p>
+                                        <p class="info-text">Photos taken after maintenance work completed</p>
+                                    </div>
+                                    <input type="file" id="afterPhotoInput" multiple accept="image/*">
+                                    <div class="photo-gallery" id="afterPhotoGallery"></div>
                                 </div>
                             </div>
 
@@ -1350,6 +1370,7 @@
                             <!-- ACTIONS -->
                             <div class="form-actions">
                                 <button type="button" class="btn btn-secondary" onclick="resetForm()">Clear</button>
+                                <button type="button" class="btn btn-secondary" id="pauseButton" onclick="pauseForm()" style="display: none;">Pause & Resume Later</button>
                                 <button type="button" class="btn btn-primary" onclick="saveFormToRepository()">Save</button>
                             </div>
                         </form>
@@ -1391,10 +1412,42 @@
         </div>
     </div>
 
+    <!-- PIN Modal for Resuming Paused Forms -->
+    <div class="modal-overlay" id="pausePINModal">
+        <div class="modal-content">
+            <h2>Report Paused</h2>
+            <p>Your report has been paused. Save this 4-digit PIN to resume later:</p>
+            <div class="pin-display">
+                <h3 id="pausePINCode" style="font-size: 36px; font-weight: bold; letter-spacing: 10px; text-align: center; background: #e8f0fe; padding: 20px; border-radius: 8px; font-family: monospace;">0000</h3>
+                <p style="text-align: center; font-size: 12px; color: #666; margin-top: 10px;">Save this PIN to access the report later</p>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-primary" onclick="closePINModal()">Done</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PIN Modal for Resuming Paused Forms -->
+    <div class="modal-overlay" id="resumeFormPINModal">
+        <div class="modal-content">
+            <h2>Resume Paused Report</h2>
+            <p>Enter the 4-digit PIN to resume your paused report:</p>
+            <div class="modal-password-group">
+                <label for="resumePINInput">PIN</label>
+                <input type="text" id="resumePINInput" placeholder="0000" maxlength="4" pattern="[0-9]{4}" />
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-cancel" onclick="closeResumePINModal()">Cancel</button>
+                <button type="button" class="btn-unlock" onclick="validateResumePIN()">Resume</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         let allForms = [];
         let currentFormIndex = -1;
-        let photos = [];
+        let beforePhotos = [];
+        let afterPhotos = [];
         let formStatus = 'new'; // 'new', 'pending', or 'complete'
         let isPendingFormOpen = false; // Track if we're editing a pending form (supervisor completing)
         let isPendingCouncilFormOpen = false; // Track if we're editing a council form
@@ -1412,6 +1465,7 @@
                 // Also load pending forms count
                 loadPendingForms();
                 loadCouncilForms();
+                loadPausedForms();
                 
                 // Set today's date for inspection and approval dates
                 const today = new Date().toISOString().split('T')[0];
@@ -1419,9 +1473,24 @@
                 document.getElementById('engineerDate').value = today;
                 document.getElementById('supervisorDate').value = today;
                 document.getElementById('councilDate').value = today;
+                
+                // Show pause button for fresh forms
+                updatePauseButtonVisibility();
             } catch (error) {
                 console.error('Error loading forms:', error);
                 showError('Error loading forms');
+            }
+        }
+        
+        function updatePauseButtonVisibility() {
+            const pauseBtn = document.getElementById('pauseButton');
+            // Show pause button only during engineer phase (new form, not pending)
+            if (pauseBtn) {
+                if (!isPendingFormOpen && !isPendingCouncilFormOpen && currentFormIndex >= 0) {
+                    pauseBtn.style.display = 'inline-block';
+                } else {
+                    pauseBtn.style.display = 'none';
+                }
             }
         }
 
@@ -1533,6 +1602,66 @@
             showCouncilPasswordModal();
         }
 
+        // Load paused forms list
+        async function loadPausedForms() {
+            try {
+                const response = await fetch('/api/paused-forms');
+                const result = await response.json();
+                
+                if (result.success && result.forms) {
+                    populatePausedFormsList(result.forms);
+                    
+                    // Update count badge
+                    const countBadge = document.getElementById('pausedReportsCount');
+                    if (result.count > 0) {
+                        countBadge.textContent = result.count;
+                        countBadge.style.display = 'inline-block';
+                    } else {
+                        countBadge.style.display = 'none';
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading paused forms:', error);
+            }
+        }
+
+        function populatePausedFormsList(forms) {
+            const pausedList = document.getElementById('pausedFormsList');
+            pausedList.innerHTML = '';
+            
+            if (forms.length === 0) {
+                const li = document.createElement('li');
+                li.innerHTML = '<p style="padding: 10px; color: #999; text-align: center;">No paused reports. Enter PIN to resume.</p>';
+                pausedList.appendChild(li);
+                return;
+            }
+            
+            forms.forEach(form => {
+                const li = document.createElement('li');
+                li.className = 'pending-form-item';
+                
+                const createdDate = new Date(form.created_at).toLocaleDateString();
+                const createdTime = new Date(form.created_at).toLocaleTimeString();
+                
+                li.innerHTML = `
+                    <div class="pending-form-item-title">Section ${form.section}</div>
+                    <div class="pending-form-item-info">
+                        ⏸ Paused Report
+                        <br>Paused: ${createdDate} ${createdTime}
+                        <br><strong>PIN: ${form.pin}</strong>
+                    </div>
+                `;
+                
+                li.onclick = () => resumePausedFormDirect(form.id);
+                pausedList.appendChild(li);
+            });
+        }
+
+        async function resumePausedFormDirect(formId) {
+            // Show PIN modal to confirm
+            document.getElementById('resumeFormPINModal').classList.add('active');
+        }
+
         // Show password modal for pending form access
         function showSupervisorPasswordModal() {
             const modal = document.getElementById('passwordModal');
@@ -1612,6 +1741,16 @@
                     }
                 });
                 
+                // Restore BEFORE and AFTER inspection photos
+                if (formData.beforePhotos && Array.isArray(formData.beforePhotos)) {
+                    beforePhotos = formData.beforePhotos;
+                    displayBeforePhotos();
+                }
+                if (formData.afterPhotos && Array.isArray(formData.afterPhotos)) {
+                    afterPhotos = formData.afterPhotos;
+                    displayAfterPhotos();
+                }
+                
                 // Set form as pending
                 isPendingFormOpen = true;
                 formStatus = 'pending';
@@ -1663,6 +1802,9 @@
                 // Show form and hide welcome message
                 document.getElementById('noFormSelected').style.display = 'none';
                 document.getElementById('formContainer').style.display = 'block';
+                
+                // Hide pause button during supervisor review
+                updatePauseButtonVisibility();
                 
             } catch (error) {
                 console.error('Error loading pending form:', error);
@@ -1749,6 +1891,16 @@
                     document.getElementById('supervisorDate').value = formData.signatures.supervisorDate || '';
                 }
                 
+                // Restore BEFORE and AFTER inspection photos (read-only for council)
+                if (formData.beforePhotos && Array.isArray(formData.beforePhotos)) {
+                    beforePhotos = formData.beforePhotos;
+                    displayBeforePhotos();
+                }
+                if (formData.afterPhotos && Array.isArray(formData.afterPhotos)) {
+                    afterPhotos = formData.afterPhotos;
+                    displayAfterPhotos();
+                }
+                
                 // Set form as pending council
                 isPendingCouncilFormOpen = true;
                 formStatus = 'pending_council';
@@ -1783,10 +1935,14 @@
                     materialsField.style.cursor = 'default';
                 }
                 
-                // Enable photo upload for council if needed
-                const photoInput = document.getElementById('photoInput');
-                if (photoInput) {
-                    photoInput.disabled = false;
+                // Disable BEFORE and AFTER photo uploads for council (read-only)
+                const beforePhotoInput = document.getElementById('beforePhotoInput');
+                if (beforePhotoInput) {
+                    beforePhotoInput.disabled = true;
+                }
+                const afterPhotoInput = document.getElementById('afterPhotoInput');
+                if (afterPhotoInput) {
+                    afterPhotoInput.disabled = true;
                 }
                 
                 // Load tasks as read-only
@@ -1833,19 +1989,23 @@
             const allFormsList = document.getElementById('formList');
             const pendingSupervisorList = document.getElementById('pendingSupervisorList');
             const pendingCouncilList = document.getElementById('pendingCouncilList');
+            const pausedFormsList = document.getElementById('pausedFormsList');
             const tabAllBtn = document.getElementById('tabAllForms');
             const tabPendingSupervisorBtn = document.getElementById('tabPendingSupervisor');
             const tabPendingCouncilBtn = document.getElementById('tabPendingCouncil');
+            const tabPausedBtn = document.getElementById('tabPausedReports');
             
             // Hide all lists
             allFormsList.style.display = 'none';
             pendingSupervisorList.style.display = 'none';
             pendingCouncilList.style.display = 'none';
+            pausedFormsList.style.display = 'none';
             
             // Remove active from all tabs
             tabAllBtn.classList.remove('active');
             tabPendingSupervisorBtn.classList.remove('active');
             tabPendingCouncilBtn.classList.remove('active');
+            tabPausedBtn.classList.remove('active');
             
             // Show selected tab
             if (tab === 'all') {
@@ -1862,6 +2022,11 @@
                 tabPendingCouncilBtn.classList.add('active');
                 document.getElementById('searchForms').style.display = 'none';
                 loadCouncilForms(); // Refresh the list
+            } else if (tab === 'paused') {
+                pausedFormsList.style.display = 'block';
+                tabPausedBtn.classList.add('active');
+                document.getElementById('searchForms').style.display = 'none';
+                loadPausedForms(); // Load paused forms list
             }
         }
 
@@ -1928,6 +2093,11 @@
 
             // Load form
             loadFormData(form);
+            
+            // Update pause button visibility for fresh engineer form
+            isPendingFormOpen = false;
+            isPendingCouncilFormOpen = false;
+            updatePauseButtonVisibility();
         }
 
         function loadFormData(form) {
@@ -2289,6 +2459,7 @@
                 isPendingFormOpen = true;
                 setSupervisorState(true);
                 updateFormStatusDisplay();
+                updatePauseButtonVisibility();
                 
                 // Now load the pending form data
                 loadPendingFormDataAfterPassword();
@@ -2340,6 +2511,7 @@
                 isPendingCouncilFormOpen = true;
                 setCouncilState(true);
                 updateFormStatusDisplay();
+                updatePauseButtonVisibility();
                 
                 // Now load the pending council form data
                 loadPendingCouncilFormDataAfterPassword();
@@ -2347,6 +2519,167 @@
             } else {
                 showError('❌ Incorrect password');
                 document.getElementById('councilPassword').value = '';
+            }
+        }
+
+        // ============ PAUSE REPORT FUNCTIONS ============
+        
+        function generatePIN() {
+            // Generate a random 4-digit PIN
+            return Math.floor(Math.random() * 10000).toString().padStart(4, '0');
+        }
+
+        async function pauseForm() {
+            if (currentFormIndex === -1) {
+                showError('No form to pause');
+                return;
+            }
+
+            const cleanedForms = allForms.filter(f => f.tasks.length > 0);
+            const form = cleanedForms[currentFormIndex];
+            
+            // Generate PIN
+            const pin = generatePIN();
+            window.currentPausedPIN = pin;
+            
+            // Collect all current form data (same as save)
+            const tasks = [];
+            document.querySelectorAll('.task-checkbox').forEach(checkbox => {
+                const taskItem = checkbox.closest('.task-item');
+                const description = taskItem.querySelector('.task-description').textContent;
+                tasks.push({
+                    step: description,
+                    completed: checkbox.checked
+                });
+            });
+
+            const formData = {
+                section: form.section,
+                equipment: form.equipment,
+                drawing_ref: form.drawing_ref,
+                locations: form.locations,
+                frequencies: form.frequencies,
+                inspectionDate: document.getElementById('inspectionDate').value,
+                inspector: document.getElementById('inspector').value,
+                engineer_comments: document.getElementById('engineerComments').value,
+                supervisor_comments: document.getElementById('supervisorComments').value,
+                council_comments: document.getElementById('councilComments').value,
+                materials_used: document.getElementById('materialsUsed').value,
+                beforePhotos: beforePhotos,
+                afterPhotos: afterPhotos,
+                tasks: tasks,
+                edp: window.selectedEDP || null,
+                status: 'paused',
+                pin: pin,
+                signatures: {
+                    engineer: document.getElementById('engineerName').value,
+                    engineerInitials: document.getElementById('engineerInitials').value,
+                    engineerDate: document.getElementById('engineerDate').value
+                },
+                timestamp: new Date().toISOString()
+            };
+
+            try {
+                const response = await fetch('/api/pause-form', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    showSuccess(`✓ Report paused! PIN: ${pin}`);
+                    // Show PIN modal
+                    document.getElementById('pausePINCode').textContent = pin;
+                    document.getElementById('pausePINModal').classList.add('active');
+                } else {
+                    showError(`Failed to pause: ${result.message}`);
+                }
+            } catch (error) {
+                console.error('Pause error:', error);
+                showError(`Error pausing form: ${error.message}`);
+            }
+        }
+
+        function showPINModal() {
+            document.getElementById('pausePINModal').classList.add('active');
+        }
+
+        function closePINModal() {
+            document.getElementById('pausePINModal').classList.remove('active');
+            resetForm();
+        }
+
+        function closeResumePINModal() {
+            document.getElementById('resumeFormPINModal').classList.remove('active');
+        }
+
+        async function validateResumePIN() {
+            const pin = document.getElementById('resumePINInput').value;
+            
+            if (!pin || pin.length !== 4) {
+                showError('Please enter a valid 4-digit PIN');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/resume-paused-form/${pin}`);
+                const result = await response.json();
+
+                if (result.success) {
+                    closeResumePINModal();
+                    document.getElementById('resumePINInput').value = '';
+                    
+                    // Load the paused form data
+                    const formData = result.data;
+                    currentFormIndex = 0; // Set as active
+                    
+                    // Populate the form with paused data
+                    document.getElementById('inspectionDate').value = formData.inspectionDate || '';
+                    document.getElementById('inspector').value = formData.inspector || '';
+                    document.getElementById('engineerComments').value = formData.engineer_comments || '';
+                    document.getElementById('materialsUsed').value = formData.materials_used || '';
+                    document.getElementById('engineerName').value = formData.signatures?.engineer || '';
+                    document.getElementById('engineerInitials').value = formData.signatures?.engineerInitials || '';
+                    document.getElementById('engineerDate').value = formData.signatures?.engineerDate || '';
+                    
+                    // Restore photos
+                    if (formData.beforePhotos && Array.isArray(formData.beforePhotos)) {
+                        beforePhotos = formData.beforePhotos;
+                        displayBeforePhotos();
+                    }
+                    if (formData.afterPhotos && Array.isArray(formData.afterPhotos)) {
+                        afterPhotos = formData.afterPhotos;
+                        displayAfterPhotos();
+                    }
+                    
+                    // Load tasks
+                    if (formData.tasks) {
+                        loadTasks(formData.tasks);
+                        setTimeout(() => {
+                            const taskList = document.getElementById('taskList');
+                            const checkboxes = taskList.querySelectorAll('input[type="checkbox"]');
+                            checkboxes.forEach((checkbox, index) => {
+                                if (formData.tasks[index] && formData.tasks[index].completed) {
+                                    checkbox.checked = true;
+                                }
+                            });
+                        }, 100);
+                    }
+                    
+                    // Show form and hide welcome
+                    document.getElementById('noFormSelected').style.display = 'none';
+                    document.getElementById('formContainer').style.display = 'block';
+                    
+                    showSuccess('✓ Paused report resumed!');
+                } else {
+                    showError(`Invalid PIN or form not found: ${result.message}`);
+                }
+            } catch (error) {
+                console.error('Resume error:', error);
+                showError(`Error resuming form: ${error.message}`);
             }
         }
 
@@ -2441,59 +2774,116 @@
             });
         });
 
-        // PHOTOS
-        document.getElementById('photoInput').addEventListener('change', function(e) {
+        // BEFORE INSPECTION PHOTOS
+        document.getElementById('beforePhotoInput').addEventListener('change', function(e) {
             Array.from(e.target.files).forEach(file => {
                 const reader = new FileReader();
                 reader.onload = (evt) => {
-                    photos.push(evt.target.result);
-                    displayPhotos();
+                    beforePhotos.push(evt.target.result);
+                    displayBeforePhotos();
                 };
                 reader.readAsDataURL(file);
             });
         });
 
-        document.querySelector('.photo-upload').addEventListener('dragover', (e) => {
-            e.preventDefault();
-            e.currentTarget.style.background = '#e8f0fe';
-        });
-
-        document.querySelector('.photo-upload').addEventListener('dragleave', (e) => {
-            e.currentTarget.style.background = '#f8f9fa';
-        });
-
-        document.querySelector('.photo-upload').addEventListener('drop', (e) => {
-            e.preventDefault();
-            e.currentTarget.style.background = '#f8f9fa';
-            const files = e.dataTransfer.files;
-            document.getElementById('photoInput').files = files;
-            Array.from(files).forEach(file => {
+        // AFTER INSPECTION PHOTOS
+        document.getElementById('afterPhotoInput').addEventListener('change', function(e) {
+            Array.from(e.target.files).forEach(file => {
                 const reader = new FileReader();
                 reader.onload = (evt) => {
-                    photos.push(evt.target.result);
-                    displayPhotos();
+                    afterPhotos.push(evt.target.result);
+                    displayAfterPhotos();
                 };
                 reader.readAsDataURL(file);
             });
         });
 
-        function displayPhotos() {
-            const gallery = document.getElementById('photoGallery');
+        // Drag and drop for BEFORE photos
+        const beforeUploadBox = document.querySelector('.photo-upload[onclick*="beforePhotoInput"]');
+        if (beforeUploadBox) {
+            beforeUploadBox.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                e.currentTarget.style.background = '#ffe5a1';
+            });
+            beforeUploadBox.addEventListener('dragleave', (e) => {
+                e.currentTarget.style.background = '#fff3cd';
+            });
+            beforeUploadBox.addEventListener('drop', (e) => {
+                e.preventDefault();
+                e.currentTarget.style.background = '#fff3cd';
+                const files = e.dataTransfer.files;
+                Array.from(files).forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = (evt) => {
+                        beforePhotos.push(evt.target.result);
+                        displayBeforePhotos();
+                    };
+                    reader.readAsDataURL(file);
+                });
+            });
+        }
+
+        // Drag and drop for AFTER photos
+        const afterUploadBox = document.querySelector('.photo-upload[onclick*="afterPhotoInput"]');
+        if (afterUploadBox) {
+            afterUploadBox.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                e.currentTarget.style.background = '#a9d5a1';
+            });
+            afterUploadBox.addEventListener('dragleave', (e) => {
+                e.currentTarget.style.background = '#d4edda';
+            });
+            afterUploadBox.addEventListener('drop', (e) => {
+                e.preventDefault();
+                e.currentTarget.style.background = '#d4edda';
+                const files = e.dataTransfer.files;
+                Array.from(files).forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = (evt) => {
+                        afterPhotos.push(evt.target.result);
+                        displayAfterPhotos();
+                    };
+                    reader.readAsDataURL(file);
+                });
+            });
+        }
+
+        function displayBeforePhotos() {
+            const gallery = document.getElementById('beforePhotoGallery');
             gallery.innerHTML = '';
-            photos.forEach((photo, index) => {
+            beforePhotos.forEach((photo, index) => {
                 const photoItem = document.createElement('div');
                 photoItem.className = 'photo-item';
                 photoItem.innerHTML = `
-                    <img src="${photo}" alt="Photo ${index + 1}">
-                    <button type="button" class="photo-delete" onclick="deletePhoto(${index})">×</button>
+                    <img src="${photo}" alt="Before Photo ${index + 1}">
+                    <button type="button" class="photo-delete" onclick="deleteBeforePhoto(${index})">×</button>
                 `;
                 gallery.appendChild(photoItem);
             });
         }
 
-        function deletePhoto(index) {
-            photos.splice(index, 1);
-            displayPhotos();
+        function displayAfterPhotos() {
+            const gallery = document.getElementById('afterPhotoGallery');
+            gallery.innerHTML = '';
+            afterPhotos.forEach((photo, index) => {
+                const photoItem = document.createElement('div');
+                photoItem.className = 'photo-item';
+                photoItem.innerHTML = `
+                    <img src="${photo}" alt="After Photo ${index + 1}">
+                    <button type="button" class="photo-delete" onclick="deleteAfterPhoto(${index})">×</button>
+                `;
+                gallery.appendChild(photoItem);
+            });
+        }
+
+        function deleteBeforePhoto(index) {
+            beforePhotos.splice(index, 1);
+            displayBeforePhotos();
+        }
+
+        function deleteAfterPhoto(index) {
+            afterPhotos.splice(index, 1);
+            displayAfterPhotos();
         }
 
         // FORM
@@ -2559,8 +2949,10 @@
 
         function resetForm() {
             document.getElementById('maintenanceForm').reset();
-            photos = [];
-            displayPhotos();
+            beforePhotos = [];
+            afterPhotos = [];
+            displayBeforePhotos();
+            displayAfterPhotos();
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('inspectionDate').value = today;
             document.getElementById('engineerDate').value = today;
@@ -2582,6 +2974,9 @@
             setCouncilState(false);
             setEngineerSectionReadOnly(false); // Enable engineer fields for next form
             setupSupervisorInputListeners();
+            
+            // Hide pause button when form is reset
+            updatePauseButtonVisibility();
             
             // Hide form and show welcome message
             document.getElementById('noFormSelected').style.display = 'block';
@@ -2738,7 +3133,8 @@
                     councilInitials: councilInitials,
                     councilDate: councilDate
                 },
-                photos: photos,
+                beforePhotos: beforePhotos,
+                afterPhotos: afterPhotos,
                 timestamp: new Date().toISOString()
             };
 

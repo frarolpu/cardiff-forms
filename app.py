@@ -276,42 +276,82 @@ def create_pdf(form_data):
             pdf.multi_cell(0, 7, materials_text)
             pdf.ln(3)
         
-        # Photos section
-        photos = form_data.get('photos', [])
-        if photos and len(photos) > 0:
-            pdf.ln(3)
-            pdf.set_font(default_font, "B", 12)
-            pdf.cell(0, 10, "Photos", 0, 1)
-            pdf.set_font(default_font, "", 9)
-            
-            # Insert photos
-            for idx, photo_base64 in enumerate(photos[:4]):  # Max 4 photos per page
-                try:
-                    # Extract base64 data
-                    if isinstance(photo_base64, str) and photo_base64.startswith('data:image'):
-                        photo_data = photo_base64.split(',')[1]
-                    else:
-                        photo_data = photo_base64
-                    
-                    # Create temp file
-                    with tempfile.NamedTemporaryFile(suffix='.png', delete=False) as tmp:
-                        tmp.write(base64.b64decode(photo_data))
-                        temp_files.append(tmp.name)
-                    
-                    # Add image to PDF (small size)
-                    img_width = 30
-                    if idx % 2 == 0 and idx > 0:
-                        pdf.ln(40)
-                    
-                    pdf.image(temp_files[-1], w=img_width, h=30)
-                    if (idx + 1) % 2 == 0:
-                        pdf.ln(40)
-                except Exception as e:
-                    log_error(f"Photo insertion error: {e}")
-                    pass
+        # BEFORE and AFTER Photos sections
+        before_photos = form_data.get('beforePhotos', [])
+        after_photos = form_data.get('afterPhotos', [])
+        has_before = before_photos and len(before_photos) > 0
+        has_after = after_photos and len(after_photos) > 0
         
-        # Add page for signatures if we have photos
-        if photos and len(photos) > 0:
+        # BEFORE Inspection Photos
+        if has_before:
+            try:
+                pdf.ln(3)
+                pdf.set_font(default_font, "B", 12)
+                pdf.cell(0, 10, "BEFORE Inspection Photos", 0, 1)
+                pdf.set_font(default_font, "", 9)
+                
+                for idx, photo_base64 in enumerate(before_photos[:4]):  # Max 4 photos
+                    try:
+                        # Extract base64 data
+                        if isinstance(photo_base64, str) and photo_base64.startswith('data:image'):
+                            photo_data = photo_base64.split(',')[1]
+                        else:
+                            photo_data = photo_base64
+                        
+                        # Create temp file
+                        with tempfile.NamedTemporaryFile(suffix='.png', delete=False) as tmp:
+                            tmp.write(base64.b64decode(photo_data))
+                            temp_files.append(tmp.name)
+                        
+                        # Add image to PDF
+                        img_width = 30
+                        if idx % 2 == 0 and idx > 0:
+                            pdf.ln(40)
+                        pdf.image(temp_files[-1], w=img_width, h=30)
+                        if (idx + 1) % 2 == 0:
+                            pdf.ln(40)
+                    except Exception as e:
+                        log_error(f"Before photo insertion error: {e}")
+                        pass
+            except Exception as e:
+                log_error(f"Before photos section error: {e}")
+        
+        # AFTER Inspection Photos
+        if has_after:
+            try:
+                pdf.ln(3)
+                pdf.set_font(default_font, "B", 12)
+                pdf.cell(0, 10, "AFTER Inspection Photos", 0, 1)
+                pdf.set_font(default_font, "", 9)
+                
+                for idx, photo_base64 in enumerate(after_photos[:4]):  # Max 4 photos
+                    try:
+                        # Extract base64 data
+                        if isinstance(photo_base64, str) and photo_base64.startswith('data:image'):
+                            photo_data = photo_base64.split(',')[1]
+                        else:
+                            photo_data = photo_base64
+                        
+                        # Create temp file
+                        with tempfile.NamedTemporaryFile(suffix='.png', delete=False) as tmp:
+                            tmp.write(base64.b64decode(photo_data))
+                            temp_files.append(tmp.name)
+                        
+                        # Add image to PDF
+                        img_width = 30
+                        if idx % 2 == 0 and idx > 0:
+                            pdf.ln(40)
+                        pdf.image(temp_files[-1], w=img_width, h=30)
+                        if (idx + 1) % 2 == 0:
+                            pdf.ln(40)
+                    except Exception as e:
+                        log_error(f"After photo insertion error: {e}")
+                        pass
+            except Exception as e:
+                log_error(f"After photos section error: {e}")
+        
+        # Add page for signatures if we have any photos
+        if has_before or has_after:
             pdf.add_page()
         
         # Signatures section
@@ -848,6 +888,128 @@ def download_form(form_identifier):
             'success': False,
             'message': str(e)
         }), 500
+
+@app.route('/api/pause-form', methods=['POST'])
+def pause_form():
+    """Save a paused form with PIN for later resumption"""
+    try:
+        data = request.json
+        if not data:
+            return jsonify({'success': False, 'message': 'No JSON data provided'}), 400
+        
+        section = data.get('section', 'unknown')
+        pin = data.get('pin', '')
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        
+        # Create filename with PIN
+        filename = f"{section}_{timestamp}_PAUSED_{pin}.json"
+        
+        # Save JSON file
+        try:
+            saved_forms_dir = Path('saved_forms')
+            saved_forms_dir.mkdir(exist_ok=True)
+            json_path = saved_forms_dir / filename
+            with open(json_path, 'w') as f:
+                json.dump(data, f, indent=2)
+            log_error(f"Saved paused form: {json_path} with PIN: {pin}")
+        except Exception as json_err:
+            log_error(f"Error saving paused form: {str(json_err)}")
+            return jsonify({'success': False, 'message': f'Error saving form: {str(json_err)}'}), 500
+        
+        return jsonify({
+            'success': True,
+            'message': f'Form paused with PIN: {pin}',
+            'pin': pin,
+            'filename': filename
+        }), 200
+    
+    except Exception as e:
+        log_error(f"Pause form error: {str(e)}")
+        return jsonify({
+            'success': False,
+            'message': str(e)
+        }), 500
+
+
+@app.route('/api/paused-forms', methods=['GET'])
+def get_paused_forms():
+    """Get list of paused forms with PINs"""
+    try:
+        paused_forms = []
+        
+        # Read from filesystem (look for files with _PAUSED_ suffix)
+        saved_forms_dir = Path('saved_forms')
+        if saved_forms_dir.exists():
+            for json_file in sorted(saved_forms_dir.glob('*_PAUSED_*.json'), reverse=True):
+                try:
+                    with open(json_file, 'r') as f:
+                        form_data = json.load(f)
+                    
+                    # Extract PIN from filename
+                    filename_parts = json_file.stem.split('_')
+                    pin = filename_parts[-1] if len(filename_parts) > 0 else '0000'
+                    base_id = json_file.stem.replace(f'_PAUSED_{pin}', '')
+                    
+                    paused_forms.append({
+                        'id': base_id,
+                        'filename': json_file.name,
+                        'section': base_id.split('_')[0] if '_' in base_id else 'N/A',
+                        'pin': pin,
+                        'status': 'paused',
+                        'created_at': datetime.fromtimestamp(json_file.stat().st_mtime).isoformat()
+                    })
+                except Exception as e:
+                    log_error(f"Error reading paused form {json_file}: {e}")
+                    continue
+        
+        return jsonify({
+            'success': True,
+            'forms': paused_forms,
+            'count': len(paused_forms)
+        }), 200
+    
+    except Exception as e:
+        log_error(f"Get paused forms error: {str(e)}")
+        return jsonify({
+            'success': False,
+            'message': str(e)
+        }), 500
+
+
+@app.route('/api/resume-paused-form/<pin>', methods=['GET'])
+def resume_paused_form(pin):
+    """Load a paused form using PIN"""
+    try:
+        # Search for paused form with matching PIN
+        saved_forms_dir = Path('saved_forms')
+        if saved_forms_dir.exists():
+            for json_file in saved_forms_dir.glob(f'*_PAUSED_{pin}.json'):
+                try:
+                    with open(json_file, 'r') as f:
+                        form_data = json.load(f)
+                    
+                    return jsonify({
+                        'success': True,
+                        'data': form_data,
+                        'filename': json_file.stem.replace(f'_PAUSED_{pin}', '') + '.pdf',
+                        'status': 'paused'
+                    }), 200
+                except Exception as read_err:
+                    log_error(f"Error reading paused form: {read_err}")
+                    continue
+        
+        return jsonify({
+            'success': False,
+            'message': 'Paused form not found with this PIN'
+        }), 404
+    
+    except Exception as e:
+        log_error(f"Resume paused form error: {str(e)}")
+        return jsonify({
+            'success': False,
+            'message': str(e)
+        }), 500
+
 
 if __name__ == '__main__':
     # Use environment variable to determine if running in production
