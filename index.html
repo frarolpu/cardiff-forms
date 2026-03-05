@@ -2602,14 +2602,7 @@
             URL.revokeObjectURL(url);
         }
 
-        function showSuccess(message) {
-            const msgDiv = document.getElementById('successMessage');
-            msgDiv.textContent = message;
-            msgDiv.style.display = 'block';
-            setTimeout(() => {
-                msgDiv.style.display = 'none';
-            }, 5000);
-        }
+
 
         async function saveFormToRepository() {
             // Check if we're saving a pending form (supervisor completing it), council form, or a new form (engineer creating it)
@@ -2781,7 +2774,10 @@
                     } else {
                         showSuccess(`✓ Form COMPLETED and saved! Filename: ${result.filename}`);
                     }
-                    resetForm();
+                    // Delay form reset by 2 seconds to allow success message to display
+                    setTimeout(() => {
+                        resetForm();
+                    }, 2000);
                 } else {
                     showError(`Failed to save: ${result.message || 'Unknown error'}`);
                 }
@@ -2799,9 +2795,10 @@
             const msgDiv = document.getElementById('successMessage');
             msgDiv.innerHTML = `✓ ${message}`;
             msgDiv.style.display = 'block';
+            msgDiv.style.opacity = '1';
             setTimeout(() => {
                 msgDiv.style.display = 'none';
-            }, 4000);
+            }, 6000);
         }
 
         function showError(message) {

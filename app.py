@@ -119,6 +119,36 @@ def create_pdf(form_data):
         pdf = FPDF()
         pdf.add_page()
         
+        # Use Unicode font for better character support (especially special symbols like €)
+        try:
+            pdf.add_font('DejaVu', '', 'DejaVuSans.ttf', uni=True)
+            pdf.add_font('DejaVu', 'B', 'DejaVuSans-Bold.ttf', uni=True)
+            default_font = 'DejaVu'
+        except Exception as font_err:
+            log_error(f"Could not load DejaVu font, using Arial: {font_err}")
+            default_font = 'Arial'
+        
+        # Function to sanitize text for Arial font (remove problematic Unicode chars)
+        def sanitize_text(text):
+            if not text:
+                return text
+            # Replace common problematic Unicode characters
+            replacements = {
+                '€': 'EUR',  # Euro symbol
+                '£': 'GBP',  # Pound symbol
+                '¥': 'JPY',  # Yen symbol
+                '©': '(C)',  # Copyright
+                '®': '(R)',  # Registered
+                '™': '(TM)', # Trademark
+            }
+            result = str(text)
+            for char, replacement in replacements.items():
+                result = result.replace(char, replacement)
+            # Remove other problematic Unicode characters if using Arial
+            if default_font == 'Arial':
+                result = result.encode('ascii', 'ignore').decode('ascii')
+            return result
+        
         # Add header logo image (centered)
         try:
             # Image dimensions: width=150mm, height will scale proportionally
@@ -133,7 +163,7 @@ def create_pdf(form_data):
         except Exception as e:
             log_error(f"Logo image error: {str(e)}")
         
-        pdf.set_font("Arial", "B", 16)
+        pdf.set_font(default_font, "B", 16)
         
         # Initialize temp file list for photos
         temp_files = []
@@ -141,21 +171,21 @@ def create_pdf(form_data):
         # Title
         section = form_data.get('section', 'N/A')
         pdf.cell(0, 10, f"Maintenance Form - Section {section}", 0, 1, "C")
-        pdf.set_font("Arial", "", 11)
+        pdf.set_font(default_font, "", 11)
         pdf.ln(5)
         
         # General Information
-        pdf.set_font("Arial", "B", 12)
+        pdf.set_font(default_font, "B", 12)
         pdf.cell(0, 10, "General Information", 0, 1)
-        pdf.set_font("Arial", "", 10)
+        pdf.set_font(default_font, "", 10)
         
         # Create info lines
         info_items = [
-            ("Section:", form_data.get('section', '')),
-            ("Equipment/System:", form_data.get('equipment', '')),
-            ("Inspector:", form_data.get('inspector', '')),
-            ("Date:", form_data.get('inspectionDate', '')),
-            ("Drawing Reference:", form_data.get('drawing_ref', '')),
+            ("Section:", sanitize_text(form_data.get('section', ''))),
+            ("Equipment/System:", sanitize_text(form_data.get('equipment', ''))),
+            ("Inspector:", sanitize_text(form_data.get('inspector', ''))),
+            ("Date:", sanitize_text(form_data.get('inspectionDate', ''))),
+            ("Drawing Reference:", sanitize_text(form_data.get('drawing_ref', ''))),
         ]
         
         # Add EDP if this is a matrix form
@@ -173,9 +203,9 @@ def create_pdf(form_data):
         col2_width = pdf.epw - col1_width - 2
         
         for label, value in info_items:
-            pdf.set_font("Arial", "B", 9)
+            pdf.set_font(default_font, "B", 9)
             pdf.cell(col1_width, 7, label, 0, 0)
-            pdf.set_font("Arial", "", 9)
+            pdf.set_font(default_font, "", 9)
             pdf.multi_cell(col2_width, 7, str(value)[:100])
             pdf.ln(2)
         
@@ -184,9 +214,9 @@ def create_pdf(form_data):
         # Tasks
         tasks = form_data.get('tasks', [])
         if tasks:
-            pdf.set_font("Arial", "B", 12)
+            pdf.set_font(default_font, "B", 12)
             pdf.cell(0, 10, "Tasks Performed", 0, 1)
-            pdf.set_font("Arial", "", 9)
+            pdf.set_font(default_font, "", 9)
             
             # Use effective page width for task text wrapping
             available_width = pdf.epw - 2
@@ -194,7 +224,7 @@ def create_pdf(form_data):
             for task in tasks:
                 # Use checkbox representation
                 checkbox = 'X' if task.get('completed') else '_'
-                step_text = str(task.get('step', ''))
+                step_text = sanitize_text(str(task.get('step', '')))
                 # Use multi_cell for text wrapping, aligned left
                 pdf.set_x(pdf.l_margin)
                 pdf.multi_cell(available_width, 6, f"[{checkbox}] {step_text}", align='L')
@@ -202,46 +232,46 @@ def create_pdf(form_data):
             pdf.ln(1)
         
         # Comments - Engineer, Supervisor, and Council sections
-        engineer_comments = form_data.get('engineer_comments') or form_data.get('comments', '')
-        supervisor_comments = form_data.get('supervisor_comments', '')
-        council_comments = form_data.get('council_comments', '')
-        materials_used = form_data.get('materials_used', '')
+        engineer_comments = sanitize_text(form_data.get('engineer_comments') or form_data.get('comments', ''))
+        supervisor_comments = sanitize_text(form_data.get('supervisor_comments', ''))
+        council_comments = sanitize_text(form_data.get('council_comments', ''))
+        materials_used = sanitize_text(form_data.get('materials_used', ''))
         
         if engineer_comments or supervisor_comments or council_comments:
             pdf.ln(3)
             
             # Engineer Comments
             if engineer_comments:
-                pdf.set_font("Arial", "B", 12)
+                pdf.set_font(default_font, "B", 12)
                 pdf.cell(0, 10, "Maintenance Engineer Comments", 0, 1)
-                pdf.set_font("Arial", "", 9)
+                pdf.set_font(default_font, "", 9)
                 eng_comments_text = str(engineer_comments)[:300]
                 pdf.multi_cell(0, 7, eng_comments_text)
                 pdf.ln(3)
             
             # Supervisor Comments
             if supervisor_comments:
-                pdf.set_font("Arial", "B", 12)
+                pdf.set_font(default_font, "B", 12)
                 pdf.cell(0, 10, "Contractor Supervisor Comments", 0, 1)
-                pdf.set_font("Arial", "", 9)
+                pdf.set_font(default_font, "", 9)
                 sup_comments_text = str(supervisor_comments)[:300]
                 pdf.multi_cell(0, 7, sup_comments_text)
                 pdf.ln(3)
             
             # Council Comments
             if council_comments:
-                pdf.set_font("Arial", "B", 12)
+                pdf.set_font(default_font, "B", 12)
                 pdf.cell(0, 10, "Council Approval Comments", 0, 1)
-                pdf.set_font("Arial", "", 9)
+                pdf.set_font(default_font, "", 9)
                 council_comments_text = str(council_comments)[:300]
                 pdf.multi_cell(0, 7, council_comments_text)
                 pdf.ln(3)
         
         # Materials Used section
         if materials_used:
-            pdf.set_font("Arial", "B", 12)
+            pdf.set_font(default_font, "B", 12)
             pdf.cell(0, 10, "Materials Used", 0, 1)
-            pdf.set_font("Arial", "", 9)
+            pdf.set_font(default_font, "", 9)
             materials_text = str(materials_used)[:500]
             pdf.multi_cell(0, 7, materials_text)
             pdf.ln(3)
@@ -250,9 +280,9 @@ def create_pdf(form_data):
         photos = form_data.get('photos', [])
         if photos and len(photos) > 0:
             pdf.ln(3)
-            pdf.set_font("Arial", "B", 12)
+            pdf.set_font(default_font, "B", 12)
             pdf.cell(0, 10, "Photos", 0, 1)
-            pdf.set_font("Arial", "", 9)
+            pdf.set_font(default_font, "", 9)
             
             # Insert photos
             for idx, photo_base64 in enumerate(photos[:4]):  # Max 4 photos per page
@@ -286,20 +316,20 @@ def create_pdf(form_data):
         
         # Signatures section
         pdf.ln(10)
-        pdf.set_font("Arial", "B", 11)
+        pdf.set_font(default_font, "B", 11)
         pdf.cell(0, 10, "Approval", 0, 1)
         pdf.ln(5)
         
         sig_col_width = (pdf.w - 20) / 3
         
         # Names with initials
-        pdf.set_font("Arial", "B", 8)
-        eng_name = form_data.get('signatures', {}).get('engineer', '')
-        eng_initials = form_data.get('signatures', {}).get('engineerInitials', '')
-        sup_name = form_data.get('signatures', {}).get('supervisor', '')
-        sup_initials = form_data.get('signatures', {}).get('supervisorInitials', '')
-        council_name = form_data.get('signatures', {}).get('council', '')
-        council_initials = form_data.get('signatures', {}).get('councilInitials', '')
+        pdf.set_font(default_font, "B", 8)
+        eng_name = sanitize_text(form_data.get('signatures', {}).get('engineer', ''))
+        eng_initials = sanitize_text(form_data.get('signatures', {}).get('engineerInitials', ''))
+        sup_name = sanitize_text(form_data.get('signatures', {}).get('supervisor', ''))
+        sup_initials = sanitize_text(form_data.get('signatures', {}).get('supervisorInitials', ''))
+        council_name = sanitize_text(form_data.get('signatures', {}).get('council', ''))
+        council_initials = sanitize_text(form_data.get('signatures', {}).get('councilInitials', ''))
         
         eng_text = f"Engineer: {eng_name}"
         if eng_initials:
@@ -316,7 +346,7 @@ def create_pdf(form_data):
         pdf.cell(sig_col_width, 6, council_text, 0, 1)
         
         # Dates
-        pdf.set_font("Arial", "", 7)
+        pdf.set_font(default_font, "", 7)
         eng_date = form_data.get('signatures', {}).get('engineerDate', '')
         sup_date = form_data.get('signatures', {}).get('supervisorDate', '')
         council_date = form_data.get('signatures', {}).get('councilDate', '')
@@ -326,7 +356,7 @@ def create_pdf(form_data):
         
         # Footer
         pdf.ln(10)
-        pdf.set_font("Arial", "", 7)
+        pdf.set_font(default_font, "", 7)
         generated_text = f"Generated: {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}"
         pdf.cell(0, 5, generated_text, 0, 1, "C")
         
@@ -411,6 +441,20 @@ def save_form():
                     log_error(f"Deleted interim PENDING JSON: {pending_file.name}")
             except Exception as cleanup_err:
                 log_error(f"Warning: Could not delete PENDING files: {str(cleanup_err)}")
+        
+        # If form is transitioning from pending_supervisor to pending_council (supervisor just completed it)
+        if status == 'pending_council':
+            try:
+                saved_forms_dir = Path('saved_forms')
+                # Delete PENDING_SUPERVISOR files for this section (no longer needed)
+                for pending_file in saved_forms_dir.glob(f'{section}_*_PENDING_SUPERVISOR.pdf'):
+                    pending_file.unlink()
+                    log_error(f"Deleted PENDING_SUPERVISOR form: {pending_file.name}")
+                for pending_file in saved_forms_dir.glob(f'{section}_*_PENDING_SUPERVISOR.json'):
+                    pending_file.unlink()
+                    log_error(f"Deleted PENDING_SUPERVISOR JSON: {pending_file.name}")
+            except Exception as cleanup_err:
+                log_error(f"Warning: Could not delete PENDING_SUPERVISOR files: {str(cleanup_err)}")
         
         # Try to save to database first if configured
         if USE_DATABASE:
@@ -608,10 +652,12 @@ def get_pending_forms():
         saved_forms_dir = Path('saved_forms')
         if saved_forms_dir.exists():
             for pdf_file in sorted(saved_forms_dir.glob('*_PENDING_SUPERVISOR.pdf'), reverse=True):
+                # Remove status suffix from stem to get the base filename as ID
+                base_id = pdf_file.stem.replace('_PENDING_SUPERVISOR', '')
                 pending_forms.append({
-                    'id': pdf_file.stem,
+                    'id': base_id,
                     'filename': pdf_file.name,
-                    'section': pdf_file.stem.split('_')[0] if '_' in pdf_file.stem else 'N/A',
+                    'section': base_id.split('_')[0] if '_' in base_id else 'N/A',
                     'status': 'pending_supervisor',
                     'created_at': datetime.fromtimestamp(pdf_file.stat().st_mtime).isoformat()
                 })
@@ -732,10 +778,12 @@ def get_council_forms():
         saved_forms_dir = Path('saved_forms')
         if saved_forms_dir.exists():
             for pdf_file in sorted(saved_forms_dir.glob('*_PENDING_COUNCIL.pdf'), reverse=True):
+                # Remove status suffix from stem to get the base filename as ID
+                base_id = pdf_file.stem.replace('_PENDING_COUNCIL', '')
                 council_forms.append({
-                    'id': pdf_file.stem,
+                    'id': base_id,
                     'filename': pdf_file.name,
-                    'section': pdf_file.stem.split('_')[0] if '_' in pdf_file.stem else 'N/A',
+                    'section': base_id.split('_')[0] if '_' in base_id else 'N/A',
                     'status': 'pending_council',
                     'created_at': datetime.fromtimestamp(pdf_file.stat().st_mtime).isoformat()
                 })
