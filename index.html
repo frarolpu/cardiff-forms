@@ -1479,6 +1479,10 @@
             try {
                 const response = await fetch('forms_final.json');
                 allForms = await response.json();
+                
+                // Clear search box
+                document.getElementById('searchForms').value = '';
+                
                 populateFormList();
                 
                 // Also load pending forms count
