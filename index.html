@@ -2810,13 +2810,42 @@
                 const taskDescription = task.description || task.step;
                 const taskNumber = task.step && !isNaN(task.step) ? task.step : (index + 1);
                 
-                taskItem.innerHTML = `
-                    <input type="checkbox" class="task-checkbox" data-step="${taskNumber}">
-                    <div class="task-text">
-                        <span class="task-number">${taskNumber}.</span>
-                        <span class="task-description">${taskDescription}</span>
-                    </div>
-                `;
+                // Check if task has subtasks
+                if (task.subtasks && task.subtasks.length > 0) {
+                    // Main task without checkbox if it has subtasks
+                    taskItem.innerHTML = `
+                        <div class="task-text">
+                            <span class="task-number">${taskNumber}.</span>
+                            <span class="task-description">${taskDescription}</span>
+                        </div>
+                        <div class="subtasks-container" style="margin-left: 30px; margin-top: 10px;">
+                    `;
+                    
+                    // Add each subtask with checkbox
+                    task.subtasks.forEach((subtask, subtaskIndex) => {
+                        const subtaskDiv = document.createElement('div');
+                        subtaskDiv.className = 'subtask-item';
+                        subtaskDiv.style.marginBottom = '8px';
+                        subtaskDiv.innerHTML = `
+                            <input type="checkbox" class="task-checkbox" data-step="${taskNumber}-${subtaskIndex + 1}">
+                            <div class="subtask-text" style="display: inline-block; margin-left: 8px;">
+                                <span class="subtask-description">• ${subtask.description}</span>
+                            </div>
+                        `;
+                        taskItem.querySelector('.subtasks-container').appendChild(subtaskDiv);
+                    });
+                    
+                    taskItem.innerHTML += '</div>';
+                } else {
+                    // Regular task with checkbox
+                    taskItem.innerHTML = `
+                        <input type="checkbox" class="task-checkbox" data-step="${taskNumber}">
+                        <div class="task-text">
+                            <span class="task-number">${taskNumber}.</span>
+                            <span class="task-description">${taskDescription}</span>
+                        </div>
+                    `;
+                }
                 taskList.appendChild(taskItem);
             });
         }

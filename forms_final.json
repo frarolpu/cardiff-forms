@@ -7789,6 +7789,10 @@
       {
         "step": "5",
         "description": "Operate door from EPCMS and log door checked."
+      },
+      {
+        "step": "6",
+        "description": "Check EPCMS for any alarms and rectify as necessary"
       }
     ]
   },
