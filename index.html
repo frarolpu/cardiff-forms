@@ -1477,13 +1477,18 @@
         // Load form data
         async function loadForms() {
             try {
+                console.log('Loading forms...');
                 const response = await fetch('forms_final.json');
+                console.log('Fetch response status:', response.status);
                 allForms = await response.json();
+                console.log('Loaded forms count:', allForms.length);
+                console.log('First form:', allForms[0]);
                 
                 // Clear search box
                 document.getElementById('searchForms').value = '';
                 
                 populateFormList();
+                console.log('Form list populated');
                 
                 // Also load pending forms count
                 loadPendingForms();
@@ -1501,7 +1506,8 @@
                 updatePauseButtonVisibility();
             } catch (error) {
                 console.error('Error loading forms:', error);
-                showError('Error loading forms');
+                console.error('Stack:', error.stack);
+                showError('Error loading forms: ' + error.message);
             }
         }
         
@@ -2850,7 +2856,6 @@
                     taskList.appendChild(taskItem);
                 }
             });
-        }
         }
 
         // SEARCH
