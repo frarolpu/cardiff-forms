@@ -1241,6 +1241,24 @@
                                 </div>
                             </div>
 
+                            <!-- CROSS BORE DOOR SELECTOR (Sections 2.24.1 - 2.24.6) -->
+                            <div class="form-section" id="crossBoreDoorSection" style="display: none;">
+                                <h2>Cross Bore Door</h2>
+                                <div class="form-group">
+                                    <label class="field-required">Select Door Number</label>
+                                    <select id="crossBoreDoorSelector" required onchange="window.selectedCrossBoreDoor = this.value;">
+                                        <option value="">-- Select a door --</option>
+                                        <option value="Cross Bore Door 1">Cross Bore Door 1</option>
+                                        <option value="Cross Bore Door 2">Cross Bore Door 2</option>
+                                        <option value="Cross Bore Door 3">Cross Bore Door 3</option>
+                                        <option value="Cross Bore Door 4">Cross Bore Door 4</option>
+                                        <option value="Cross Bore Door 5">Cross Bore Door 5</option>
+                                        <option value="Cross Bore Door 6">Cross Bore Door 6</option>
+                                        <option value="Cross Bore Door 7">Cross Bore Door 7</option>
+                                    </select>
+                                </div>
+                            </div>
+
                             <!-- TASKS -->
                             <div class="form-section">
                                 <h2>Tasks to Perform</h2>
@@ -1454,6 +1472,7 @@
         window.pendingFormData = null;
         window.pendingFormTasks = [];
         window.pendingCouncilFormData = null;
+        window.selectedCrossBoreDoor = null;
 
         // Load form data
         async function loadForms() {
@@ -1751,6 +1770,15 @@
                     displayAfterPhotos();
                 }
                 
+                // Restore Cross Bore Door selection if applicable
+                if (formData.cross_bore_door) {
+                    window.selectedCrossBoreDoor = formData.cross_bore_door;
+                    const crossBoreDoorSelector = document.getElementById('crossBoreDoorSelector');
+                    if (crossBoreDoorSelector) {
+                        crossBoreDoorSelector.value = formData.cross_bore_door;
+                    }
+                }
+                
                 // Set form as pending
                 isPendingFormOpen = true;
                 formStatus = 'pending';
@@ -1899,6 +1927,16 @@
                 if (formData.afterPhotos && Array.isArray(formData.afterPhotos)) {
                     afterPhotos = formData.afterPhotos;
                     displayAfterPhotos();
+                }
+                
+                // Restore Cross Bore Door selection if applicable
+                if (formData.cross_bore_door) {
+                    window.selectedCrossBoreDoor = formData.cross_bore_door;
+                    const crossBoreDoorSelector = document.getElementById('crossBoreDoorSelector');
+                    if (crossBoreDoorSelector) {
+                        crossBoreDoorSelector.value = formData.cross_bore_door;
+                        crossBoreDoorSelector.disabled = true; // Read-only for council
+                    }
                 }
                 
                 // Set form as pending council
@@ -2179,6 +2217,20 @@
                 edpSection.style.display = 'none';
                 // Load tasks directly for non-matrix forms
                 loadTasks(form.tasks);
+            }
+
+            // Handle Cross Bore Door selector (Sections 2.24.1 to 2.24.6)
+            const crossBoreDoorSection = document.getElementById('crossBoreDoorSection');
+            const crossBoreDoorSelector = document.getElementById('crossBoreDoorSelector');
+            const crossBoreSectionList = ['2.24.1', '2.24.2', '2.24.3', '2.24.4', '2.24.5', '2.24.6'];
+            
+            if (crossBoreSectionList.includes(form.section)) {
+                crossBoreDoorSection.style.display = 'block';
+                crossBoreDoorSelector.value = window.selectedCrossBoreDoor || '';
+                window.selectedCrossBoreDoor = null;  // Reset
+            } else {
+                crossBoreDoorSection.style.display = 'none';
+                window.selectedCrossBoreDoor = null;  // Reset
             }
 
             // Set current dates
@@ -2569,6 +2621,7 @@
                 afterPhotos: afterPhotos,
                 tasks: tasks,
                 edp: window.selectedEDP || null,
+                cross_bore_door: window.selectedCrossBoreDoor || null,
                 status: 'paused',
                 pin: pin,
                 signatures: {
@@ -2641,6 +2694,10 @@
                     document.getElementById('inspector').value = formData.inspector || '';
                     document.getElementById('engineerComments').value = formData.engineer_comments || '';
                     document.getElementById('materialsUsed').value = formData.materials_used || '';
+                    window.selectedCrossBoreDoor = formData.cross_bore_door || null;
+                    if (formData.cross_bore_door) {
+                        document.getElementById('crossBoreDoorSelector').value = formData.cross_bore_door;
+                    }
                     document.getElementById('engineerName').value = formData.signatures?.engineer || '';
                     document.getElementById('engineerInitials').value = formData.signatures?.engineerInitials || '';
                     document.getElementById('engineerDate').value = formData.signatures?.engineerDate || '';
@@ -2964,6 +3021,8 @@
             document.getElementById('supervisorComments').value = '';
             document.getElementById('councilComments').value = '';
             document.getElementById('materialsUsed').value = '';
+            document.getElementById('crossBoreDoorSelector').value = '';
+            window.selectedCrossBoreDoor = null;
             
             // Reset workflow state after save
             isPendingFormOpen = false;
@@ -3121,6 +3180,7 @@
                 materials_used: document.getElementById('materialsUsed').value,
                 tasks: tasks,
                 edp: window.selectedEDP || null,
+                cross_bore_door: window.selectedCrossBoreDoor || null,
                 status: formStatus,
                 signatures: {
                     engineer: engineerName,
