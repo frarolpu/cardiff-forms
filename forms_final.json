@@ -477,7 +477,7 @@
       },
       {
         "step": "4",
-        "description": "Check the heater/thermostat is operational 15oC"
+        "description": "Check the heater/thermostat is operational 15ºC"
       },
       {
         "step": "5",
@@ -581,7 +581,7 @@
       },
       {
         "step": "4",
-        "description": "Check the heater/thermostat is operational 15oC"
+        "description": "Check the heater/thermostat is operational 15ºC"
       },
       {
         "step": "5",
@@ -685,7 +685,7 @@
       },
       {
         "step": "4",
-        "description": "Check the heater/thermostat is operational 15oC"
+        "description": "Check the heater/thermostat is operational 15ºC"
       },
       {
         "step": "5",
@@ -813,7 +813,7 @@
       },
       {
         "step": "4",
-        "description": "Check the heater/thermostat is operational 15oC"
+        "description": "Check the heater/thermostat is operational 15ºC"
       },
       {
         "step": "5",
@@ -917,7 +917,7 @@
       },
       {
         "step": "4",
-        "description": "Check the heater/thermostat is operational 15oC"
+        "description": "Check the heater/thermostat is operational 15ºC"
       },
       {
         "step": "5",
@@ -1021,7 +1021,7 @@
       },
       {
         "step": "4",
-        "description": "Check the heater/thermostat is operational 15oC"
+        "description": "Check the heater/thermostat is operational 15ºC"
       },
       {
         "step": "5",
@@ -1165,7 +1165,7 @@
       },
       {
         "step": "9",
-        "description": "Check trace heating and thermostat settings (50oC)"
+        "description": "Check trace heating and thermostat settings (50ºC)"
       },
       {
         "step": "11",
@@ -1285,7 +1285,7 @@
       },
       {
         "step": "9",
-        "description": "Check trace heating and thermostat settings (50oC)"
+        "description": "Check trace heating and thermostat settings (50ºC)"
       },
       {
         "step": "11",
@@ -1413,7 +1413,7 @@
       },
       {
         "step": "9",
-        "description": "Check trace heating and thermostat settings (50oC)"
+        "description": "Check trace heating and thermostat settings (50ºC)"
       },
       {
         "step": "11",
@@ -1533,7 +1533,7 @@
       },
       {
         "step": "9",
-        "description": "Check trace heating and thermostat settings (50oC)"
+        "description": "Check trace heating and thermostat settings (50ºC)"
       },
       {
         "step": "11",
@@ -1727,7 +1727,7 @@
       },
       {
         "step": "4",
-        "description": "Ensure anti-condensation heater are operating correctly (15oC)"
+        "description": "Ensure anti-condensation heater are operating correctly (15ºC)"
       },
       {
         "step": "5",
@@ -1784,7 +1784,7 @@
       },
       {
         "step": "4",
-        "description": "Ensure anti-condensation heater are operating correctly (15oC)"
+        "description": "Ensure anti-condensation heater are operating correctly (15ºC)"
       },
       {
         "step": "5",
@@ -2199,7 +2199,7 @@
       },
       {
         "step": "4",
-        "description": "Ensure anti-condensation heaters are operating correctly (15oC). Replace with spares if required."
+        "description": "Ensure anti-condensation heaters are operating correctly (15ºC). Replace with spares if required."
       },
       {
         "step": "5",
@@ -2248,7 +2248,7 @@
       },
       {
         "step": "4",
-        "description": "Ensure anti-condensation heaters are operating correctly (15oC). Replace with spares if required."
+        "description": "Ensure anti-condensation heaters are operating correctly (15ºC). Replace with spares if required."
       },
       {
         "step": "5",
