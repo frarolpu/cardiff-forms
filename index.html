@@ -2803,41 +2803,39 @@
             }
 
             tasks.forEach((task, index) => {
-                const taskItem = document.createElement('div');
-                taskItem.className = 'task-item';
-                
-                // Handle different task formats (step can be number or full description)
                 const taskDescription = task.description || task.step;
                 const taskNumber = task.step && !isNaN(task.step) ? task.step : (index + 1);
                 
                 // Check if task has subtasks
                 if (task.subtasks && task.subtasks.length > 0) {
-                    // Main task without checkbox if it has subtasks
-                    taskItem.innerHTML = `
-                        <div class="task-text">
-                            <span class="task-number">${taskNumber}.</span>
-                            <span class="task-description">${taskDescription}</span>
+                    // Build subtasks HTML
+                    let subtasksHTML = task.subtasks.map((subtask, subtaskIndex) => `
+                        <div style="display: flex; align-items: flex-start; margin-bottom: 6px; margin-left: 8px;">
+                            <input type="checkbox" class="task-checkbox" data-step="${taskNumber}-${subtaskIndex + 1}" style="margin-top: 3px; margin-right: 8px; flex-shrink: 0;">
+                            <span style="font-size: 14px;">• ${subtask.description}</span>
                         </div>
-                        <div class="subtasks-container" style="margin-left: 30px; margin-top: 10px;">
-                    `;
+                    `).join('');
                     
-                    // Add each subtask with checkbox
-                    task.subtasks.forEach((subtask, subtaskIndex) => {
-                        const subtaskDiv = document.createElement('div');
-                        subtaskDiv.className = 'subtask-item';
-                        subtaskDiv.style.marginBottom = '8px';
-                        subtaskDiv.innerHTML = `
-                            <input type="checkbox" class="task-checkbox" data-step="${taskNumber}-${subtaskIndex + 1}">
-                            <div class="subtask-text" style="display: inline-block; margin-left: 8px;">
-                                <span class="subtask-description">• ${subtask.description}</span>
+                    const taskItem = document.createElement('div');
+                    taskItem.className = 'task-item';
+                    taskItem.innerHTML = `
+                        <div style="display: flex; align-items: flex-start;">
+                            <div style="flex: 1;">
+                                <div style="display: flex; align-items: flex-start;">
+                                    <span class="task-number" style="padding-right: 8px; flex-shrink: 0;">${taskNumber}.</span>
+                                    <span class="task-description">${taskDescription}</span>
+                                </div>
+                                <div style="margin-top: 8px;">
+                                    ${subtasksHTML}
+                                </div>
                             </div>
-                        `;
-                        taskItem.querySelector('.subtasks-container').appendChild(subtaskDiv);
-                    });
-                    
-                    taskItem.innerHTML += '</div>';
+                        </div>
+                    `;
+                    taskList.appendChild(taskItem);
                 } else {
                     // Regular task with checkbox
+                    const taskItem = document.createElement('div');
+                    taskItem.className = 'task-item';
                     taskItem.innerHTML = `
                         <input type="checkbox" class="task-checkbox" data-step="${taskNumber}">
                         <div class="task-text">
@@ -2845,9 +2843,10 @@
                             <span class="task-description">${taskDescription}</span>
                         </div>
                     `;
+                    taskList.appendChild(taskItem);
                 }
-                taskList.appendChild(taskItem);
             });
+        }
         }
 
         // SEARCH
