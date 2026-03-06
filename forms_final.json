@@ -477,7 +477,7 @@
       },
       {
         "step": "4",
-        "description": "Check the heater/thermostat is operational 15ºC"
+        "description": "Check the heater/thermostat is operational 15\u00baC"
       },
       {
         "step": "5",
@@ -581,7 +581,7 @@
       },
       {
         "step": "4",
-        "description": "Check the heater/thermostat is operational 15ºC"
+        "description": "Check the heater/thermostat is operational 15\u00baC"
       },
       {
         "step": "5",
@@ -685,7 +685,7 @@
       },
       {
         "step": "4",
-        "description": "Check the heater/thermostat is operational 15ºC"
+        "description": "Check the heater/thermostat is operational 15\u00baC"
       },
       {
         "step": "5",
@@ -813,7 +813,7 @@
       },
       {
         "step": "4",
-        "description": "Check the heater/thermostat is operational 15ºC"
+        "description": "Check the heater/thermostat is operational 15\u00baC"
       },
       {
         "step": "5",
@@ -917,7 +917,7 @@
       },
       {
         "step": "4",
-        "description": "Check the heater/thermostat is operational 15ºC"
+        "description": "Check the heater/thermostat is operational 15\u00baC"
       },
       {
         "step": "5",
@@ -1021,7 +1021,7 @@
       },
       {
         "step": "4",
-        "description": "Check the heater/thermostat is operational 15ºC"
+        "description": "Check the heater/thermostat is operational 15\u00baC"
       },
       {
         "step": "5",
@@ -1165,7 +1165,7 @@
       },
       {
         "step": "9",
-        "description": "Check trace heating and thermostat settings (50ºC)"
+        "description": "Check trace heating and thermostat settings (50\u00baC)"
       },
       {
         "step": "11",
@@ -1285,7 +1285,7 @@
       },
       {
         "step": "9",
-        "description": "Check trace heating and thermostat settings (50ºC)"
+        "description": "Check trace heating and thermostat settings (50\u00baC)"
       },
       {
         "step": "11",
@@ -1413,7 +1413,11 @@
       },
       {
         "step": "9",
-        "description": "Check trace heating and thermostat settings (50ºC)"
+        "description": "Check trace heating and thermostat settings (50\u00baC)"
+      },
+      {
+        "step": "10",
+        "description": "Check the operation of and lubricate all door hinges."
       },
       {
         "step": "11",
@@ -1533,7 +1537,7 @@
       },
       {
         "step": "9",
-        "description": "Check trace heating and thermostat settings (50ºC)"
+        "description": "Check trace heating and thermostat settings (50\u00baC)"
       },
       {
         "step": "11",
@@ -1727,7 +1731,7 @@
       },
       {
         "step": "4",
-        "description": "Ensure anti-condensation heater are operating correctly (15ºC)"
+        "description": "Ensure anti-condensation heater are operating correctly (15\u00baC)"
       },
       {
         "step": "5",
@@ -1784,7 +1788,7 @@
       },
       {
         "step": "4",
-        "description": "Ensure anti-condensation heater are operating correctly (15ºC)"
+        "description": "Ensure anti-condensation heater are operating correctly (15\u00baC)"
       },
       {
         "step": "5",
@@ -2199,7 +2203,7 @@
       },
       {
         "step": "4",
-        "description": "Ensure anti-condensation heaters are operating correctly (15ºC). Replace with spares if required."
+        "description": "Ensure anti-condensation heaters are operating correctly (15\u00baC). Replace with spares if required."
       },
       {
         "step": "5",
@@ -2248,7 +2252,7 @@
       },
       {
         "step": "4",
-        "description": "Ensure anti-condensation heaters are operating correctly (15ºC). Replace with spares if required."
+        "description": "Ensure anti-condensation heaters are operating correctly (15\u00baC). Replace with spares if required."
       },
       {
         "step": "5",
@@ -2571,6 +2575,10 @@
       {
         "step": "10",
         "description": "Check and lubricate door hinges. Check door fasteners and adjust or renew as required."
+      },
+      {
+        "step": "11",
+        "description": "Ensure the exchanges at County Hall and the Tunnel Service Building are healthy including all operator consoles and voice recorders."
       }
     ]
   },
@@ -4820,6 +4828,10 @@
       {
         "step": "10",
         "description": "Lubricate the panel door hinges and fasteners."
+      },
+      {
+        "step": "11",
+        "description": "Test operation of all RCD devices."
       }
     ],
     "is_matrix": true,
@@ -7001,6 +7013,10 @@
       {
         "step": "7",
         "description": "Have all rectification actions been completed. \nIf no provide details in comment section below of follow up actions required."
+      },
+      {
+        "step": "8",
+        "description": "Remove any Graffiti from any of the above."
       }
     ]
   },
@@ -7157,6 +7173,10 @@
       {
         "step": "6",
         "description": "Carry out thorough clean of all road markings within the tunnel including road centre dividing line."
+      },
+      {
+        "step": "7",
+        "description": "Carry Out cleaning / flushing through of all road gullies and interconnecting drainage pipe work. Remove all debris and silt collected from site and submit waste disposal certificate with tunnel closure report. Ensure all covers removed are correctly barriered off for the works duration and replaced on completion of the works"
       }
     ]
   },
@@ -7309,7 +7329,25 @@
     "tasks": [
       {
         "step": "1",
-        "description": "Carry out inspection of stage 1-3 LED Luminaires and replace any:\nFailed T-Line units with a spare that will be issued by Cardiff Council. \nFaulty DALI driver (Phillips XITANIUM 1-10V Dimming) a spare that will be issued by Cardiff Council\nFaulty RS485 DALI Gateway that will be issued by Cardiff Council\nFaulty plugs/sockets at driver or T-Line that will be issued by Cardiff Council"
+        "description": "Carry out inspection of stage 1-3 LED Luminaires and replace any:",
+        "subtasks": [
+          {
+            "description": "Failed T-Line units with a spare that will be issued by Cardiff Council.",
+            "tickbox": true
+          },
+          {
+            "description": "Faulty DALI driver (Phillips XITANIUM 1-10V Dimming) a spare that will be issued by Cardiff Council",
+            "tickbox": true
+          },
+          {
+            "description": "Faulty RS485 DALI Gateway that will be issued by Cardiff Council",
+            "tickbox": true
+          },
+          {
+            "description": "Faulty plugs/sockets at driver or T-Line that will be issued by Cardiff",
+            "tickbox": true
+          }
+        ]
       },
       {
         "step": "2",
@@ -7317,7 +7355,29 @@
       },
       {
         "step": "3",
-        "description": "Inspect scoutmaster control unit and rectify any hardware faults.\nClean monitor and Keyboard\nReplace fan filter and ensure fan is operational.\nArchive System data files and historical luminaire data\nCheck system for errors and rectify as necessary."
+        "description": "Plaese check",
+        "subtasks": [
+          {
+            "description": "Inspect scoutmaster control unit and rectify any hardware faults.",
+            "tickbox": true
+          },
+          {
+            "description": "Clean monitor and Keyboard",
+            "tickbox": true
+          },
+          {
+            "description": "Replace fan filter and ensure fan is operational.",
+            "tickbox": true
+          },
+          {
+            "description": "Archive System data files and historical luminaire data",
+            "tickbox": true
+          },
+          {
+            "description": "Check system for errors and rectify as necessary.",
+            "tickbox": true
+          }
+        ]
       },
       {
         "step": "4",
@@ -7702,7 +7762,21 @@
       },
       {
         "step": "2",
-        "description": "Manually operate the system at each door position. Ensure that:\nEach arrow functions and is sequential.\nStrobe lighting on sign operates and sign is illuminated.\nAudible sound and white noise alert are operational"
+        "description": "Manually operate the system at each door position. Ensure that:",
+        "subtasks": [
+          {
+            "description": "Each arrow functions and is sequential.",
+            "tickbox": true
+          },
+          {
+            "description": "Strobe lighting on sign operates and sign is illuminated.",
+            "tickbox": true
+          },
+          {
+            "description": "Audible sound and white noise alert are operational",
+            "tickbox": true
+          }
+        ]
       },
       {
         "step": "3",
