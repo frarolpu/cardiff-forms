@@ -9,6 +9,11 @@ from io import BytesIO
 import psycopg2
 from psycopg2.extras import RealDictCursor
 import base64
+try:
+    from PIL import Image as PILImage
+    _PILLOW_AVAILABLE = True
+except ImportError:
+    _PILLOW_AVAILABLE = False
 
 app = Flask(__name__)
 
@@ -289,27 +294,41 @@ def create_pdf(form_data):
                 pdf.set_font(default_font, "B", 12)
                 pdf.cell(0, 10, "BEFORE Inspection Photos", 0, 1)
                 pdf.set_font(default_font, "", 9)
-                
-                for idx, photo_base64 in enumerate(before_photos[:4]):  # Max 4 photos
+
+                img_max_w = pdf.w - 20  # full usable width (10mm margins)
+
+                for idx, photo_base64 in enumerate(before_photos):
                     try:
                         # Extract base64 data
                         if isinstance(photo_base64, str) and photo_base64.startswith('data:image'):
                             photo_data = photo_base64.split(',')[1]
                         else:
                             photo_data = photo_base64
-                        
-                        # Create temp file
-                        with tempfile.NamedTemporaryFile(suffix='.png', delete=False) as tmp:
-                            tmp.write(base64.b64decode(photo_data))
+
+                        img_bytes = base64.b64decode(photo_data)
+                        with tempfile.NamedTemporaryFile(suffix='.jpg', delete=False) as tmp:
+                            tmp.write(img_bytes)
                             temp_files.append(tmp.name)
-                        
-                        # Add image to PDF
-                        img_width = 30
-                        if idx % 2 == 0 and idx > 0:
-                            pdf.ln(40)
-                        pdf.image(temp_files[-1], w=img_width, h=30)
-                        if (idx + 1) % 2 == 0:
-                            pdf.ln(40)
+
+                        # Compute proportional height and check for page break
+                        img_w = img_max_w
+                        img_h = None
+                        if _PILLOW_AVAILABLE:
+                            try:
+                                pil = PILImage.open(tmp.name)
+                                orig_w, orig_h = pil.size
+                                pil.close()
+                                if orig_w > 0:
+                                    img_h = img_w * (orig_h / orig_w)
+                                    remaining = pdf.h - pdf.get_y() - pdf.b_margin
+                                    if img_h > remaining - 10:
+                                        pdf.add_page()
+                            except Exception:
+                                pass
+
+                        # Insert image — omit h so fpdf2 preserves aspect ratio
+                        pdf.image(temp_files[-1], x=10, w=img_w)
+                        pdf.ln(5)
                     except Exception as e:
                         log_error(f"Before photo insertion error: {e}")
                         pass
@@ -323,34 +342,40 @@ def create_pdf(form_data):
                 pdf.set_font(default_font, "B", 12)
                 pdf.cell(0, 10, "AFTER Inspection Photos", 0, 1)
                 pdf.set_font(default_font, "", 9)
-                
-                for idx, photo_base64 in enumerate(after_photos[:4]):  # Max 4 photos
+
+                img_max_w = pdf.w - 20  # full usable width (10mm margins)
+
+                for idx, photo_base64 in enumerate(after_photos):
                     try:
                         # Extract base64 data
                         if isinstance(photo_base64, str) and photo_base64.startswith('data:image'):
                             photo_data = photo_base64.split(',')[1]
                         else:
                             photo_data = photo_base64
-                        
-                        # Create temp file
-                        with tempfile.NamedTemporaryFile(suffix='.png', delete=False) as tmp:
-                            tmp.write(base64.b64decode(photo_data))
+
+                        img_bytes = base64.b64decode(photo_data)
+                        with tempfile.NamedTemporaryFile(suffix='.jpg', delete=False) as tmp:
+                            tmp.write(img_bytes)
                             temp_files.append(tmp.name)
-                        
-                        # Add image to PDF
-                        img_width = 30
-                        if idx % 2 == 0 and idx > 0:
-                            pdf.ln(40)
-                        pdf.image(temp_files[-1], w=img_width, h=30)
-                        if (idx + 1) % 2 == 0:
-                            pdf.ln(40)
-                    except Exception as e:
-                        log_error(f"After photo insertion error: {e}")
-                        pass
-            except Exception as e:
-                log_error(f"After photos section error: {e}")
-        
-        # Add page for signatures if we have any photos
+
+                        # Compute proportional height and check for page break
+                        img_w = img_max_w
+                        if _PILLOW_AVAILABLE:
+                            try:
+                                pil = PILImage.open(tmp.name)
+                                orig_w, orig_h = pil.size
+                                pil.close()
+                                if orig_w > 0:
+                                    img_h = img_w * (orig_h / orig_w)
+                                    remaining = pdf.h - pdf.get_y() - pdf.b_margin
+                                    if img_h > remaining - 10:
+                                        pdf.add_page()
+                            except Exception:
+                                pass
+
+                        # Insert image — omit h so fpdf2 preserves aspect ratio
+                        pdf.image(temp_files[-1], x=10, w=img_w)
+                        pdf.ln(5)
         if has_before or has_after:
             pdf.add_page()
         
