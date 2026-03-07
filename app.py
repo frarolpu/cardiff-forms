@@ -376,6 +376,12 @@ def create_pdf(form_data):
                         # Insert image — omit h so fpdf2 preserves aspect ratio
                         pdf.image(temp_files[-1], x=10, w=img_w)
                         pdf.ln(5)
+                    except Exception as e:
+                        log_error(f"After photo insertion error: {e}")
+                        pass
+            except Exception as e:
+                log_error(f"After photos section error: {e}")
+
         if has_before or has_after:
             pdf.add_page()
         
