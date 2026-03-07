@@ -101,13 +101,13 @@
       },
       {
         "step": "11",
-        "description": "Services ACB's in accordance with the manufacturer\u00c3\u00a2\u00e2\u201a\u00ac\u00e2\u201e\u00a2s instructions - Volume 2"
+        "description": "Services ACB's in accordance with the manufacturerÃ¢â‚¬â„¢s instructions - Volume 2"
       }
     ]
   },
   {
     "section": "2.1.5",
-    "equipment": "SWITCHBOARD / MAINS FAILURE TEST",
+    "equipment": "SWITCHBOARD MAINS FAILURE TEST",
     "drawing_ref": "B8/1 to B8/6",
     "locations": [
       "SERVICE BUILDING"
@@ -118,7 +118,7 @@
     "tasks": [
       {
         "step": "1",
-        "description": "Position personal as following:\nNOTE: ALL ISOLATION WORKS WILL BE UNDER THE CONTROL OF THE SUPPLY AUTHORITIES\u00e2\u20ac\u2122 ISOLATION SYSTEM OF WORKS\n1 \u00e2\u20ac\u201c Supply Authority engineer in HV switch room (Contractor to arrange. CCC will cover costs direct with supply authority)\n\n1 - Generator room\n\n1 -  switch room\n\n1 - Control room"
+        "description": "Position personal as following:\nNOTE: ALL ISOLATION WORKS WILL BE UNDER THE CONTROL OF THE SUPPLY AUTHORITIESâ€™ ISOLATION SYSTEM OF WORKS\n1 â€“ Supply Authority engineer in HV switch room (Contractor to arrange. CCC will cover costs direct with supply authority)\n\n1 - Generator room\n\n1 -  switch room\n\n1 - Control room"
       },
       {
         "step": "2",
@@ -399,7 +399,7 @@
       },
       {
         "step": "9",
-        "description": "Record the running current Fan     EF5\u00c3\u00a2\u00e2\u201a\u00ac\u00c2\u00a6\u00c3\u00a2\u00e2\u201a\u00ac\u00c2\u00a6\u00c3\u00a2\u00e2\u201a\u00ac\u00c2\u00a6\u00c3\u00a2\u00e2\u201a\u00ac\u00c2\u00a6. Amps"
+        "description": "Record the running current Fan     EF5Ã¢â‚¬Â¦Ã¢â‚¬Â¦Ã¢â‚¬Â¦Ã¢â‚¬Â¦. Amps"
       }
     ]
   },
@@ -448,13 +448,13 @@
       },
       {
         "step": "9",
-        "description": "Record the running current Fan     EF1\u00c3\u00a2\u00e2\u201a\u00ac\u00c2\u00a6\u00c3\u00a2\u00e2\u201a\u00ac\u00c2\u00a6\u00c3\u00a2\u00e2\u201a\u00ac\u00c2\u00a6\u00c3\u00a2\u00e2\u201a\u00ac\u00c2\u00a6. Amps        EF2\u00c3\u00a2\u00e2\u201a\u00ac\u00c2\u00a6\u00c3\u00a2\u00e2\u201a\u00ac\u00c2\u00a6\u00c3\u00a2\u00e2\u201a\u00ac\u00c2\u00a6\u00c3\u00a2\u00e2\u201a\u00ac\u00c2\u00a6\u00c3\u00a2\u00e2\u201a\u00ac\u00c2\u00a6Amps"
+        "description": "Record the running current Fan     EF1Ã¢â‚¬Â¦Ã¢â‚¬Â¦Ã¢â‚¬Â¦Ã¢â‚¬Â¦. Amps        EF2Ã¢â‚¬Â¦Ã¢â‚¬Â¦Ã¢â‚¬Â¦Ã¢â‚¬Â¦Ã¢â‚¬Â¦Amps"
       }
     ]
   },
   {
     "section": "2.5.1",
-    "equipment": "TUNNEL DISTRUBITION",
+    "equipment": "TUNNEL DISTRUBITION PANELS",
     "drawing_ref": "B15/1 - 15/3 & 15/8",
     "locations": [
       "EASTBOUND BORE"
@@ -477,7 +477,7 @@
       },
       {
         "step": "4",
-        "description": "Check the heater/thermostat is operational 15\u00baC"
+        "description": "Check the heater/thermostat is operational 15ºC"
       },
       {
         "step": "5",
@@ -558,7 +558,7 @@
   },
   {
     "section": "2.5.2",
-    "equipment": "TUNNEL DISTRUBITION",
+    "equipment": "TUNNEL DISTRUBITION PANELS",
     "drawing_ref": "B15/1 - 15/3 & 15/8",
     "locations": [
       "EASTBOUND BORE"
@@ -581,7 +581,7 @@
       },
       {
         "step": "4",
-        "description": "Check the heater/thermostat is operational 15\u00baC"
+        "description": "Check the heater/thermostat is operational 15ºC"
       },
       {
         "step": "5",
@@ -662,7 +662,7 @@
   },
   {
     "section": "2.5.3",
-    "equipment": "TUNNEL DISTRUBITION",
+    "equipment": "TUNNEL DISTRUBITION PANELS",
     "drawing_ref": "B15/1 - 15/3 & 15/8",
     "locations": [
       "EASTBOUND BORE"
@@ -685,7 +685,7 @@
       },
       {
         "step": "4",
-        "description": "Check the heater/thermostat is operational 15\u00baC"
+        "description": "Check the heater/thermostat is operational 15ºC"
       },
       {
         "step": "5",
@@ -790,7 +790,7 @@
   },
   {
     "section": "2.5.4",
-    "equipment": "TUNNEL DISTRUBITION",
+    "equipment": "TUNNEL DISTRUBITION PANELS",
     "drawing_ref": "B15/1 - 15/3 & 15/8",
     "locations": [
       "WESTBOUND BORE"
@@ -813,7 +813,7 @@
       },
       {
         "step": "4",
-        "description": "Check the heater/thermostat is operational 15\u00baC"
+        "description": "Check the heater/thermostat is operational 15ºC"
       },
       {
         "step": "5",
@@ -894,7 +894,7 @@
   },
   {
     "section": "2.5.5",
-    "equipment": "TUNNEL DISTRUBITION",
+    "equipment": "TUNNEL DISTRUBITION PANELS",
     "drawing_ref": "B15/1 - 15/3 & 15/8",
     "locations": [
       "WESTBOUND BORE"
@@ -917,7 +917,7 @@
       },
       {
         "step": "4",
-        "description": "Check the heater/thermostat is operational 15\u00baC"
+        "description": "Check the heater/thermostat is operational 15ºC"
       },
       {
         "step": "5",
@@ -998,7 +998,7 @@
   },
   {
     "section": "2.5.6",
-    "equipment": "TUNNEL DISTRUBITION",
+    "equipment": "TUNNEL DISTRUBITION PANELS",
     "drawing_ref": "B15/1 - 15/3 & 15/8",
     "locations": [
       "WESTBOUND BORE"
@@ -1021,7 +1021,7 @@
       },
       {
         "step": "4",
-        "description": "Check the heater/thermostat is operational 15\u00baC"
+        "description": "Check the heater/thermostat is operational 15ºC"
       },
       {
         "step": "5",
@@ -1122,7 +1122,7 @@
   },
   {
     "section": "2.6.1",
-    "equipment": "TUNNEL EMERGENCY",
+    "equipment": "TUNNEL EMERGENCY PANELS",
     "drawing_ref": "B15/1 -15/3 &15/8",
     "locations": [
       "EASTBOUND BORE"
@@ -1133,7 +1133,7 @@
     "tasks": [
       {
         "step": "1",
-        "description": "Check operation of fireman\u00c3\u00a2\u00e2\u201a\u00ac\u00e2\u201e\u00a2s socket outlets"
+        "description": "Check operation of firemanÃ¢â‚¬â„¢s socket outlets"
       },
       {
         "step": "2",
@@ -1165,7 +1165,7 @@
       },
       {
         "step": "9",
-        "description": "Check trace heating and thermostat settings (50\u00baC)"
+        "description": "Check trace heating and thermostat settings (50ºC)"
       },
       {
         "step": "11",
@@ -1242,7 +1242,7 @@
   },
   {
     "section": "2.6.2",
-    "equipment": "TUNNEL EMERGENCY",
+    "equipment": "TUNNEL EMERGENCY PANELS",
     "drawing_ref": "B15/1 -15/3 &15/8",
     "locations": [
       "EASTBOUND BORE"
@@ -1253,7 +1253,7 @@
     "tasks": [
       {
         "step": "1",
-        "description": "Check operation of fireman\u00c3\u00a2\u00e2\u201a\u00ac\u00e2\u201e\u00a2s socket outlets"
+        "description": "Check operation of firemanÃ¢â‚¬â„¢s socket outlets"
       },
       {
         "step": "2",
@@ -1285,7 +1285,7 @@
       },
       {
         "step": "9",
-        "description": "Check trace heating and thermostat settings (50\u00baC)"
+        "description": "Check trace heating and thermostat settings (50ºC)"
       },
       {
         "step": "11",
@@ -1370,7 +1370,7 @@
   },
   {
     "section": "2.6.3",
-    "equipment": "TUNNEL EMERGENCY",
+    "equipment": "TUNNEL EMERGENCY PANELS",
     "drawing_ref": "B15/1 -15/3 &15/8",
     "locations": [
       "WESTBOUND BORE"
@@ -1381,7 +1381,7 @@
     "tasks": [
       {
         "step": "1",
-        "description": "Check operation of fireman\u00c3\u00a2\u00e2\u201a\u00ac\u00e2\u201e\u00a2s socket outlets"
+        "description": "Check operation of firemanÃ¢â‚¬â„¢s socket outlets"
       },
       {
         "step": "2",
@@ -1413,7 +1413,7 @@
       },
       {
         "step": "9",
-        "description": "Check trace heating and thermostat settings (50\u00baC)"
+        "description": "Check trace heating and thermostat settings (50ºC)"
       },
       {
         "step": "10",
@@ -1494,7 +1494,7 @@
   },
   {
     "section": "2.6.4",
-    "equipment": "TUNNEL EMERGENCY",
+    "equipment": "TUNNEL EMERGENCY PANELS",
     "drawing_ref": "B15/1 -15/3 &15/8",
     "locations": [
       "WESTBOUND BORE"
@@ -1505,7 +1505,7 @@
     "tasks": [
       {
         "step": "1",
-        "description": "Check operation of fireman\u00c3\u00a2\u00e2\u201a\u00ac\u00e2\u201e\u00a2s socket outlets"
+        "description": "Check operation of firemanÃ¢â‚¬â„¢s socket outlets"
       },
       {
         "step": "2",
@@ -1537,7 +1537,7 @@
       },
       {
         "step": "9",
-        "description": "Check trace heating and thermostat settings (50\u00baC)"
+        "description": "Check trace heating and thermostat settings (50ºC)"
       },
       {
         "step": "11",
@@ -1622,7 +1622,7 @@
   },
   {
     "section": "2.7.1",
-    "equipment": "FIRE PUMP HOUSE &",
+    "equipment": "FIRE PUMP HOUSE & PIPEWORK",
     "drawing_ref": "B13/1 - 13/6",
     "locations": [
       "FIRE PUMPING STATION"
@@ -1653,7 +1653,7 @@
       },
       {
         "step": "6",
-        "description": "Operate all manual valves through full range of travel to check operation. Lubricate as necessary \u00c3\u00a2\u00e2\u201a\u00ac\u00e2\u20ac\u0153 Reset"
+        "description": "Operate all manual valves through full range of travel to check operation. Lubricate as necessary Ã¢â‚¬â€œ Reset"
       },
       {
         "step": "7",
@@ -1663,7 +1663,7 @@
   },
   {
     "section": "2.7.2",
-    "equipment": "FIRE PUMP HOUSE &",
+    "equipment": "FIRE PUMP HOUSE & PIPEWORK",
     "drawing_ref": "B13/1 - 13/6",
     "locations": [
       "FIRE PUMPING STATION"
@@ -1708,7 +1708,7 @@
   },
   {
     "section": "2.8.1",
-    "equipment": "FIRE PUMP HOUSE &",
+    "equipment": "FIRE PUMP HOUSE & CONTROL PANEL",
     "drawing_ref": "B13/1 - 13/6",
     "locations": [
       "FIRE PUMPING STATION"
@@ -1731,7 +1731,7 @@
       },
       {
         "step": "4",
-        "description": "Ensure anti-condensation heater are operating correctly (15\u00baC)"
+        "description": "Ensure anti-condensation heater are operating correctly (15ºC)"
       },
       {
         "step": "5",
@@ -1765,7 +1765,7 @@
   },
   {
     "section": "2.8.2",
-    "equipment": "FIRE PUMP HOUSE",
+    "equipment": "FIRE PUMP HOUSE CONTROL PANEL",
     "drawing_ref": "B13/1 - 13/6",
     "locations": [
       "FIRE PUMPING STATION"
@@ -1788,7 +1788,7 @@
       },
       {
         "step": "4",
-        "description": "Ensure anti-condensation heater are operating correctly (15\u00baC)"
+        "description": "Ensure anti-condensation heater are operating correctly (15ºC)"
       },
       {
         "step": "5",
@@ -1810,7 +1810,7 @@
   },
   {
     "section": "2.8.3",
-    "equipment": "FIREFIGHTING WATER",
+    "equipment": "FIREFIGHTING WATER MAIN HYDRANTS",
     "drawing_ref": "B13/1 - 13/6",
     "locations": [
       "EASTBOUND BORE"
@@ -1847,7 +1847,7 @@
   },
   {
     "section": "2.8.4",
-    "equipment": "FIREFIGHTING WATER",
+    "equipment": "FIREFIGHTING WATER MAIN HYDRANTS",
     "drawing_ref": "B13/1 - 13/6",
     "locations": [
       "EASTBOUND BORE"
@@ -1888,7 +1888,7 @@
   },
   {
     "section": "2.8.5",
-    "equipment": "FIREFIGHTING WATER",
+    "equipment": "FIREFIGHTING WATER MAIN HYDRANTS",
     "drawing_ref": "B13/1 - 13/6",
     "locations": [
       "WESTBOUND BORE"
@@ -1925,7 +1925,7 @@
   },
   {
     "section": "2.8.6",
-    "equipment": "FIREFIGHTING WATER",
+    "equipment": "FIREFIGHTING WATER MAIN HYDRANTS",
     "drawing_ref": "B13/1 - 13/6",
     "locations": [
       "WESTBOUND BORE"
@@ -1966,7 +1966,7 @@
   },
   {
     "section": "2.8.7",
-    "equipment": "FIREFIGHTING WATER",
+    "equipment": "FIREFIGHTING WATER MAIN ISOLATING VALVES",
     "drawing_ref": "B13/1 - 13/6",
     "locations": [
       "EASTBOUND BORE"
@@ -2003,7 +2003,7 @@
   },
   {
     "section": "2.8.8",
-    "equipment": "FIREFIGHTING WATER",
+    "equipment": "FIREFIGHTING WATER MAIN ISOLATING VALVES",
     "drawing_ref": "B13/1 - 13/6",
     "locations": [
       "EASTBOUND BORE"
@@ -2040,7 +2040,7 @@
   },
   {
     "section": "2.8.9",
-    "equipment": "FIREFIGHTING WATER",
+    "equipment": "FIREFIGHTING WATER MAIN ISOLATING VALVES",
     "drawing_ref": "B13/1 - 13/6",
     "locations": [
       "WESTBOUND BORE"
@@ -2077,7 +2077,7 @@
   },
   {
     "section": "2.8.10",
-    "equipment": "FIREFIGHTING WATER",
+    "equipment": "FIREFIGHTING WATER MAIN ISOLATING VALVES",
     "drawing_ref": "B13/1 - 13/6",
     "locations": [
       "WESTBOUND BORE"
@@ -2147,7 +2147,7 @@
   },
   {
     "section": "2.9.4",
-    "equipment": "TUNNEL DRAINAGE",
+    "equipment": "TUNNEL DRAINAGE Cleaning",
     "drawing_ref": "B12/1 - B19/19",
     "locations": [
       "SERVICE BUILDING"
@@ -2203,7 +2203,7 @@
       },
       {
         "step": "4",
-        "description": "Ensure anti-condensation heaters are operating correctly (15\u00baC). Replace with spares if required."
+        "description": "Ensure anti-condensation heaters are operating correctly (15ºC). Replace with spares if required."
       },
       {
         "step": "5",
@@ -2252,7 +2252,7 @@
       },
       {
         "step": "4",
-        "description": "Ensure anti-condensation heaters are operating correctly (15\u00baC). Replace with spares if required."
+        "description": "Ensure anti-condensation heaters are operating correctly (15ºC). Replace with spares if required."
       },
       {
         "step": "5",
@@ -2278,7 +2278,7 @@
   },
   {
     "section": "2.11.2",
-    "equipment": "SUMP PUMPS, VALVES",
+    "equipment": "SUMP PUMPS, VALVES & PIPEWORK",
     "drawing_ref": "B12/1 - B19/9",
     "locations": [
       "SERVICE BUILDING"
@@ -2400,7 +2400,7 @@
   },
   {
     "section": "2.17.1",
-    "equipment": "SMOKE CONTROL",
+    "equipment": "SMOKE CONTROL TELEPHONE",
     "drawing_ref": "",
     "locations": [
       "EASTBOUND BORE"
@@ -2437,7 +2437,7 @@
   },
   {
     "section": "2.17.2",
-    "equipment": "SMOKE CONTROL",
+    "equipment": "SMOKE CONTROL TELEPHONE",
     "drawing_ref": "",
     "locations": [
       "WESTBOUND BORE"
@@ -2474,7 +2474,7 @@
   },
   {
     "section": "2.18.1",
-    "equipment": "TUNNEL EMERGENCY",
+    "equipment": "TUNNEL EMERGENCY TELEPHONE",
     "drawing_ref": "",
     "locations": [
       "EASTBOUND BORE"
@@ -2527,7 +2527,7 @@
   },
   {
     "section": "2.18.2",
-    "equipment": "TUNNEL EMERGENCY",
+    "equipment": "TUNNEL EMERGENCY TELEPHONE",
     "drawing_ref": "",
     "locations": [
       "WESTBOUND BORE"
@@ -2799,7 +2799,7 @@
   },
   {
     "section": "2.22.1",
-    "equipment": "TRIPPING",
+    "equipment": "TRIPPING CHARGER",
     "drawing_ref": "",
     "locations": [
       "SERVICE BUILDING"
@@ -2895,7 +2895,7 @@
   },
   {
     "section": "2.22.2",
-    "equipment": "TRIPPING",
+    "equipment": "TRIPPING CHARGER",
     "drawing_ref": "",
     "locations": [
       "SERVICE BUILDING"
@@ -2991,7 +2991,7 @@
   },
   {
     "section": "2.22.3",
-    "equipment": "TRIPPING",
+    "equipment": "TRIPPING CHARGER",
     "drawing_ref": "",
     "locations": [
       "SERVICE BUILDING"
@@ -3095,7 +3095,7 @@
   },
   {
     "section": "2.23.1",
-    "equipment": "LV CLOSING BATTERY CHARGER",
+    "equipment": "CLOSING CHARGER",
     "drawing_ref": "",
     "locations": [
       "SERVICE BUILDING"
@@ -3191,7 +3191,7 @@
   },
   {
     "section": "2.23.2",
-    "equipment": "LV CLOSING BATTERY CHARGER",
+    "equipment": "CLOSING CHARGER",
     "drawing_ref": "",
     "locations": [
       "SERVICE BUILDING"
@@ -3287,7 +3287,7 @@
   },
   {
     "section": "2.23.3",
-    "equipment": "LV CLOSING BATTERY CHARGER",
+    "equipment": "CLOSING CHARGER",
     "drawing_ref": "",
     "locations": [
       "SERVICE BUILDING"
@@ -3391,7 +3391,7 @@
   },
   {
     "section": "2.24.1",
-    "equipment": "CROSS BORE DOORS",
+    "equipment": "CROSS BORE DOORS NO 1,2,3,4,5,6 & 7",
     "drawing_ref": "",
     "locations": [
       "WESTBOUND BORE"
@@ -3432,7 +3432,7 @@
   },
   {
     "section": "2.24.2",
-    "equipment": "CROSS BORE DOORS",
+    "equipment": "CROSS BORE DOORS NO 1,2,3,4,5,6 & 7",
     "drawing_ref": "",
     "locations": [
       "EASTBOUND BORE"
@@ -3473,7 +3473,7 @@
   },
   {
     "section": "2.24.3",
-    "equipment": "CROSS BORE DOORS",
+    "equipment": "CROSS BORE DOORS NO 1,2,3,4,5,6 & 7",
     "drawing_ref": "",
     "locations": [
       "WESTBOUND BORE"
@@ -3514,7 +3514,7 @@
   },
   {
     "section": "2.24.4",
-    "equipment": "CROSS BORE DOORS",
+    "equipment": "CROSS BORE DOORS NO 1,2,3,4,5,6 & 7",
     "drawing_ref": "",
     "locations": [
       "EASTBOUND BORE"
@@ -3555,7 +3555,7 @@
   },
   {
     "section": "2.24.5",
-    "equipment": "CROSS BORE DOORS",
+    "equipment": "CROSS BORE DOORS NO. 1,2,3,4,5,6 & 7",
     "drawing_ref": "",
     "locations": [
       "WESTBOUND BORE"
@@ -3596,7 +3596,7 @@
   },
   {
     "section": "2.24.6",
-    "equipment": "CROSS BORE DOORS",
+    "equipment": "CROSS BORE DOORS NO 1,2,3,4,5,6 & 7",
     "drawing_ref": "",
     "locations": [
       "EASTBOUND BORE"
@@ -3637,7 +3637,7 @@
   },
   {
     "section": "2.25.1",
-    "equipment": "HOSE CONNECTION",
+    "equipment": "HOSE CONNECTION PANELS",
     "drawing_ref": "",
     "locations": [
       "EASTBOUND BORE"
@@ -3670,7 +3670,7 @@
   },
   {
     "section": "2.25.2",
-    "equipment": "HOSE CONNECTION",
+    "equipment": "HOSE CONNECTION PANELS",
     "drawing_ref": "",
     "locations": [
       "WESTBOUND BORE"
@@ -3777,7 +3777,7 @@
   },
   {
     "section": "2.26.5",
-    "equipment": "Portal Matrix Signs &",
+    "equipment": "Portal Matrix Signs & Tunnel Approaches",
     "drawing_ref": "",
     "locations": [
       "WESTBOUND A4232\nEASTBOUND A4232"
@@ -4060,7 +4060,7 @@
   },
   {
     "section": "2.28.1",
-    "equipment": "SMOKE CONTROL",
+    "equipment": "SMOKE CONTROL PANELS",
     "drawing_ref": "",
     "locations": [
       "EASTBOUND BORE"
@@ -4109,7 +4109,7 @@
   },
   {
     "section": "2.28.2",
-    "equipment": "SMOKE CONTROL",
+    "equipment": "SMOKE CONTROL PANELS",
     "drawing_ref": "",
     "locations": [
       "WESTBOUND BORE"
@@ -4158,7 +4158,7 @@
   },
   {
     "section": "2.29.1",
-    "equipment": "HIGH LEVEL EQUIPMENT",
+    "equipment": "HIGH LEVEL EQUIPMENT CONDUIT & CABLE TRAYS",
     "drawing_ref": "",
     "locations": [
       "EASTBOUND BORE"
@@ -4183,7 +4183,7 @@
   },
   {
     "section": "2.29.2",
-    "equipment": "HIGH LEVEL EQUIPMENT",
+    "equipment": "HIGH LEVEL EQUIPMENT CONDUIT & CABLE TRAYS",
     "drawing_ref": "",
     "locations": [
       "EASTBOUND BORE"
@@ -4212,7 +4212,7 @@
   },
   {
     "section": "2.29.3",
-    "equipment": "HIGH LEVEL EQUIPMENT",
+    "equipment": "HIGH LEVEL EQUIPMENT CONDUIT & CABLE TRAYS",
     "drawing_ref": "",
     "locations": [
       "WESTBOUND BORE"
@@ -4237,7 +4237,7 @@
   },
   {
     "section": "2.29.4",
-    "equipment": "HIGH LEVEL EQUIPMENT",
+    "equipment": "HIGH LEVEL EQUIPMENT CONDUIT & CABLE TRAYS",
     "drawing_ref": "",
     "locations": [
       "WESTBOUND BORE"
@@ -4266,7 +4266,7 @@
   },
   {
     "section": "2.29.5",
-    "equipment": "HIGH LEVEL EQUIPMENT",
+    "equipment": "HIGH LEVEL EQUIPMENT STEELWORK SUPPORT SYSTEM",
     "drawing_ref": "",
     "locations": [
       "EASTBOUND BORE"
@@ -4291,7 +4291,7 @@
   },
   {
     "section": "2.29.6",
-    "equipment": "HIGH LEVEL EQUIPMENT",
+    "equipment": "HIGH LEVEL EQUIPMENT STEELWORK SUPPORT SYSTEMS",
     "drawing_ref": "",
     "locations": [
       "EASTBOUND BORE"
@@ -4324,7 +4324,7 @@
   },
   {
     "section": "2.29.7",
-    "equipment": "HIGH LEVEL EQUIPMENT",
+    "equipment": "HIGH LEVEL EQUIPMENT STEEL WORK SUPPORT SYSTEM",
     "drawing_ref": "",
     "locations": [
       "WESTBOUND BORE"
@@ -4349,7 +4349,7 @@
   },
   {
     "section": "2.29.8",
-    "equipment": "HIGH LEVEL EQUIPMENT",
+    "equipment": "HIGH LEVEL EQUIPMENT STEELWORK SUPPORT SYSTEMS",
     "drawing_ref": "",
     "locations": [
       "WESTBOUND BORE"
@@ -4417,13 +4417,13 @@
       },
       {
         "step": "7",
-        "description": "Carry Out routine maintenance of radio control equipment within the service building in accordance with the manufacturer\u00c3\u00a2\u00e2\u201a\u00ac\u00e2\u201e\u00a2s recommendations. \nThis item is only required at 6 Monthly intervals"
+        "description": "Carry Out routine maintenance of radio control equipment within the service building in accordance with the manufacturerÃ¢â‚¬â„¢s recommendations. \nThis item is only required at 6 Monthly intervals"
       }
     ]
   },
   {
     "section": "2.29.10",
-    "equipment": "HIGH LEVEL EQUIPMENT",
+    "equipment": "HIGH LEVEL EQUIPMENT RADIO COMMUNIC'S SYSTEM",
     "drawing_ref": "",
     "locations": [
       "WESTBOUND BORE"
@@ -4460,7 +4460,7 @@
   },
   {
     "section": "2.29.11",
-    "equipment": "HIGH LEVEL EQUIPMENT",
+    "equipment": "HIGH LEVEL EQUIPMENT CCTV",
     "drawing_ref": "",
     "locations": [
       "EASTBOUND BORE"
@@ -4489,7 +4489,7 @@
   },
   {
     "section": "2.29.12",
-    "equipment": "HIGH LEVEL EQUIPMENT",
+    "equipment": "HIGH LEVEL EQUIPMENT CCTV",
     "drawing_ref": "",
     "locations": [
       "WESTBOUND BORE"
@@ -4518,7 +4518,7 @@
   },
   {
     "section": "2.30.2",
-    "equipment": "EARTHING SYSTEM AND",
+    "equipment": "EARTHING SYSTEM AND LIGHTNING PROTECTION",
     "drawing_ref": "",
     "locations": [
       "SERVICE BUILDING"
@@ -4555,7 +4555,7 @@
   },
   {
     "section": "2.30.3",
-    "equipment": "EARTHING SYSTEM",
+    "equipment": "EARTHING SYSTEM TUNNEL",
     "drawing_ref": "B1/15",
     "locations": [
       "EASTBOUND BORE"
@@ -4576,7 +4576,7 @@
   },
   {
     "section": "2.30.4",
-    "equipment": "EARTHING SYSTEM",
+    "equipment": "EARTHING SYSTEM TUNNEL",
     "drawing_ref": "B1/15",
     "locations": [
       "WESTBOUND BORE"
@@ -4597,7 +4597,7 @@
   },
   {
     "section": "2.30.5",
-    "equipment": "EARTHING SYSTEM",
+    "equipment": "EARTHING SYSTEM TUNNEL",
     "drawing_ref": "B1/15",
     "locations": [
       "EASTBOUND BORE"
@@ -4626,7 +4626,7 @@
   },
   {
     "section": "2.30.6",
-    "equipment": "EARTHING SYSTEM",
+    "equipment": "EARTHING SYSTEM TUNNEL",
     "drawing_ref": "B1/15",
     "locations": [
       "WESTBOUND BORE"
@@ -4655,7 +4655,7 @@
   },
   {
     "section": "2.30.8",
-    "equipment": "EARTHING SYSTEM",
+    "equipment": "EARTHING SYSTEM SUMP",
     "drawing_ref": "B1/15 & B12/6",
     "locations": [
       "SERVICE BUILDING"
@@ -4684,7 +4684,7 @@
   },
   {
     "section": "2.31.1",
-    "equipment": "TUNNEL VENTILATION",
+    "equipment": "TUNNEL VENTILATION PANELS",
     "drawing_ref": "",
     "locations": [
       "EASTBOUND BORE"
@@ -4695,7 +4695,7 @@
     "tasks": [
       {
         "step": "1",
-        "description": "Ensure that all electrical connections are tight and that the contactors within the fan\u00c3\u00a2\u00e2\u201a\u00ac\u00e2\u201e\u00a2s starters are in good order"
+        "description": "Ensure that all electrical connections are tight and that the contactors within the fanÃ¢â‚¬â„¢s starters are in good order"
       },
       {
         "step": "2",
@@ -4780,7 +4780,7 @@
   },
   {
     "section": "2.31.2",
-    "equipment": "TUNNEL VENTILATION",
+    "equipment": "TUNNEL VENTILATION PANELS",
     "drawing_ref": "",
     "locations": [
       "WESTBOUND BORE"
@@ -4791,7 +4791,7 @@
     "tasks": [
       {
         "step": "1",
-        "description": "Ensure that all electrical connections are tight and that the contactors within the fan\u00c3\u00a2\u00e2\u201a\u00ac\u00e2\u201e\u00a2s starters are in good order"
+        "description": "Ensure that all electrical connections are tight and that the contactors within the fanÃ¢â‚¬â„¢s starters are in good order"
       },
       {
         "step": "2",
@@ -4880,7 +4880,7 @@
   },
   {
     "section": "2.31.3",
-    "equipment": "TUNNEL VENTILATION",
+    "equipment": "TUNNEL VENTILATION PANELS",
     "drawing_ref": "",
     "locations": [
       "EASTBOUND BORE"
@@ -4891,7 +4891,7 @@
     "tasks": [
       {
         "step": "1",
-        "description": "Ensure that all electrical connections are tight and that the contactors within the fan\u00c3\u00a2\u00e2\u201a\u00ac\u00e2\u201e\u00a2s starters are in good order"
+        "description": "Ensure that all electrical connections are tight and that the contactors within the fanÃ¢â‚¬â„¢s starters are in good order"
       },
       {
         "step": "2",
@@ -4976,7 +4976,7 @@
   },
   {
     "section": "2.31.4",
-    "equipment": "TUNNEL VENTILATION",
+    "equipment": "TUNNEL VENTILATION PANELS",
     "drawing_ref": "",
     "locations": [
       "WESTBOUND BORE"
@@ -4987,7 +4987,7 @@
     "tasks": [
       {
         "step": "1",
-        "description": "Ensure that all electrical connections are tight and that the contactors within the fan\u00c3\u00a2\u00e2\u201a\u00ac\u00e2\u201e\u00a2s starters are in good order"
+        "description": "Ensure that all electrical connections are tight and that the contactors within the fanÃ¢â‚¬â„¢s starters are in good order"
       },
       {
         "step": "2",
@@ -5863,7 +5863,7 @@
       },
       {
         "step": "3",
-        "description": "Re-Torque all fixings associated with the fan and ensure fan doesn\u00c3\u00a2\u00e2\u201a\u00ac\u00e2\u201e\u00a2t encroach into the traffic window"
+        "description": "Re-Torque all fixings associated with the fan and ensure fan doesnÃ¢â‚¬â„¢t encroach into the traffic window"
       },
       {
         "step": "4",
@@ -5955,7 +5955,7 @@
       },
       {
         "step": "3",
-        "description": "Re-Torque all fixings associated with the fan and ensure fan doesn\u00c3\u00a2\u00e2\u201a\u00ac\u00e2\u201e\u00a2t encroach into the traffic window"
+        "description": "Re-Torque all fixings associated with the fan and ensure fan doesnÃ¢â‚¬â„¢t encroach into the traffic window"
       },
       {
         "step": "4",
@@ -6185,7 +6185,7 @@
   },
   {
     "section": "2.35.10",
-    "equipment": "POWER CABLES",
+    "equipment": "POWER CABLES Highway Supplies",
     "drawing_ref": "",
     "locations": [
       "VARIOUS"
@@ -6284,7 +6284,7 @@
   },
   {
     "section": "2.35.13",
-    "equipment": "POWER & CONTROL CABLES",
+    "equipment": "POWER & CONTROL CABLES SUMP",
     "drawing_ref": "",
     "locations": [
       "SERVICE BUILDING"
@@ -6301,7 +6301,7 @@
   },
   {
     "section": "2.35.14",
-    "equipment": "POWER AND CONTROL CABLES",
+    "equipment": "POWER AND CONTROL CABLES SUMP",
     "drawing_ref": "",
     "locations": [
       "SERVICE BUILDING"
@@ -6558,7 +6558,7 @@
   },
   {
     "section": "2.36.10",
-    "equipment": "CONTROL CABLES",
+    "equipment": "CONTROL CABLES Highway Equipment",
     "drawing_ref": "",
     "locations": [
       "VARIOUS"
@@ -6936,7 +6936,7 @@
   },
   {
     "section": "2.42.1",
-    "equipment": "Tunnel Cladding Structural",
+    "equipment": "Tunnel Cladding Structural Integrity Checks",
     "drawing_ref": "",
     "locations": [
       "EASTBOUND BORE"
@@ -6977,7 +6977,7 @@
   },
   {
     "section": "2.42.2",
-    "equipment": "Tunnel Cladding Structural",
+    "equipment": "Tunnel Cladding Structural Integrity Checks",
     "drawing_ref": "",
     "locations": [
       "WESTBOUND BORE"
@@ -7022,7 +7022,7 @@
   },
   {
     "section": "2.42.3",
-    "equipment": "Tunnel Cladding Structural",
+    "equipment": "Tunnel Cladding Structural Integrity Checks & Repair",
     "drawing_ref": "",
     "locations": [
       "EASTBOUND BORE"
@@ -7063,7 +7063,7 @@
   },
   {
     "section": "2.42.4",
-    "equipment": "Tunnel Cladding Structural",
+    "equipment": "Tunnel Cladding Structural Integrity Checks & Repair",
     "drawing_ref": "",
     "locations": [
       "WESTBOUND BORE"
@@ -7104,7 +7104,7 @@
   },
   {
     "section": "2.42.5",
-    "equipment": "Tunnel Sweep and Cladding  Cleaning",
+    "equipment": "Tunnel Sweep and Cladding Cleaning",
     "drawing_ref": "",
     "locations": [
       "EASTBOUND BORE"
@@ -7141,7 +7141,7 @@
   },
   {
     "section": "2.42.6",
-    "equipment": "Tunnel Sweep and Cladding  & Drainage Cleaning",
+    "equipment": "Tunnel Sweep and Cladding & Drainage Cleaning",
     "drawing_ref": "",
     "locations": [
       "WESTBOUND BORE"
@@ -7219,7 +7219,7 @@
   },
   {
     "section": "2.43.1",
-    "equipment": "Tunnel Lighting\nT-Line 2865 LED Luminaires & Control",
+    "equipment": "Tunnel Lighting T-Line 2865 LED Luminaires & Control",
     "drawing_ref": "",
     "locations": [
       "EASTBOUND BORE"
@@ -7252,7 +7252,7 @@
   },
   {
     "section": "2.43.2",
-    "equipment": "Tunnel Lighting\nT-Line 2865 LED Luminaires & Control",
+    "equipment": "Tunnel Lighting T-Line 2865 LED Luminaires & Control",
     "drawing_ref": "",
     "locations": [
       "EASTBOUND BORE"
@@ -7285,7 +7285,7 @@
   },
   {
     "section": "2.43.3",
-    "equipment": "Tunnel Lighting\nT-Line 2865 LED Luminaires & Control",
+    "equipment": "Tunnel Lighting T-Line 2865 LED Luminaires & Control",
     "drawing_ref": "",
     "locations": [
       "EASTBOUND BORE"
@@ -7318,7 +7318,7 @@
   },
   {
     "section": "2.43.4",
-    "equipment": "Tunnel Lighting\nT-Line 2865 LED Luminaires & Control",
+    "equipment": "Tunnel Lighting T-Line 2865 LED Luminaires & Control",
     "drawing_ref": "",
     "locations": [
       "WESTBOUND BORE"
@@ -7391,7 +7391,7 @@
   },
   {
     "section": "2.43.5",
-    "equipment": "Tunnel Lighting\nT-Line 2865 LED Luminaires & Control",
+    "equipment": "Tunnel Lighting T-Line 2865 LED Luminaires & Control",
     "drawing_ref": "",
     "locations": [
       "WESTBOUND BORE"
@@ -7424,7 +7424,7 @@
   },
   {
     "section": "2.43.6",
-    "equipment": "Tunnel Lighting\nT-Line 2865 LED Luminaires & Control",
+    "equipment": "Tunnel Lighting T-Line 2865 LED Luminaires & Control",
     "drawing_ref": "",
     "locations": [
       "WESTBOUND BORE"
@@ -7457,7 +7457,7 @@
   },
   {
     "section": "2.43.7",
-    "equipment": "Tunnel Lighting\nT-Line 2865 LED Luminaires & Control",
+    "equipment": "Tunnel Lighting T-Line 2865 LED Luminaires & Control",
     "drawing_ref": "",
     "locations": [
       "EASTBOUND BORE"
@@ -7474,7 +7474,7 @@
   },
   {
     "section": "2.43.8",
-    "equipment": "Tunnel Lighting\nT-Line 2865 LED Luminaires & Control",
+    "equipment": "Tunnel Lighting T-Line 2865 LED Luminaires & Control",
     "drawing_ref": "",
     "locations": [
       "WESTBOUND BORE"
@@ -7491,7 +7491,7 @@
   },
   {
     "section": "2.44.1",
-    "equipment": "Tunnel SON Lighting\nStages 4 to 8",
+    "equipment": "Tunnel SON Lighting Stages 4 to 8",
     "drawing_ref": "",
     "locations": [
       "EASTBOUND BORE"
@@ -7524,7 +7524,7 @@
   },
   {
     "section": "2.44.2",
-    "equipment": "Tunnel SON Lighting\nStages 4 to 8",
+    "equipment": "Tunnel SON Lighting Stages 4 to 8",
     "drawing_ref": "",
     "locations": [
       "EASTBOUND BORE"
@@ -7557,7 +7557,7 @@
   },
   {
     "section": "2.44.3",
-    "equipment": "Tunnel SON Lighting\nStages 4 to 8",
+    "equipment": "Tunnel SON Lighting Stages 4 to 8",
     "drawing_ref": "B3/2",
     "locations": [
       "EASTBOUND BORE"
@@ -7582,7 +7582,7 @@
   },
   {
     "section": "2.44.4",
-    "equipment": "Tunnel SON Lighting\nStages 4 to 8",
+    "equipment": "Tunnel SON Lighting Stages 4 to 8",
     "drawing_ref": "",
     "locations": [
       "WESTBOUND BORE"
@@ -7615,7 +7615,7 @@
   },
   {
     "section": "2.44.5",
-    "equipment": "Tunnel SON Lighting\nStages 4 to 8",
+    "equipment": "Tunnel SON Lighting Stages 4 to 8",
     "drawing_ref": "",
     "locations": [
       "WESTBOUND BORE"
@@ -7648,7 +7648,7 @@
   },
   {
     "section": "2.44.6",
-    "equipment": "Tunnel SON Lighting\nStages 4 to 8",
+    "equipment": "Tunnel SON Lighting Stages 4 to 8",
     "drawing_ref": "B3/2",
     "locations": [
       "WESTBOUND BORE"
@@ -7673,7 +7673,7 @@
   },
   {
     "section": "2.45.1",
-    "equipment": "Audible & Visual Escape",
+    "equipment": "Audible & Visual Escape Emergency Escape Doors",
     "drawing_ref": "",
     "locations": [
       "EASTBOUND BORE"
@@ -7706,7 +7706,7 @@
   },
   {
     "section": "2.45.2",
-    "equipment": "Audible & Visual Escape",
+    "equipment": "Audible & Visual Escape Emergency Escape Doors",
     "drawing_ref": "",
     "locations": [
       "EASTBOUND BORE"
@@ -7747,7 +7747,7 @@
   },
   {
     "section": "2.45.3",
-    "equipment": "Audible & Visual Escape",
+    "equipment": "Audible & Visual Escape Emergency Escape Doors",
     "drawing_ref": "",
     "locations": [
       "WESTBOUND BORE"
@@ -7798,7 +7798,7 @@
   },
   {
     "section": "2.45.4",
-    "equipment": "Audible & Visual Escape",
+    "equipment": "Audible & Visual Escape Emergency Escape Doors",
     "drawing_ref": "",
     "locations": [
       "WESTBOUND BORE"
