@@ -1598,7 +1598,7 @@
                             <div class="form-actions">
                                 <button type="button" class="btn btn-secondary" onclick="resetForm()">Clear</button>
                                 <button type="button" class="btn btn-secondary" id="pauseButton" onclick="pauseForm()" style="display: none;">Pause & Resume Later</button>
-                                <button type="button" class="btn btn-primary" onclick="saveFormToRepository()">Save</button>
+                                <button type="button" class="btn btn-primary" id="saveBtn" onclick="saveFormToRepository()">Save</button>
                             </div>
                         </form>
                     </div>
@@ -3399,6 +3399,10 @@
             // Hide pause button when form is reset
             updatePauseButtonVisibility();
             
+            // Re-enable save button for next use
+            const saveBtn = document.getElementById('saveBtn');
+            if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = 'Save'; }
+
             // Hide form and show welcome message
             document.getElementById('noFormSelected').style.display = 'block';
             document.getElementById('formContainer').style.display = 'none';
@@ -3560,6 +3564,10 @@
                 timestamp: new Date().toISOString()
             };
 
+            // Disable save button to prevent double submission
+            const saveBtn = document.getElementById('saveBtn');
+            if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = 'Saving...'; }
+
             try {
                 const response = await fetch('/api/save-form', {
                     method: 'POST',
@@ -3598,6 +3606,7 @@
                     }, 2000);
                 } else {
                     showError(`Failed to save: ${result.message || 'Unknown error'}`);
+                    if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = 'Save'; }
                 }
             } catch (error) {
                 console.error('Save error:', error);
@@ -3606,6 +3615,7 @@
                 } else {
                     showError(`Error saving form: ${error.message}`);
                 }
+                if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = 'Save'; }
             }
         }
 
