@@ -419,6 +419,28 @@
             background: #f0f7ff;
         }
 
+        .btn-back-home {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.9);
+            color: #1a1f3a;
+            border: 1.5px solid #c8d0e0;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 0;
+        }
+
+        .btn-back-home:hover {
+            background: #e8f2ff;
+            border-color: #0084ff;
+            color: #0084ff;
+        }
+
         .btn-primary {
             background: linear-gradient(135deg, #0084ff 0%, #005ce6 100%);
             color: white;
@@ -1361,6 +1383,11 @@
                 </div>
 
                 <div id="formContainer" style="display: none;">
+                    <div style="padding: 12px 20px 0;">
+                        <button type="button" class="btn-back-home" onclick="goBackHome()">
+                            &#8592; Back to Quick Access
+                        </button>
+                    </div>
                     <div class="header">
                         <div class="header-logos">
                             <img src="Cardiff_Council.svg" alt="Cardiff Council Logo">
@@ -2385,6 +2412,13 @@
                     formList.appendChild(li);
                 });
             });
+        }
+
+        function goBackHome() {
+            document.getElementById('formContainer').style.display = 'none';
+            document.getElementById('noFormSelected').style.display = 'block';
+            // Deselect any highlighted sidebar item
+            document.querySelectorAll('.form-item').forEach(item => item.classList.remove('active'));
         }
 
         function selectForm(index) {
