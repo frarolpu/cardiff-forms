@@ -950,6 +950,120 @@
             margin-bottom: 10px;
         }
 
+        /* ── Quick Access Panel ── */
+        .qa-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px 20px 40px;
+        }
+        .qa-title {
+            font-size: 26px;
+            font-weight: 700;
+            color: #1a1f3a;
+            margin-bottom: 6px;
+        }
+        .qa-subtitle {
+            font-size: 14px;
+            color: #888;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+        .qa-display {
+            width: 100%;
+            max-width: 420px;
+            background: #f0f7ff;
+            border: 3px solid #0084ff;
+            border-radius: 16px;
+            padding: 18px 24px;
+            font-size: 48px;
+            font-weight: 700;
+            color: #1a1f3a;
+            text-align: center;
+            letter-spacing: 4px;
+            min-height: 90px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 20px rgba(0,132,255,.15);
+            transition: border-color .2s;
+        }
+        .qa-display.has-value { border-color: #005ce6; background: #e8f2ff; }
+        .qa-placeholder { color: #aac4e8; font-weight: 400; font-size: 26px; letter-spacing: 2px; }
+        .qa-numpad {
+            margin-top: 18px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 11px;
+            width: 100%;
+            max-width: 340px;
+        }
+        .qa-key {
+            padding: 17px 10px;
+            font-size: 26px;
+            font-weight: 600;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            background: #f0f4fa;
+            color: #1a1f3a;
+            box-shadow: 0 3px 8px rgba(0,0,0,.1);
+            transition: .12s;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+        .qa-key:active { transform: scale(.91); background: #dde5f5; }
+        .qa-key.qa-dot  { font-size: 34px; color: #0084ff; background: #e8f2ff; }
+        .qa-key.qa-back { font-size: 22px; color: #e74c3c; background: #fdeaea; }
+        .qa-results {
+            width: 100%;
+            max-width: 420px;
+            margin-top: 18px;
+        }
+        .qa-results-count {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+        .qa-result-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 18px;
+            background: #f8faff;
+            border: 1px solid #dde9ff;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: .2s;
+            border-left: 4px solid #0084ff;
+        }
+        .qa-result-item:hover, .qa-result-item:active {
+            background: #e8f2ff;
+            border-color: #005ce6;
+            transform: translateX(3px);
+        }
+        .qa-result-section { font-size: 22px; font-weight: 800; color: #0084ff; min-width: 60px; }
+        .qa-result-info { flex: 1; }
+        .qa-result-equipment { font-size: 14px; font-weight: 600; color: #1a1f3a; }
+        .qa-result-freq { font-size: 12px; color: #888; margin-top: 2px; }
+        .qa-result-arrow { color: #aaa; font-size: 20px; }
+        .qa-no-results { text-align: center; color: #bbb; padding: 20px; font-size: 14px; }
+        .qa-tip {
+            background: #e8f2ff;
+            border-left: 4px solid #0084ff;
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 13px;
+            color: #1a4a7a;
+            margin-top: 18px;
+            max-width: 420px;
+            width: 100%;
+        }
+        .qa-tip strong { display: block; margin-bottom: 3px; }
+
         .field-required::after {
             content: " *";
             color: red;
@@ -1196,8 +1310,40 @@
         <div class="main-content">
             <div class="container">
                 <div id="noFormSelected" class="no-form-selected">
-                    <h2>Select a form</h2>
-                    <p>Click on the left panel to get started</p>
+                    <div class="qa-wrapper">
+                        <div class="qa-title">Quick Access</div>
+                        <div class="qa-subtitle">Type a section number to open a form directly</div>
+
+                        <div class="qa-display" id="qaDisplay">
+                            <span class="qa-placeholder" id="qaPlaceholder">e.g.&nbsp;2.30.3</span>
+                            <span id="qaTyped" style="display:none"></span>
+                        </div>
+
+                        <div class="qa-numpad">
+                            <button class="qa-key" data-qv="1">1</button>
+                            <button class="qa-key" data-qv="2">2</button>
+                            <button class="qa-key" data-qv="3">3</button>
+                            <button class="qa-key" data-qv="4">4</button>
+                            <button class="qa-key" data-qv="5">5</button>
+                            <button class="qa-key" data-qv="6">6</button>
+                            <button class="qa-key" data-qv="7">7</button>
+                            <button class="qa-key" data-qv="8">8</button>
+                            <button class="qa-key" data-qv="9">9</button>
+                            <button class="qa-key qa-dot" data-qv=".">·</button>
+                            <button class="qa-key" data-qv="0">0</button>
+                            <button class="qa-key qa-back" data-qa="back">⌫</button>
+                        </div>
+
+                        <div class="qa-results" id="qaResults" style="display:none">
+                            <div class="qa-results-count" id="qaResultsCount"></div>
+                            <div id="qaResultsList"></div>
+                        </div>
+
+                        <div class="qa-tip">
+                            <strong>💡 Tip</strong>
+                            Type any part of a section number — e.g. <strong>2.30</strong> shows all 2.30.x forms, <strong>2.30.3</strong> opens it directly.
+                        </div>
+                    </div>
                 </div>
 
                 <div id="formContainer" style="display: none;">
@@ -1506,13 +1652,102 @@
                 
                 // Show pause button for fresh forms
                 updatePauseButtonVisibility();
+                // Wire up Quick Access numpad
+                initQuickAccess();
             } catch (error) {
                 console.error('Error loading forms:', error);
                 console.error('Stack:', error.stack);
                 showError('Error loading forms: ' + error.message);
             }
         }
-        
+
+        // ── Quick Access numpad ──
+        (function() {
+            let qaTyped = '';
+
+            function initQuickAccess() {
+                document.querySelectorAll('.qa-key').forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const v = this.dataset.qv;
+                        const a = this.dataset.qa;
+                        if (a === 'back') {
+                            qaTyped = qaTyped.slice(0, -1);
+                        } else if (v !== undefined && qaTyped.length < 8) {
+                            qaTyped += v;
+                        }
+                        renderQA();
+                    });
+                });
+
+                // Keyboard support
+                document.addEventListener('keydown', function(e) {
+                    const nfs = document.getElementById('noFormSelected');
+                    if (!nfs || nfs.style.display === 'none') return;
+                    if (/^[0-9]$/.test(e.key) && qaTyped.length < 8) { qaTyped += e.key; renderQA(); }
+                    else if (e.key === '.' && qaTyped.length < 8)     { qaTyped += '.';   renderQA(); }
+                    else if (e.key === 'Backspace')                    { qaTyped = qaTyped.slice(0, -1); renderQA(); }
+                });
+            }
+
+            function renderQA() {
+                const typedEl  = document.getElementById('qaTyped');
+                const phEl     = document.getElementById('qaPlaceholder');
+                const display  = document.getElementById('qaDisplay');
+                const resArea  = document.getElementById('qaResults');
+                const resList  = document.getElementById('qaResultsList');
+                const resCount = document.getElementById('qaResultsCount');
+                if (!typedEl) return;
+
+                if (qaTyped === '') {
+                    typedEl.style.display = 'none';
+                    phEl.style.display    = '';
+                    display.classList.remove('has-value');
+                    resArea.style.display = 'none';
+                    return;
+                }
+
+                typedEl.textContent = qaTyped;
+                typedEl.style.display = '';
+                phEl.style.display    = 'none';
+                display.classList.add('has-value');
+
+                const cleaned = allForms.filter(f => f.tasks && f.tasks.length > 0);
+                const matches = cleaned.filter(f => f.section.startsWith(qaTyped));
+
+                // Exact match → open immediately
+                const exact = cleaned.findIndex(f => f.section === qaTyped);
+                if (exact !== -1) {
+                    qaTyped = '';
+                    selectForm(exact);
+                    return;
+                }
+
+                resArea.style.display = '';
+                if (matches.length === 0) {
+                    resCount.textContent = '';
+                    resList.innerHTML = '<div class="qa-no-results">No forms match <strong>' + qaTyped + '</strong></div>';
+                    return;
+                }
+
+                resCount.textContent = matches.length + ' form' + (matches.length > 1 ? 's' : '') + ' found';
+                resList.innerHTML = matches.map(f => {
+                    const realIdx = cleaned.indexOf(f);
+                    const freq = (f.frequencies && f.frequencies.filter(x => x && x !== 'TASK')[0]) || '';
+                    return `<div class="qa-result-item" onclick="(function(){document.getElementById('qaTyped').textContent='';document.getElementById('qaPlaceholder').style.display='';document.getElementById('qaDisplay').classList.remove('has-value');document.getElementById('qaResults').style.display='none';selectForm(${realIdx});})()">
+                        <div class="qa-result-section">${f.section}</div>
+                        <div class="qa-result-info">
+                            <div class="qa-result-equipment">${f.equipment || ''}</div>
+                            <div class="qa-result-freq">${freq}</div>
+                        </div>
+                        <div class="qa-result-arrow">›</div>
+                    </div>`;
+                }).join('');
+            }
+
+            window.initQuickAccess = initQuickAccess;
+        })();
+
         function updatePauseButtonVisibility() {
             const pauseBtn = document.getElementById('pauseButton');
             // Show pause button only during engineer phase (new form, not pending)
