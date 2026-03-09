@@ -1493,22 +1493,32 @@
                                 <!-- BEFORE Inspection Photos -->
                                 <div class="form-group">
                                     <label><strong>BEFORE Inspection Photos</strong></label>
-                                    <div class="photo-upload" onclick="document.getElementById('beforePhotoInput').click()" style="background: #fff3cd; border: 2px dashed #ffc107;">
-                                        <p><strong>Click to add BEFORE photos</strong></p>
-                                        <p class="info-text">Photos taken before maintenance work</p>
+                                    <div class="photo-btn-row">
+                                        <button type="button" class="photo-btn photo-btn-camera" onclick="document.getElementById('beforeCameraInput').click()">
+                                            &#128247; Take Photo
+                                        </button>
+                                        <button type="button" class="photo-btn photo-btn-gallery" onclick="document.getElementById('beforePhotoInput').click()">
+                                            &#128444; Choose from Gallery
+                                        </button>
                                     </div>
-                                    <input type="file" id="beforePhotoInput" multiple accept="image/*">
+                                    <input type="file" id="beforeCameraInput" accept="image/*" capture="environment" style="display:none">
+                                    <input type="file" id="beforePhotoInput" multiple accept="image/*" style="display:none">
                                     <div class="photo-gallery" id="beforePhotoGallery"></div>
                                 </div>
                                 
                                 <!-- AFTER Inspection Photos -->
                                 <div class="form-group">
                                     <label><strong>AFTER Inspection Photos</strong></label>
-                                    <div class="photo-upload" onclick="document.getElementById('afterPhotoInput').click()" style="background: #d4edda; border: 2px dashed #28a745;">
-                                        <p><strong>Click to add AFTER photos</strong></p>
-                                        <p class="info-text">Photos taken after maintenance work completed</p>
+                                    <div class="photo-btn-row">
+                                        <button type="button" class="photo-btn photo-btn-camera" onclick="document.getElementById('afterCameraInput').click()">
+                                            &#128247; Take Photo
+                                        </button>
+                                        <button type="button" class="photo-btn photo-btn-gallery" onclick="document.getElementById('afterPhotoInput').click()">
+                                            &#128444; Choose from Gallery
+                                        </button>
                                     </div>
-                                    <input type="file" id="afterPhotoInput" multiple accept="image/*">
+                                    <input type="file" id="afterCameraInput" accept="image/*" capture="environment" style="display:none">
+                                    <input type="file" id="afterPhotoInput" multiple accept="image/*" style="display:none">
                                     <div class="photo-gallery" id="afterPhotoGallery"></div>
                                 </div>
                             </div>
@@ -3167,27 +3177,34 @@
         });
 
         // BEFORE INSPECTION PHOTOS
-        document.getElementById('beforePhotoInput').addEventListener('change', function(e) {
-            Array.from(e.target.files).forEach(file => {
+        function handlePhotoFiles(files, arr, displayFn) {
+            Array.from(files).forEach(file => {
                 const reader = new FileReader();
                 reader.onload = (evt) => {
-                    beforePhotos.push(evt.target.result);
-                    displayBeforePhotos();
+                    arr.push(evt.target.result);
+                    displayFn();
                 };
                 reader.readAsDataURL(file);
             });
+        }
+
+        document.getElementById('beforePhotoInput').addEventListener('change', function(e) {
+            handlePhotoFiles(e.target.files, beforePhotos, displayBeforePhotos);
+            e.target.value = '';
+        });
+        document.getElementById('beforeCameraInput').addEventListener('change', function(e) {
+            handlePhotoFiles(e.target.files, beforePhotos, displayBeforePhotos);
+            e.target.value = '';
         });
 
         // AFTER INSPECTION PHOTOS
         document.getElementById('afterPhotoInput').addEventListener('change', function(e) {
-            Array.from(e.target.files).forEach(file => {
-                const reader = new FileReader();
-                reader.onload = (evt) => {
-                    afterPhotos.push(evt.target.result);
-                    displayAfterPhotos();
-                };
-                reader.readAsDataURL(file);
-            });
+            handlePhotoFiles(e.target.files, afterPhotos, displayAfterPhotos);
+            e.target.value = '';
+        });
+        document.getElementById('afterCameraInput').addEventListener('change', function(e) {
+            handlePhotoFiles(e.target.files, afterPhotos, displayAfterPhotos);
+            e.target.value = '';
         });
 
         // Drag and drop for BEFORE photos
