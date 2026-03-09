@@ -1735,12 +1735,16 @@
                 const cleaned = allForms.filter(f => f.tasks && f.tasks.length > 0);
                 const matches = cleaned.filter(f => f.section.startsWith(qaTyped));
 
-                // Exact match → open immediately
+                // Exact match → only auto-open if no other form could extend the typed string
+                // (e.g. typing "2.30.1" should NOT open if "2.30.10" also exists)
                 const exact = cleaned.findIndex(f => f.section === qaTyped);
                 if (exact !== -1) {
-                    qaTyped = '';
-                    selectForm(exact);
-                    return;
+                    const couldExtend = cleaned.some(f => f.section.startsWith(qaTyped) && f.section !== qaTyped);
+                    if (!couldExtend) {
+                        qaTyped = '';
+                        selectForm(exact);
+                        return;
+                    }
                 }
 
                 resArea.style.display = '';

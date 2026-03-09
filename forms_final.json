@@ -2618,7 +2618,7 @@
   {
     "section": "2.20.1",
     "equipment": "TUNNEL FIRE FIGHTING",
-    "drawing_ref": "",
+    "drawing_ref": "B15/8",
     "locations": [
       "WESTBOUND BORE"
     ],
@@ -4033,11 +4033,10 @@
     "equipment": "LANE CONTROL SIGNS",
     "drawing_ref": "",
     "locations": [
-      "WESTBOUND BORE",
-      "COUNTY HALL"
+      "WESTBOUND BORE"
     ],
     "frequencies": [
-      "6 MONTHLY"
+      "3 MONTHLY"
     ],
     "tasks": [
       {
@@ -4781,7 +4780,7 @@
   {
     "section": "2.31.2",
     "equipment": "TUNNEL VENTILATION PANELS",
-    "drawing_ref": "",
+    "drawing_ref": "B14/4 - B15/6",
     "locations": [
       "WESTBOUND BORE"
     ],
@@ -7324,7 +7323,7 @@
       "WESTBOUND BORE"
     ],
     "frequencies": [
-      "6 WEEKLY"
+      "3 MONTHLY"
     ],
     "tasks": [
       {
