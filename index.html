@@ -481,6 +481,22 @@
             display: none;
         }
 
+        .photo-camera-btn {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 20px;
+            background: #0a2463;
+            color: #fff;
+            border: none;
+            border-radius: 20px;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .photo-camera-btn:hover {
+            background: #1a3a7d;
+        }
+
         .photo-gallery {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -1493,13 +1509,10 @@
                                 <!-- BEFORE Inspection Photos -->
                                 <div class="form-group">
                                     <label><strong>BEFORE Inspection Photos</strong></label>
-                                    <div class="photo-btn-row">
-                                        <button type="button" class="photo-btn photo-btn-camera" onclick="document.getElementById('beforeCameraInput').click()">
-                                            &#128247; Take Photo
-                                        </button>
-                                        <button type="button" class="photo-btn photo-btn-gallery" onclick="document.getElementById('beforePhotoInput').click()">
-                                            &#128444; Choose from Gallery
-                                        </button>
+                                    <div class="photo-upload" onclick="document.getElementById('beforePhotoInput').click()" style="background: #fff3cd; border: 2px dashed #ffc107;">
+                                        <p><strong>Click to add BEFORE photos</strong></p>
+                                        <p class="info-text">Photos taken before maintenance work</p>
+                                        <button type="button" class="photo-camera-btn" onclick="event.stopPropagation(); document.getElementById('beforeCameraInput').click()">&#128247; Take Photo Now</button>
                                     </div>
                                     <input type="file" id="beforeCameraInput" accept="image/*" capture="environment" style="display:none">
                                     <input type="file" id="beforePhotoInput" multiple accept="image/*" style="display:none">
@@ -1509,13 +1522,10 @@
                                 <!-- AFTER Inspection Photos -->
                                 <div class="form-group">
                                     <label><strong>AFTER Inspection Photos</strong></label>
-                                    <div class="photo-btn-row">
-                                        <button type="button" class="photo-btn photo-btn-camera" onclick="document.getElementById('afterCameraInput').click()">
-                                            &#128247; Take Photo
-                                        </button>
-                                        <button type="button" class="photo-btn photo-btn-gallery" onclick="document.getElementById('afterPhotoInput').click()">
-                                            &#128444; Choose from Gallery
-                                        </button>
+                                    <div class="photo-upload" onclick="document.getElementById('afterPhotoInput').click()" style="background: #d4edda; border: 2px dashed #28a745;">
+                                        <p><strong>Click to add AFTER photos</strong></p>
+                                        <p class="info-text">Photos taken after maintenance work completed</p>
+                                        <button type="button" class="photo-camera-btn" onclick="event.stopPropagation(); document.getElementById('afterCameraInput').click()">&#128247; Take Photo Now</button>
                                     </div>
                                     <input type="file" id="afterCameraInput" accept="image/*" capture="environment" style="display:none">
                                     <input type="file" id="afterPhotoInput" multiple accept="image/*" style="display:none">
