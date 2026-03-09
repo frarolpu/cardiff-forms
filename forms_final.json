@@ -3741,7 +3741,7 @@
   {
     "section": "2.26.3",
     "equipment": "PORTAL MATRIX SIGNS",
-    "drawing_ref": "",
+    "drawing_ref": "B1/89",
     "locations": [
       "WESTBOUND BORE"
     ],
@@ -4031,7 +4031,7 @@
   {
     "section": "2.27.5",
     "equipment": "LANE CONTROL SIGNS",
-    "drawing_ref": "",
+    "drawing_ref": "B1/89",
     "locations": [
       "WESTBOUND BORE"
     ],
@@ -4109,7 +4109,7 @@
   {
     "section": "2.28.2",
     "equipment": "SMOKE CONTROL PANELS",
-    "drawing_ref": "",
+    "drawing_ref": "QPT0040/405",
     "locations": [
       "WESTBOUND BORE"
     ],
@@ -5256,7 +5256,7 @@
   {
     "section": "2.32.2",
     "equipment": "TUNNEL FANS",
-    "drawing_ref": "",
+    "drawing_ref": "B4/1 - B4/3",
     "locations": [
       "WESTBOUND BORE"
     ],
@@ -6127,7 +6127,7 @@
   {
     "section": "2.35.5",
     "equipment": "POWER CABLES",
-    "drawing_ref": "",
+    "drawing_ref": "B1/6",
     "locations": [
       "WESTBOUND BORE"
     ],
@@ -6450,7 +6450,7 @@
   {
     "section": "2.36.5",
     "equipment": "CONTROL/COMMS CABLES",
-    "drawing_ref": "",
+    "drawing_ref": "B1/8",
     "locations": [
       "WESTBOUND BORE"
     ],
