@@ -1018,7 +1018,16 @@ def resume_paused_form(pin):
                 try:
                     with open(json_file, 'r') as f:
                         form_data = json.load(f)
-                    
+
+                    # Delete the paused file now that it's been resumed
+                    try:
+                        json_file.unlink()
+                        pdf_file = json_file.with_suffix('.pdf')
+                        if pdf_file.exists():
+                            pdf_file.unlink()
+                    except Exception as del_err:
+                        log_error(f"Error deleting paused file on resume: {del_err}")
+
                     return jsonify({
                         'success': True,
                         'data': form_data,

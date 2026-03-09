@@ -943,6 +943,18 @@
             text-align: center;
             padding: 60px 30px;
             color: #999;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .no-form-selected::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url('Designer.png') center center / cover no-repeat;
+            opacity: 0.30;
+            pointer-events: none;
+            z-index: 0;
         }
 
         .no-form-selected h2 {
@@ -956,6 +968,8 @@
             flex-direction: column;
             align-items: center;
             padding: 30px 20px 40px;
+            position: relative;
+            z-index: 1;
         }
         .qa-title {
             font-size: 26px;
@@ -1665,10 +1679,15 @@
         (function() {
             let qaTyped = '';
 
+            function isAnyModalOpen() {
+                return document.querySelector('.modal-overlay.active') !== null;
+            }
+
             function initQuickAccess() {
                 document.querySelectorAll('.qa-key').forEach(btn => {
                     btn.addEventListener('click', function(e) {
                         e.preventDefault();
+                        if (isAnyModalOpen()) return;
                         const v = this.dataset.qv;
                         const a = this.dataset.qa;
                         if (a === 'back') {
@@ -1682,6 +1701,7 @@
 
                 // Keyboard support
                 document.addEventListener('keydown', function(e) {
+                    if (isAnyModalOpen()) return;
                     const nfs = document.getElementById('noFormSelected');
                     if (!nfs || nfs.style.display === 'none') return;
                     if (/^[0-9]$/.test(e.key) && qaTyped.length < 8) { qaTyped += e.key; renderQA(); }
@@ -2976,7 +2996,10 @@
                     // Show form and hide welcome
                     document.getElementById('noFormSelected').style.display = 'none';
                     document.getElementById('formContainer').style.display = 'block';
-                    
+
+                    // Refresh paused list so the resumed form disappears
+                    loadPausedForms();
+
                     showSuccess('✓ Paused report resumed!');
                 } else {
                     showError(`Invalid PIN or form not found: ${result.message}`);
