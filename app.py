@@ -15,6 +15,12 @@ try:
 except ImportError:
     _PILLOW_AVAILABLE = False
 
+try:
+    import resend as _resend
+    _RESEND_AVAILABLE = True
+except ImportError:
+    _RESEND_AVAILABLE = False
+
 app = Flask(__name__)
 
 # Error log file
@@ -43,6 +49,49 @@ def get_db_connection():
     except Exception as e:
         log_error(f"Database connection error: {str(e)}")
         return None
+
+# ── Email notification ──────────────────────────────────────────────────────
+RESEND_API_KEY  = os.environ.get('RESEND_API_KEY', '')
+REPORT_EMAIL_TO = os.environ.get('REPORT_EMAIL_TO', '')
+REPORT_EMAIL_FROM = os.environ.get('REPORT_EMAIL_FROM', 'Cardiff Forms <reports@cardiffforms.com>')
+
+def send_completion_email(form_data, pdf_bytes, filename):
+    """Send completed report by email via Resend."""
+    if not _RESEND_AVAILABLE or not RESEND_API_KEY or not REPORT_EMAIL_TO:
+        log_error('Email skipped: Resend not configured (RESEND_API_KEY / REPORT_EMAIL_TO missing)')
+        return
+    try:
+        _resend.api_key = RESEND_API_KEY
+        section    = form_data.get('section', 'N/A')
+        equipment  = form_data.get('equipment', 'N/A')
+        sigs       = form_data.get('signatures', {})
+        engineer   = sigs.get('engineer', 'N/A')
+        supervisor = sigs.get('supervisor', 'N/A')
+        council    = sigs.get('council', 'N/A')
+        insp_date  = form_data.get('inspectionDate', 'N/A')
+        html_body = f"""
+        <h2>Completed Maintenance Report – Section {section}</h2>
+        <p><strong>Equipment:</strong> {equipment}</p>
+        <p><strong>Inspection Date:</strong> {insp_date}</p>
+        <p><strong>Engineer:</strong> {engineer}</p>
+        <p><strong>Supervisor:</strong> {supervisor}</p>
+        <p><strong>Council:</strong> {council}</p>
+        <p>The signed report is attached as a PDF.</p>
+        """
+        _resend.Emails.send({
+            'from':    REPORT_EMAIL_FROM,
+            'to':      [REPORT_EMAIL_TO],
+            'subject': f'Completed Report – Section {section} – {insp_date}',
+            'html':    html_body,
+            'attachments': [{
+                'filename': filename,
+                'content':  list(pdf_bytes)
+            }]
+        })
+        log_error(f'Completion email sent for {filename} to {REPORT_EMAIL_TO}')
+    except Exception as e:
+        log_error(f'Email send error: {str(e)}')
+# ─────────────────────────────────────────────────────────────────────────────
 
 def init_db():
     """Initialize database table for saved forms"""
@@ -527,6 +576,10 @@ def save_form():
             except Exception as cleanup_err:
                 log_error(f"Warning: Could not delete PENDING_SUPERVISOR files: {str(cleanup_err)}")
         
+        # Send completion email if fully signed off
+        if status == 'complete':
+            send_completion_email(data, pdf_data, filename)
+
         # Try to save to database first if configured
         if USE_DATABASE:
             conn = get_db_connection()
