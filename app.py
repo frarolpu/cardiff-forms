@@ -119,6 +119,10 @@ def init_db():
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         ''')
+        # Add pin column if it doesn't exist (safe to run multiple times)
+        cursor.execute('''
+            ALTER TABLE saved_forms ADD COLUMN IF NOT EXISTS pin VARCHAR(20)
+        ''')
         conn.commit()
         cursor.close()
         conn.close()
@@ -845,7 +849,8 @@ def load_pending_form(form_id):
                     conn.close()
                     
                     if row:
-                        form_data = json.loads(row['form_data'])
+                        raw = row['form_data']
+                        form_data = json.loads(raw) if isinstance(raw, str) else raw
                         return jsonify({
                             'success': True,
                             'data': form_data,
@@ -1011,35 +1016,50 @@ def pause_form():
         section = data.get('section', 'unknown')
         pin = data.get('pin', '')
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        
-        # Create filename with PIN
         filename = f"{section}_{timestamp}_PAUSED_{pin}.json"
-        
-        # Save JSON file
+
+        # Embed PIN in form_data so we can retrieve it from DB
+        data['pin'] = pin
+
+        # Save to database if available
+        if USE_DATABASE:
+            conn = get_db_connection()
+            if conn:
+                try:
+                    cursor = conn.cursor()
+                    cursor.execute(
+                        'INSERT INTO saved_forms (section, filename, status, form_data, pin) VALUES (%s, %s, %s, %s, %s)',
+                        (section, filename, 'paused', json.dumps(data), pin)
+                    )
+                    conn.commit()
+                    cursor.close()
+                    conn.close()
+                    log_error(f"Saved paused form to DB: {filename} PIN: {pin}")
+                    return jsonify({'success': True, 'message': f'Form paused with PIN: {pin}', 'pin': pin, 'filename': filename}), 200
+                except Exception as db_err:
+                    log_error(f"DB error saving paused form: {str(db_err)}")
+                    try: conn.close()
+                    except: pass
+                    return jsonify({'success': False, 'message': f'Database error: {str(db_err)}'}), 500
+            else:
+                return jsonify({'success': False, 'message': 'Could not connect to database'}), 500
+
+        # Fallback: filesystem (local dev only)
         try:
             saved_forms_dir = Path('saved_forms')
             saved_forms_dir.mkdir(exist_ok=True)
             json_path = saved_forms_dir / filename
             with open(json_path, 'w') as f:
                 json.dump(data, f, indent=2)
-            log_error(f"Saved paused form: {json_path} with PIN: {pin}")
+            log_error(f"Saved paused form to filesystem: {json_path} PIN: {pin}")
         except Exception as json_err:
-            log_error(f"Error saving paused form: {str(json_err)}")
             return jsonify({'success': False, 'message': f'Error saving form: {str(json_err)}'}), 500
         
-        return jsonify({
-            'success': True,
-            'message': f'Form paused with PIN: {pin}',
-            'pin': pin,
-            'filename': filename
-        }), 200
+        return jsonify({'success': True, 'message': f'Form paused with PIN: {pin}', 'pin': pin, 'filename': filename}), 200
     
     except Exception as e:
         log_error(f"Pause form error: {str(e)}")
-        return jsonify({
-            'success': False,
-            'message': str(e)
-        }), 500
+        return jsonify({'success': False, 'message': str(e)}), 500
 
 
 @app.route('/api/paused-forms', methods=['GET'])
@@ -1047,20 +1067,40 @@ def get_paused_forms():
     """Get list of paused forms with PINs"""
     try:
         paused_forms = []
-        
-        # Read from filesystem (look for files with _PAUSED_ suffix)
+
+        # Try database first
+        if USE_DATABASE:
+            conn = get_db_connection()
+            if conn:
+                try:
+                    cursor = conn.cursor(cursor_factory=RealDictCursor)
+                    cursor.execute(
+                        "SELECT id, filename, section, pin, created_at FROM saved_forms WHERE status = 'paused' ORDER BY created_at DESC"
+                    )
+                    rows = cursor.fetchall()
+                    cursor.close()
+                    conn.close()
+                    for row in rows:
+                        paused_forms.append({
+                            'id': row['id'],
+                            'filename': row['filename'],
+                            'section': row['section'],
+                            'pin': row['pin'],
+                            'status': 'paused',
+                            'created_at': row['created_at'].isoformat() if row['created_at'] else None
+                        })
+                    return jsonify({'success': True, 'forms': paused_forms, 'count': len(paused_forms)}), 200
+                except Exception as db_err:
+                    log_error(f"DB error getting paused forms: {str(db_err)}")
+
+        # Fallback: filesystem
         saved_forms_dir = Path('saved_forms')
         if saved_forms_dir.exists():
             for json_file in sorted(saved_forms_dir.glob('*_PAUSED_*.json'), reverse=True):
                 try:
-                    with open(json_file, 'r') as f:
-                        form_data = json.load(f)
-                    
-                    # Extract PIN from filename
                     filename_parts = json_file.stem.split('_')
-                    pin = filename_parts[-1] if len(filename_parts) > 0 else '0000'
+                    pin = filename_parts[-1] if filename_parts else '0000'
                     base_id = json_file.stem.replace(f'_PAUSED_{pin}', '')
-                    
                     paused_forms.append({
                         'id': base_id,
                         'filename': json_file.name,
@@ -1071,35 +1111,60 @@ def get_paused_forms():
                     })
                 except Exception as e:
                     log_error(f"Error reading paused form {json_file}: {e}")
-                    continue
-        
-        return jsonify({
-            'success': True,
-            'forms': paused_forms,
-            'count': len(paused_forms)
-        }), 200
-    
+
+        return jsonify({'success': True, 'forms': paused_forms, 'count': len(paused_forms)}), 200
+
     except Exception as e:
         log_error(f"Get paused forms error: {str(e)}")
-        return jsonify({
-            'success': False,
-            'message': str(e)
-        }), 500
+        return jsonify({'success': False, 'message': str(e)}), 500
 
 
 @app.route('/api/resume-paused-form/<pin>', methods=['GET'])
 def resume_paused_form(pin):
     """Load a paused form using PIN"""
     try:
-        # Search for paused form with matching PIN
+        # Try database first
+        if USE_DATABASE:
+            conn = get_db_connection()
+            if conn:
+                try:
+                    cursor = conn.cursor(cursor_factory=RealDictCursor)
+                    cursor.execute(
+                        "SELECT id, form_data, filename FROM saved_forms WHERE status = 'paused' AND pin = %s ORDER BY created_at DESC LIMIT 1",
+                        (pin,)
+                    )
+                    row = cursor.fetchone()
+                    if row:
+                        raw = row['form_data']
+                        form_data = json.loads(raw) if isinstance(raw, str) else raw
+                        form_id = row['id']
+                        filename = row['filename']
+                        # Delete the paused row now that it's resumed
+                        cursor.execute("DELETE FROM saved_forms WHERE id = %s", (form_id,))
+                        conn.commit()
+                        cursor.close()
+                        conn.close()
+                        log_error(f"Resumed paused form {filename} (DB id {form_id}), deleted from DB")
+                        return jsonify({
+                            'success': True,
+                            'data': form_data,
+                            'filename': filename.replace('_PAUSED_' + pin, '').replace('.json', '.pdf'),
+                            'status': 'paused'
+                        }), 200
+                    cursor.close()
+                    conn.close()
+                except Exception as db_err:
+                    log_error(f"DB error resuming paused form: {str(db_err)}")
+                    try: conn.close()
+                    except: pass
+
+        # Fallback: filesystem
         saved_forms_dir = Path('saved_forms')
         if saved_forms_dir.exists():
             for json_file in saved_forms_dir.glob(f'*_PAUSED_{pin}.json'):
                 try:
                     with open(json_file, 'r') as f:
                         form_data = json.load(f)
-
-                    # Delete the paused file now that it's been resumed
                     try:
                         json_file.unlink()
                         pdf_file = json_file.with_suffix('.pdf')
@@ -1107,7 +1172,6 @@ def resume_paused_form(pin):
                             pdf_file.unlink()
                     except Exception as del_err:
                         log_error(f"Error deleting paused file on resume: {del_err}")
-
                     return jsonify({
                         'success': True,
                         'data': form_data,
@@ -1117,18 +1181,12 @@ def resume_paused_form(pin):
                 except Exception as read_err:
                     log_error(f"Error reading paused form: {read_err}")
                     continue
-        
-        return jsonify({
-            'success': False,
-            'message': 'Paused form not found with this PIN'
-        }), 404
-    
+
+        return jsonify({'success': False, 'message': 'Paused form not found with this PIN'}), 404
+
     except Exception as e:
         log_error(f"Resume paused form error: {str(e)}")
-        return jsonify({
-            'success': False,
-            'message': str(e)
-        }), 500
+        return jsonify({'success': False, 'message': str(e)}), 500
 
 
 @app.route('/api/debug', methods=['GET'])
