@@ -15,11 +15,11 @@ try:
 except ImportError:
     _PILLOW_AVAILABLE = False
 
-try:
-    import resend as _resend
-    _RESEND_AVAILABLE = True
-except ImportError:
-    _RESEND_AVAILABLE = False
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.mime.base import MIMEBase
+from email import encoders as EmailEncoders
 
 app = Flask(__name__)
 
@@ -50,18 +50,17 @@ def get_db_connection():
         log_error(f"Database connection error: {str(e)}")
         return None
 
-# ── Email notification ──────────────────────────────────────────────────────
-RESEND_API_KEY  = os.environ.get('RESEND_API_KEY', '')
+# ── Email notification (Gmail SMTP) ──────────────────────────────────────────
+GMAIL_USER      = os.environ.get('GMAIL_USER', '')
+GMAIL_APP_PASS  = os.environ.get('GMAIL_APP_PASSWORD', '')
 REPORT_EMAIL_TO = os.environ.get('REPORT_EMAIL_TO', '')
-REPORT_EMAIL_FROM = os.environ.get('REPORT_EMAIL_FROM', 'Cardiff Forms <reports@cardiffforms.com>')
 
 def send_completion_email(form_data, pdf_bytes, filename):
-    """Send completed report by email via Resend."""
-    if not _RESEND_AVAILABLE or not RESEND_API_KEY or not REPORT_EMAIL_TO:
-        log_error('Email skipped: Resend not configured (RESEND_API_KEY / REPORT_EMAIL_TO missing)')
+    """Send completed report by email via Gmail SMTP."""
+    if not GMAIL_USER or not GMAIL_APP_PASS or not REPORT_EMAIL_TO:
+        log_error('Email skipped: Gmail not configured (GMAIL_USER / GMAIL_APP_PASSWORD / REPORT_EMAIL_TO missing)')
         return
     try:
-        _resend.api_key = RESEND_API_KEY
         section    = form_data.get('section', 'N/A')
         equipment  = form_data.get('equipment', 'N/A')
         sigs       = form_data.get('signatures', {})
@@ -69,25 +68,33 @@ def send_completion_email(form_data, pdf_bytes, filename):
         supervisor = sigs.get('supervisor', 'N/A')
         council    = sigs.get('council', 'N/A')
         insp_date  = form_data.get('inspectionDate', 'N/A')
-        html_body = f"""
-        <h2>Completed Maintenance Report – Section {section}</h2>
-        <p><strong>Equipment:</strong> {equipment}</p>
-        <p><strong>Inspection Date:</strong> {insp_date}</p>
-        <p><strong>Engineer:</strong> {engineer}</p>
-        <p><strong>Supervisor:</strong> {supervisor}</p>
-        <p><strong>Council:</strong> {council}</p>
-        <p>The signed report is attached as a PDF.</p>
-        """
-        _resend.Emails.send({
-            'from':    REPORT_EMAIL_FROM,
-            'to':      [REPORT_EMAIL_TO],
-            'subject': f'Completed Report – Section {section} – {insp_date}',
-            'html':    html_body,
-            'attachments': [{
-                'filename': filename,
-                'content':  list(pdf_bytes)
-            }]
-        })
+
+        msg = MIMEMultipart()
+        msg['From']    = f'Cardiff Forms <{GMAIL_USER}>'
+        msg['To']      = REPORT_EMAIL_TO
+        msg['Subject'] = f'Completed Report – Section {section} – {insp_date}'
+
+        body = (
+            f'Completed Maintenance Report – Section {section}\n'
+            f'Equipment:      {equipment}\n'
+            f'Inspection Date:{insp_date}\n'
+            f'Engineer:       {engineer}\n'
+            f'Supervisor:     {supervisor}\n'
+            f'Council:        {council}\n\n'
+            f'The signed report is attached as a PDF.'
+        )
+        msg.attach(MIMEText(body, 'plain'))
+
+        part = MIMEBase('application', 'octet-stream')
+        part.set_payload(pdf_bytes)
+        EmailEncoders.encode_base64(part)
+        part.add_header('Content-Disposition', f'attachment; filename="{filename}"')
+        msg.attach(part)
+
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as server:
+            server.login(GMAIL_USER, GMAIL_APP_PASS)
+            server.sendmail(GMAIL_USER, REPORT_EMAIL_TO, msg.as_string())
+
         log_error(f'Completion email sent for {filename} to {REPORT_EMAIL_TO}')
     except Exception as e:
         log_error(f'Email send error: {str(e)}')
@@ -548,39 +555,11 @@ def save_form():
         except Exception as json_err:
             log_error(f"Warning: Could not save JSON file: {str(json_err)}")
         
-        # If form is being completed, delete the old pending versions
-        if status == 'complete':
-            try:
-                saved_forms_dir = Path('saved_forms')
-                # Delete all PENDING_SUPERVISOR and PENDING_COUNCIL files for this section
-                for pending_file in saved_forms_dir.glob(f'{section}_*_PENDING_*.pdf'):
-                    pending_file.unlink()
-                    log_error(f"Deleted interim PENDING form: {pending_file.name}")
-                for pending_file in saved_forms_dir.glob(f'{section}_*_PENDING_*.json'):
-                    pending_file.unlink()
-                    log_error(f"Deleted interim PENDING JSON: {pending_file.name}")
-            except Exception as cleanup_err:
-                log_error(f"Warning: Could not delete PENDING files: {str(cleanup_err)}")
-        
-        # If form is transitioning from pending_supervisor to pending_council (supervisor just completed it)
-        if status == 'pending_council':
-            try:
-                saved_forms_dir = Path('saved_forms')
-                # Delete PENDING_SUPERVISOR files for this section (no longer needed)
-                for pending_file in saved_forms_dir.glob(f'{section}_*_PENDING_SUPERVISOR.pdf'):
-                    pending_file.unlink()
-                    log_error(f"Deleted PENDING_SUPERVISOR form: {pending_file.name}")
-                for pending_file in saved_forms_dir.glob(f'{section}_*_PENDING_SUPERVISOR.json'):
-                    pending_file.unlink()
-                    log_error(f"Deleted PENDING_SUPERVISOR JSON: {pending_file.name}")
-            except Exception as cleanup_err:
-                log_error(f"Warning: Could not delete PENDING_SUPERVISOR files: {str(cleanup_err)}")
-        
-        # Send completion email if fully signed off
+        # Send completion email if fully signed off (before save, non-blocking)
         if status == 'complete':
             send_completion_email(data, pdf_data, filename)
 
-        # Try to save to database first if configured
+        # ── Try to save to database FIRST ────────────────────────────────────
         if USE_DATABASE:
             conn = get_db_connection()
             if conn:
@@ -592,40 +571,88 @@ def save_form():
                     )
                     log_error(f"Saved to database: {filename} with status {status}")
                     conn.commit()
+
+                    # ── Only delete old pending rows/files AFTER confirmed DB save ──
+                    try:
+                        # Delete superseded DB rows for this section
+                        if status == 'complete':
+                            cursor.execute(
+                                "DELETE FROM saved_forms WHERE section = %s AND status IN ('pending_supervisor', 'pending_council') AND filename != %s",
+                                (section, filename)
+                            )
+                            deleted = cursor.rowcount
+                            if deleted:
+                                log_error(f"Deleted {deleted} old pending DB rows for section {section}")
+                        elif status == 'pending_council':
+                            cursor.execute(
+                                "DELETE FROM saved_forms WHERE section = %s AND status = 'pending_supervisor' AND filename != %s",
+                                (section, filename)
+                            )
+                            deleted = cursor.rowcount
+                            if deleted:
+                                log_error(f"Deleted {deleted} pending_supervisor DB rows for section {section}")
+                        conn.commit()
+                    except Exception as cleanup_err:
+                        log_error(f"Warning: Could not delete old pending DB rows: {str(cleanup_err)}")
+
                     cursor.close()
                     conn.close()
-                    
-                    # Return success response
-                    response = jsonify({
+
+                    # Clean up filesystem PENDING files only after DB success
+                    try:
+                        saved_forms_dir = Path('saved_forms')
+                        if status == 'complete':
+                            for f_ in saved_forms_dir.glob(f'{section}_*_PENDING_*.pdf'):
+                                f_.unlink(); log_error(f"Deleted PENDING file: {f_.name}")
+                            for f_ in saved_forms_dir.glob(f'{section}_*_PENDING_*.json'):
+                                f_.unlink(); log_error(f"Deleted PENDING JSON: {f_.name}")
+                        elif status == 'pending_council':
+                            for f_ in saved_forms_dir.glob(f'{section}_*_PENDING_SUPERVISOR.pdf'):
+                                f_.unlink(); log_error(f"Deleted PENDING_SUPERVISOR file: {f_.name}")
+                            for f_ in saved_forms_dir.glob(f'{section}_*_PENDING_SUPERVISOR.json'):
+                                f_.unlink(); log_error(f"Deleted PENDING_SUPERVISOR JSON: {f_.name}")
+                    except Exception as fs_clean_err:
+                        log_error(f"Warning: filesystem PENDING cleanup error: {str(fs_clean_err)}")
+
+                    return jsonify({
                         'success': True,
                         'message': f'Form {section} saved successfully as {status}',
                         'filename': filename,
                         'status': status
-                    })
-                    response.status_code = 200
-                    return response
+                    }), 200
+
                 except Exception as e:
-                    log_error(f"Database insert error: {str(e)}")
-                    conn.close()
-        
-        # Fallback: save to filesystem if database unavailable or disabled
+                    log_error(f"DATABASE INSERT FAILED — form NOT saved to DB: {str(e)}")
+                    try:
+                        conn.close()
+                    except:
+                        pass
+                    # Return error to user — do NOT silently fall back to filesystem
+                    return jsonify({
+                        'success': False,
+                        'message': f'Database error — form could not be saved. Please try again. ({str(e)})'
+                    }), 500
+            else:
+                log_error("DATABASE CONNECTION FAILED — form NOT saved")
+                return jsonify({
+                    'success': False,
+                    'message': 'Could not connect to database. Please try again in a moment.'
+                }), 500
+
+        # ── No database configured: save to filesystem (local dev only) ──────
         try:
             saved_forms_dir = Path('saved_forms')
             saved_forms_dir.mkdir(exist_ok=True)
             pdf_path = saved_forms_dir / filename
-            
             with open(pdf_path, 'wb') as f:
                 f.write(pdf_data)
-            
-            # Return success response
-            response = jsonify({
+            log_error(f"WARNING: Saved to filesystem only (no DB) — will be lost on restart: {filename}")
+            return jsonify({
                 'success': True,
                 'message': f'Form {section} saved successfully as {status}',
                 'filename': filename,
                 'status': status
-            })
-            response.status_code = 200
-            return response
+            }), 200
         except Exception as e:
             log_error(f"Filesystem save error: {str(e)}")
             return jsonify({
@@ -1102,6 +1129,36 @@ def resume_paused_form(pin):
             'success': False,
             'message': str(e)
         }), 500
+
+
+@app.route('/api/debug', methods=['GET'])
+def debug_status():
+    """Quick diagnostic: DB connection + row counts"""
+    info = {
+        'database_url_set': bool(DATABASE_URL),
+        'use_database': USE_DATABASE,
+        'gmail_configured': bool(GMAIL_USER and GMAIL_APP_PASS),
+        'report_email_to': REPORT_EMAIL_TO or '(not set)',
+        'db_connected': False,
+        'row_counts': {},
+        'error': None
+    }
+    if USE_DATABASE:
+        conn = get_db_connection()
+        if conn:
+            try:
+                cursor = conn.cursor()
+                cursor.execute("SELECT status, COUNT(*) FROM saved_forms GROUP BY status ORDER BY status")
+                rows = cursor.fetchall()
+                info['db_connected'] = True
+                info['row_counts'] = {r[0]: r[1] for r in rows}
+                cursor.close()
+                conn.close()
+            except Exception as e:
+                info['error'] = str(e)
+        else:
+            info['error'] = 'Could not connect to database'
+    return jsonify(info), 200
 
 
 if __name__ == '__main__':
