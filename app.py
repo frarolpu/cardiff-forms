@@ -1193,7 +1193,7 @@ def resume_paused_form(pin):
                 try:
                     cursor = conn.cursor(cursor_factory=RealDictCursor)
                     cursor.execute(
-                        "SELECT id, form_data, filename FROM saved_forms WHERE status = 'paused' AND pin = %s ORDER BY created_at DESC LIMIT 1",
+                        "SELECT id, form_data, filename, pin FROM saved_forms WHERE status = 'paused' AND pin = %s ORDER BY created_at DESC LIMIT 1",
                         (pin,)
                     )
                     row = cursor.fetchone()
