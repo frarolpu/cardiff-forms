@@ -3057,10 +3057,8 @@
 
                 const result = await response.json();
                 if (result.success) {
-                    showSuccess(`✓ Report paused! PIN: ${pin}`);
-                    // Show PIN modal
-                    document.getElementById('pausePINCode').textContent = pin;
-                    document.getElementById('pausePINModal').classList.add('active');
+                    showSuccess('✓ Report paused. You can resume it from the Paused Reports tab.');
+                    resetForm();
                 } else {
                     showError(`Failed to pause: ${result.message}`);
                 }
