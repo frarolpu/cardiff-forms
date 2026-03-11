@@ -3036,20 +3036,45 @@
                     window.resumedFormPin = result.pin || pin;
                     const formData = result.data;
                     currentFormIndex = 0; // Set as active
-                    
-                    // Load the paused form data
+
+                    // Build a synthetic form object so loadFormData() sets the header, section info, and tasks
+                    const syntheticForm = {
+                        section:     formData.section     || '',
+                        equipment:   formData.equipment   || '',
+                        drawing_ref: formData.drawing_ref || '',
+                        locations:   formData.locations   || [],
+                        frequencies: formData.frequencies || [],
+                        tasks:       formData.tasks       || [],
+                        is_matrix:   false,
+                        edps:        []
+                    };
+
+                    // Show form and hide welcome BEFORE loadFormData so elements are visible
+                    document.getElementById('noFormSelected').style.display = 'none';
+                    document.getElementById('formContainer').style.display = 'block';
+                    isPendingFormOpen = false;
+                    isPendingCouncilFormOpen = false;
+
+                    // This sets formTitle, sectionInfo bar, and renders the task list
+                    loadFormData(syntheticForm);
+
+                    // Restore paused field values AFTER loadFormData (which resets some fields)
                     document.getElementById('inspectionDate').value = formData.inspectionDate || '';
                     document.getElementById('inspector').value = formData.inspector || '';
                     document.getElementById('engineerComments').value = formData.engineer_comments || '';
+                    document.getElementById('supervisorComments').value = formData.supervisor_comments || '';
+                    document.getElementById('councilComments').value = formData.council_comments || '';
                     document.getElementById('materialsUsed').value = formData.materials_used || '';
+
                     window.selectedCrossBoreDoor = formData.cross_bore_door || null;
                     if (formData.cross_bore_door) {
                         document.getElementById('crossBoreDoorSelector').value = formData.cross_bore_door;
                     }
+
                     document.getElementById('engineerName').value = formData.signatures?.engineer || '';
                     document.getElementById('engineerInitials').value = formData.signatures?.engineerInitials || '';
                     document.getElementById('engineerDate').value = formData.signatures?.engineerDate || '';
-                    
+
                     // Restore photos
                     if (formData.beforePhotos && Array.isArray(formData.beforePhotos)) {
                         beforePhotos = formData.beforePhotos;
@@ -3059,28 +3084,19 @@
                         afterPhotos = formData.afterPhotos;
                         displayAfterPhotos();
                     }
-                    
-                    // Load tasks
-                    if (formData.tasks) {
-                        loadTasks(formData.tasks);
-                        setTimeout(() => {
-                            const taskList = document.getElementById('taskList');
-                            const checkboxes = taskList.querySelectorAll('input[type="checkbox"]');
-                            checkboxes.forEach((checkbox, index) => {
-                                if (formData.tasks[index] && formData.tasks[index].completed) {
-                                    checkbox.checked = true;
-                                }
-                            });
-                        }, 100);
-                    }
-                    
-                    // Show form and hide welcome
-                    document.getElementById('noFormSelected').style.display = 'none';
-                    document.getElementById('formContainer').style.display = 'block';
 
-                    // Refresh paused list so the resumed form disappears
+                    // Restore checkbox states (loadFormData already rendered the checkboxes)
+                    setTimeout(() => {
+                        const checkboxes = document.getElementById('taskList').querySelectorAll('input[type="checkbox"]');
+                        checkboxes.forEach((checkbox, index) => {
+                            if (formData.tasks[index] && formData.tasks[index].completed) {
+                                checkbox.checked = true;
+                            }
+                        });
+                    }, 100);
+
+                    updatePauseButtonVisibility();
                     loadPausedForms();
-
                     showSuccess('✓ Paused report resumed!');
                 } else {
                     showError(`Invalid PIN or form not found: ${result.message}`);
