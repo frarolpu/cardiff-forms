@@ -717,7 +717,7 @@ def get_saved_forms():
                 try:
                     cursor = conn.cursor(cursor_factory=RealDictCursor)
                     cursor.execute(
-                        "SELECT id, filename, section, status, created_at, form_data FROM saved_forms WHERE status != 'paused' ORDER BY created_at DESC"
+                        "SELECT id, filename, section, status, created_at, form_data FROM saved_forms ORDER BY created_at DESC"
                     )
                     rows = cursor.fetchall()
                     cursor.close()
@@ -1002,7 +1002,7 @@ def download_form(form_identifier):
                 try:
                     cursor = conn.cursor(cursor_factory=RealDictCursor)
                     cursor.execute(
-                        'SELECT filename, pdf_data FROM saved_forms WHERE id = %s',
+                        'SELECT filename, pdf_data, form_data FROM saved_forms WHERE id = %s',
                         (int(form_identifier),)
                     )
                     row = cursor.fetchone()
@@ -1010,12 +1010,23 @@ def download_form(form_identifier):
                     conn.close()
                     
                     if row:
-                        return send_file(
-                            BytesIO(row['pdf_data']),
-                            as_attachment=True,
-                            download_name=row['filename'],
-                            mimetype='application/pdf'
-                        )
+                        if row['pdf_data']:
+                            return send_file(
+                                BytesIO(bytes(row['pdf_data'])),
+                                as_attachment=True,
+                                download_name=row['filename'],
+                                mimetype='application/pdf'
+                            )
+                        elif row['form_data']:
+                            # Paused form — no PDF, serve JSON
+                            import json as _json
+                            json_bytes = _json.dumps(row['form_data'], indent=2).encode('utf-8')
+                            return send_file(
+                                BytesIO(json_bytes),
+                                as_attachment=True,
+                                download_name=row['filename'],
+                                mimetype='application/json'
+                            )
                 except Exception as db_err:
                     log_error(f"Database query error: {str(db_err)}")
         
@@ -1026,20 +1037,31 @@ def download_form(form_identifier):
                 try:
                     cursor = conn.cursor(cursor_factory=RealDictCursor)
                     cursor.execute(
-                        'SELECT filename, pdf_data FROM saved_forms WHERE filename = %s',
+                        'SELECT filename, pdf_data, form_data FROM saved_forms WHERE filename = %s',
                         (form_identifier,)
                     )
                     row = cursor.fetchone()
                     cursor.close()
                     conn.close()
 
-                    if row and row['pdf_data']:
-                        return send_file(
-                            BytesIO(bytes(row['pdf_data'])),
-                            as_attachment=True,
-                            download_name=row['filename'],
-                            mimetype='application/pdf'
-                        )
+                    if row:
+                        if row['pdf_data']:
+                            return send_file(
+                                BytesIO(bytes(row['pdf_data'])),
+                                as_attachment=True,
+                                download_name=row['filename'],
+                                mimetype='application/pdf'
+                            )
+                        elif row['form_data']:
+                            # Paused form — no PDF, serve JSON
+                            import json as _json
+                            json_bytes = _json.dumps(row['form_data'], indent=2).encode('utf-8')
+                            return send_file(
+                                BytesIO(json_bytes),
+                                as_attachment=True,
+                                download_name=row['filename'],
+                                mimetype='application/json'
+                            )
                 except Exception as db_err:
                     log_error(f"Database filename lookup error: {str(db_err)}")
 
