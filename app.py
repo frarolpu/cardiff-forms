@@ -624,6 +624,16 @@ def save_form():
                     except Exception as cleanup_err:
                         log_error(f"Warning: Could not delete old pending DB rows: {str(cleanup_err)}")
 
+                    # Delete old paused row if this form was resumed from a pause
+                    resumed_pin_val = data.get('resumed_pin')
+                    if resumed_pin_val:
+                        try:
+                            cursor.execute("DELETE FROM saved_forms WHERE status = 'paused' AND pin = %s", (resumed_pin_val,))
+                            conn.commit()
+                            log_error(f"Deleted resumed paused row with PIN {resumed_pin_val}")
+                        except Exception as rp_err:
+                            log_error(f"Warning: could not delete resumed paused row: {rp_err}")
+
                     cursor.close()
                     conn.close()
 
@@ -1076,6 +1086,10 @@ def pause_form():
             if conn:
                 try:
                     cursor = conn.cursor()
+                    # If re-pausing a previously resumed form, delete the old paused row first
+                    resumed_pin_val = data.get('resumed_pin')
+                    if resumed_pin_val:
+                        cursor.execute("DELETE FROM saved_forms WHERE status = 'paused' AND pin = %s", (resumed_pin_val,))
                     cursor.execute(
                         'INSERT INTO saved_forms (section, filename, status, form_data, pin) VALUES (%s, %s, %s, %s, %s)',
                         (section, filename, 'paused', json.dumps(data), pin)
@@ -1188,17 +1202,17 @@ def resume_paused_form(pin):
                         form_data = json.loads(raw) if isinstance(raw, str) else raw
                         form_id = row['id']
                         filename = row['filename']
-                        # Delete the paused row now that it's resumed
-                        cursor.execute("DELETE FROM saved_forms WHERE id = %s", (form_id,))
-                        conn.commit()
+                        # Keep the paused row in DB — it will be deleted when the user
+                        # actually completes/re-pauses/deletes the form.
                         cursor.close()
                         conn.close()
-                        log_error(f"Resumed paused form {filename} (DB id {form_id}), deleted from DB")
+                        log_error(f"Resumed paused form {filename} (DB id {form_id}), keeping row until saved/deleted")
                         return jsonify({
                             'success': True,
                             'data': form_data,
-                            'filename': filename.replace('_PAUSED_' + pin, '').replace('.json', '.pdf'),
-                            'status': 'paused'
+                            'filename': filename.replace('_PAUSED_' + str(row['pin']), '').replace('.json', '.pdf'),
+                            'status': 'paused',
+                            'pin': row['pin']
                         }), 200
                     cursor.close()
                     conn.close()
@@ -1235,6 +1249,43 @@ def resume_paused_form(pin):
 
     except Exception as e:
         log_error(f"Resume paused form error: {str(e)}")
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+
+@app.route('/api/delete-paused-form/<pin>', methods=['DELETE'])
+def delete_paused_form(pin):
+    """Permanently delete a paused form by PIN"""
+    try:
+        if USE_DATABASE:
+            conn = get_db_connection()
+            if conn:
+                try:
+                    cursor = conn.cursor()
+                    cursor.execute("DELETE FROM saved_forms WHERE status = 'paused' AND pin = %s", (pin,))
+                    deleted = cursor.rowcount
+                    conn.commit()
+                    cursor.close()
+                    conn.close()
+                    if deleted:
+                        return jsonify({'success': True, 'message': f'Paused form deleted'}), 200
+                    return jsonify({'success': False, 'message': 'Paused form not found'}), 404
+                except Exception as db_err:
+                    log_error(f"DB error deleting paused form: {str(db_err)}")
+                    try: conn.close()
+                    except: pass
+                    return jsonify({'success': False, 'message': str(db_err)}), 500
+        # Filesystem fallback
+        saved_forms_dir = Path('saved_forms')
+        deleted_any = False
+        for f_ in saved_forms_dir.glob(f'*_PAUSED_{pin}.json'):
+            f_.unlink(); deleted_any = True
+        for f_ in saved_forms_dir.glob(f'*_PAUSED_{pin}.pdf'):
+            f_.unlink()
+        if deleted_any:
+            return jsonify({'success': True, 'message': 'Paused form deleted'}), 200
+        return jsonify({'success': False, 'message': 'Paused form not found'}), 404
+    except Exception as e:
+        log_error(f"Delete paused form error: {str(e)}")
         return jsonify({'success': False, 'message': str(e)}), 500
 
 

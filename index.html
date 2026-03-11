@@ -1987,16 +1987,37 @@
                         <br>Paused: ${createdDate} ${createdTime}
                         <br><strong>PIN: ${form.pin}</strong>
                     </div>
+                    <div style="display:flex; gap:8px; margin-top:6px;">
+                        <button class="btn btn-primary" style="flex:1; padding:6px 8px; font-size:12px;"
+                            onclick="event.stopPropagation(); resumePausedFormDirect('${form.pin}')">▶ Resume</button>
+                        <button class="btn" style="flex:0 0 auto; padding:6px 8px; font-size:12px; background:#dc2626; color:#fff; border:none; border-radius:4px; cursor:pointer;"
+                            onclick="event.stopPropagation(); deletePausedForm('${form.pin}')">🗑 Delete</button>
+                    </div>
                 `;
                 
-                li.onclick = () => resumePausedFormDirect(form.id);
                 pausedList.appendChild(li);
             });
         }
 
-        async function resumePausedFormDirect(formId) {
-            // Show PIN modal to confirm
-            document.getElementById('resumeFormPINModal').classList.add('active');
+        async function resumePausedFormDirect(pin) {
+            document.getElementById('resumePINInput').value = pin;
+            await validateResumePIN();
+        }
+
+        async function deletePausedForm(pin) {
+            if (!confirm('Delete this paused report permanently?')) return;
+            try {
+                const resp = await fetch(`/api/delete-paused-form/${pin}`, { method: 'DELETE' });
+                const result = await resp.json();
+                if (result.success) {
+                    showSuccess('Paused report deleted.');
+                    loadPausedForms();
+                } else {
+                    showError(`Could not delete: ${result.message}`);
+                }
+            } catch (e) {
+                showError(`Error: ${e.message}`);
+            }
         }
 
         // Show password modal for pending form access
@@ -2949,6 +2970,7 @@
                 cross_bore_door: window.selectedCrossBoreDoor || null,
                 status: 'paused',
                 pin: pin,
+                resumed_pin: window.resumedFormPin || null,
                 signatures: {
                     engineer: document.getElementById('engineerName').value,
                     engineerInitials: document.getElementById('engineerInitials').value,
@@ -3010,11 +3032,12 @@
                     closeResumePINModal();
                     document.getElementById('resumePINInput').value = '';
                     
-                    // Load the paused form data
+                    // Track that this form was resumed from a pause so we can clean up the paused record on save/re-pause
+                    window.resumedFormPin = result.pin || pin;
                     const formData = result.data;
                     currentFormIndex = 0; // Set as active
                     
-                    // Populate the form with paused data
+                    // Load the paused form data
                     document.getElementById('inspectionDate').value = formData.inspectionDate || '';
                     document.getElementById('inspector').value = formData.inspector || '';
                     document.getElementById('engineerComments').value = formData.engineer_comments || '';
@@ -3408,6 +3431,7 @@
             isPendingFormOpen = false;
             isPendingCouncilFormOpen = false;
             formStatus = 'new';
+            window.resumedFormPin = null;  // Clear any resumed paused form reference
             updateFormStatusDisplay();
             setSupervisorState(false);
             setCouncilState(false);
@@ -3579,7 +3603,8 @@
                 },
                 beforePhotos: beforePhotos,
                 afterPhotos: afterPhotos,
-                timestamp: new Date().toISOString()
+                timestamp: new Date().toISOString(),
+                resumed_pin: window.resumedFormPin || null
             };
 
             // Disable save button to prevent double submission
