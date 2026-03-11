@@ -15,6 +15,24 @@ try:
 except ImportError:
     _PILLOW_AVAILABLE = False
 
+def resize_image_bytes(img_bytes, max_w=1920, quality=82):
+    """Resize image bytes so width <= max_w. Returns JPEG bytes. Falls back to original on error."""
+    if not _PILLOW_AVAILABLE:
+        return img_bytes
+    try:
+        buf = BytesIO(img_bytes)
+        pil = PILImage.open(buf)
+        pil = pil.convert('RGB')  # drop alpha channel (PNG etc.)
+        w, h = pil.size
+        if w > max_w:
+            new_h = int(h * max_w / w)
+            pil = pil.resize((max_w, new_h), PILImage.LANCZOS)
+        out = BytesIO()
+        pil.save(out, format='JPEG', quality=quality, optimize=True)
+        return out.getvalue()
+    except Exception:
+        return img_bytes
+
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -22,6 +40,11 @@ from email.mime.base import MIMEBase
 from email import encoders as EmailEncoders
 
 app = Flask(__name__)
+app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024  # 100MB hard limit
+
+@app.errorhandler(413)
+def request_too_large(e):
+    return jsonify({'success': False, 'message': 'Payload too large. Please reduce the number or size of photos.'}), 413
 
 # Error log file
 ERROR_LOG = Path('pdf_errors.log')
@@ -366,6 +389,7 @@ def create_pdf(form_data):
                             photo_data = photo_base64
 
                         img_bytes = base64.b64decode(photo_data)
+                        img_bytes = resize_image_bytes(img_bytes)  # server-side safety resize
                         with tempfile.NamedTemporaryFile(suffix='.jpg', delete=False) as tmp:
                             tmp.write(img_bytes)
                             temp_files.append(tmp.name)
@@ -414,6 +438,7 @@ def create_pdf(form_data):
                             photo_data = photo_base64
 
                         img_bytes = base64.b64decode(photo_data)
+                        img_bytes = resize_image_bytes(img_bytes)  # server-side safety resize
                         with tempfile.NamedTemporaryFile(suffix='.jpg', delete=False) as tmp:
                             tmp.write(img_bytes)
                             temp_files.append(tmp.name)

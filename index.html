@@ -3187,15 +3187,33 @@
         });
 
         // BEFORE INSPECTION PHOTOS
-        function handlePhotoFiles(files, arr, displayFn) {
-            Array.from(files).forEach(file => {
-                const reader = new FileReader();
-                reader.onload = (evt) => {
-                    arr.push(evt.target.result);
+        // Compress image to max 1920px wide, 80% JPEG quality before storing
+        function compressAndStorePhoto(file, arr, displayFn) {
+            const reader = new FileReader();
+            reader.onload = (evt) => {
+                const img = new Image();
+                img.onload = () => {
+                    const MAX_W = 1920;
+                    let w = img.width, h = img.height;
+                    if (w > MAX_W) {
+                        h = Math.round(h * MAX_W / w);
+                        w = MAX_W;
+                    }
+                    const canvas = document.createElement('canvas');
+                    canvas.width = w;
+                    canvas.height = h;
+                    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                    const compressed = canvas.toDataURL('image/jpeg', 0.80);
+                    arr.push(compressed);
                     displayFn();
                 };
-                reader.readAsDataURL(file);
-            });
+                img.src = evt.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function handlePhotoFiles(files, arr, displayFn) {
+            Array.from(files).forEach(file => compressAndStorePhoto(file, arr, displayFn));
         }
 
         document.getElementById('beforePhotoInput').addEventListener('change', function(e) {
