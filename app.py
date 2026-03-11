@@ -717,7 +717,7 @@ def get_saved_forms():
                 try:
                     cursor = conn.cursor(cursor_factory=RealDictCursor)
                     cursor.execute(
-                        'SELECT id, filename, section, created_at, form_data FROM saved_forms ORDER BY created_at DESC'
+                        "SELECT id, filename, section, status, created_at, form_data FROM saved_forms WHERE status != 'paused' ORDER BY created_at DESC"
                     )
                     rows = cursor.fetchall()
                     cursor.close()

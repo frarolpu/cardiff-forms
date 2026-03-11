@@ -2995,13 +2995,20 @@
         }
 
         async function pauseForm() {
-            if (currentFormIndex === -1) {
+            if (currentFormIndex === -1 && !window.resumedFormDbId) {
                 showError('No form to pause');
                 return;
             }
 
-            const cleanedForms = allForms.filter(f => f.tasks.length > 0);
-            const form = cleanedForms[currentFormIndex];
+            // When resuming a paused form, use window.currentForm (correct section/equipment/etc.)
+            // rather than cleanedForms[currentFormIndex] which wrongly points to index 0 (2.1.3)
+            let form;
+            if (window.resumedFormDbId && window.currentForm) {
+                form = window.currentForm;
+            } else {
+                const cleanedForms = allForms.filter(f => f.tasks.length > 0);
+                form = cleanedForms[currentFormIndex];
+            }
             
             // Generate PIN
             const pin = generatePIN();
@@ -3503,6 +3510,9 @@
                     is_matrix: false,
                     edp: null
                 };
+            } else if (window.resumedFormDbId && window.currentForm) {
+                // We're saving a resumed paused form - use the restored form metadata
+                form = window.currentForm;
             } else {
                 // We're creating a new form (engineer filling it) - use selected form
                 const cleanedForms = allForms.filter(f => f.tasks.length > 0);
