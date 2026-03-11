@@ -1009,7 +1009,31 @@ def download_form(form_identifier):
                 except Exception as db_err:
                     log_error(f"Database query error: {str(db_err)}")
         
-        # Fallback: treat as filename and read from filesystem
+        # Try DB lookup by filename (covers non-numeric identifiers like 2.42.2_..._PENDING_SUPERVISOR.pdf)
+        if USE_DATABASE:
+            conn = get_db_connection()
+            if conn:
+                try:
+                    cursor = conn.cursor(cursor_factory=RealDictCursor)
+                    cursor.execute(
+                        'SELECT filename, pdf_data FROM saved_forms WHERE filename = %s',
+                        (form_identifier,)
+                    )
+                    row = cursor.fetchone()
+                    cursor.close()
+                    conn.close()
+
+                    if row and row['pdf_data']:
+                        return send_file(
+                            BytesIO(bytes(row['pdf_data'])),
+                            as_attachment=True,
+                            download_name=row['filename'],
+                            mimetype='application/pdf'
+                        )
+                except Exception as db_err:
+                    log_error(f"Database filename lookup error: {str(db_err)}")
+
+        # Last resort: filesystem (local dev / legacy)
         saved_forms_dir = Path('saved_forms')
         pdf_path = saved_forms_dir / form_identifier
         
