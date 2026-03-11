@@ -1985,7 +1985,6 @@
                     <div class="pending-form-item-info">
                         ⏸ Paused Report
                         <br>Paused: ${createdDate} ${createdTime}
-                        <br><strong>PIN: ${form.pin}</strong>
                     </div>
                     <div style="display:flex; gap:8px; margin-top:6px;">
                         <button class="btn btn-primary" style="flex:1; padding:6px 8px; font-size:12px;"
@@ -2000,8 +1999,76 @@
         }
 
         async function resumePausedFormDirect(pin) {
-            document.getElementById('resumePINInput').value = pin;
-            await validateResumePIN();
+            // Call API directly — bypass the PIN modal and input element entirely
+            try {
+                const response = await fetch(`/api/resume-paused-form/${pin}`);
+                const result = await response.json();
+                if (result.success) {
+                    closeResumePINModal();
+                    document.getElementById('resumePINInput').value = '';
+                    window.resumedFormPin = result.pin || pin;
+                    const formData = result.data;
+                    currentFormIndex = 0;
+
+                    const syntheticForm = {
+                        section:     formData.section     || '',
+                        equipment:   formData.equipment   || '',
+                        drawing_ref: formData.drawing_ref || '',
+                        locations:   formData.locations   || [],
+                        frequencies: formData.frequencies || [],
+                        tasks:       formData.tasks       || [],
+                        is_matrix:   false,
+                        edps:        []
+                    };
+
+                    document.getElementById('noFormSelected').style.display = 'none';
+                    document.getElementById('formContainer').style.display = 'block';
+                    isPendingFormOpen = false;
+                    isPendingCouncilFormOpen = false;
+
+                    loadFormData(syntheticForm);
+
+                    document.getElementById('inspectionDate').value = formData.inspectionDate || '';
+                    document.getElementById('inspector').value = formData.inspector || '';
+                    document.getElementById('engineerComments').value = formData.engineer_comments || '';
+                    document.getElementById('supervisorComments').value = formData.supervisor_comments || '';
+                    document.getElementById('councilComments').value = formData.council_comments || '';
+                    document.getElementById('materialsUsed').value = formData.materials_used || '';
+                    window.selectedCrossBoreDoor = formData.cross_bore_door || null;
+                    if (formData.cross_bore_door) {
+                        document.getElementById('crossBoreDoorSelector').value = formData.cross_bore_door;
+                    }
+                    document.getElementById('engineerName').value = formData.signatures?.engineer || '';
+                    document.getElementById('engineerInitials').value = formData.signatures?.engineerInitials || '';
+                    document.getElementById('engineerDate').value = formData.signatures?.engineerDate || '';
+
+                    if (formData.beforePhotos && Array.isArray(formData.beforePhotos)) {
+                        beforePhotos = formData.beforePhotos;
+                        displayBeforePhotos();
+                    }
+                    if (formData.afterPhotos && Array.isArray(formData.afterPhotos)) {
+                        afterPhotos = formData.afterPhotos;
+                        displayAfterPhotos();
+                    }
+
+                    setTimeout(() => {
+                        const checkboxes = document.getElementById('taskList').querySelectorAll('input[type="checkbox"]');
+                        checkboxes.forEach((checkbox, index) => {
+                            if (formData.tasks[index] && formData.tasks[index].completed) {
+                                checkbox.checked = true;
+                            }
+                        });
+                    }, 100);
+
+                    updatePauseButtonVisibility();
+                    loadPausedForms();
+                    showSuccess('✓ Paused report resumed!');
+                } else {
+                    showError(`Could not resume: ${result.message}`);
+                }
+            } catch (e) {
+                showError(`Error resuming form: ${e.message}`);
+            }
         }
 
         async function deletePausedForm(pin) {
@@ -3017,94 +3084,12 @@
         }
 
         async function validateResumePIN() {
-            const pin = document.getElementById('resumePINInput').value;
-            
-            if (!pin || pin.length !== 4) {
+            const pin = document.getElementById('resumePINInput').value.trim();
+            if (!pin || pin.length !== 4 || !/^\d{4}$/.test(pin)) {
                 showError('Please enter a valid 4-digit PIN');
                 return;
             }
-
-            try {
-                const response = await fetch(`/api/resume-paused-form/${pin}`);
-                const result = await response.json();
-
-                if (result.success) {
-                    closeResumePINModal();
-                    document.getElementById('resumePINInput').value = '';
-                    
-                    // Track that this form was resumed from a pause so we can clean up the paused record on save/re-pause
-                    window.resumedFormPin = result.pin || pin;
-                    const formData = result.data;
-                    currentFormIndex = 0; // Set as active
-
-                    // Build a synthetic form object so loadFormData() sets the header, section info, and tasks
-                    const syntheticForm = {
-                        section:     formData.section     || '',
-                        equipment:   formData.equipment   || '',
-                        drawing_ref: formData.drawing_ref || '',
-                        locations:   formData.locations   || [],
-                        frequencies: formData.frequencies || [],
-                        tasks:       formData.tasks       || [],
-                        is_matrix:   false,
-                        edps:        []
-                    };
-
-                    // Show form and hide welcome BEFORE loadFormData so elements are visible
-                    document.getElementById('noFormSelected').style.display = 'none';
-                    document.getElementById('formContainer').style.display = 'block';
-                    isPendingFormOpen = false;
-                    isPendingCouncilFormOpen = false;
-
-                    // This sets formTitle, sectionInfo bar, and renders the task list
-                    loadFormData(syntheticForm);
-
-                    // Restore paused field values AFTER loadFormData (which resets some fields)
-                    document.getElementById('inspectionDate').value = formData.inspectionDate || '';
-                    document.getElementById('inspector').value = formData.inspector || '';
-                    document.getElementById('engineerComments').value = formData.engineer_comments || '';
-                    document.getElementById('supervisorComments').value = formData.supervisor_comments || '';
-                    document.getElementById('councilComments').value = formData.council_comments || '';
-                    document.getElementById('materialsUsed').value = formData.materials_used || '';
-
-                    window.selectedCrossBoreDoor = formData.cross_bore_door || null;
-                    if (formData.cross_bore_door) {
-                        document.getElementById('crossBoreDoorSelector').value = formData.cross_bore_door;
-                    }
-
-                    document.getElementById('engineerName').value = formData.signatures?.engineer || '';
-                    document.getElementById('engineerInitials').value = formData.signatures?.engineerInitials || '';
-                    document.getElementById('engineerDate').value = formData.signatures?.engineerDate || '';
-
-                    // Restore photos
-                    if (formData.beforePhotos && Array.isArray(formData.beforePhotos)) {
-                        beforePhotos = formData.beforePhotos;
-                        displayBeforePhotos();
-                    }
-                    if (formData.afterPhotos && Array.isArray(formData.afterPhotos)) {
-                        afterPhotos = formData.afterPhotos;
-                        displayAfterPhotos();
-                    }
-
-                    // Restore checkbox states (loadFormData already rendered the checkboxes)
-                    setTimeout(() => {
-                        const checkboxes = document.getElementById('taskList').querySelectorAll('input[type="checkbox"]');
-                        checkboxes.forEach((checkbox, index) => {
-                            if (formData.tasks[index] && formData.tasks[index].completed) {
-                                checkbox.checked = true;
-                            }
-                        });
-                    }, 100);
-
-                    updatePauseButtonVisibility();
-                    loadPausedForms();
-                    showSuccess('✓ Paused report resumed!');
-                } else {
-                    showError(`Invalid PIN or form not found: ${result.message}`);
-                }
-            } catch (error) {
-                console.error('Resume error:', error);
-                showError(`Error resuming form: ${error.message}`);
-            }
+            await resumePausedFormDirect(pin);
         }
 
         // Handle Supervisor box input focus to unlock
