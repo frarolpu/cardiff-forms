@@ -1206,12 +1206,13 @@ def resume_paused_form(identifier):
                                 "SELECT id, form_data, filename, pin FROM saved_forms WHERE status = 'paused' AND pin = %s ORDER BY created_at DESC LIMIT 1",
                                 (identifier,)
                             )
+                            row = cursor.fetchone()
                     else:
                         cursor.execute(
                             "SELECT id, form_data, filename, pin FROM saved_forms WHERE status = 'paused' AND pin = %s ORDER BY created_at DESC LIMIT 1",
                             (identifier,)
                         )
-                    row = cursor.fetchone()
+                        row = cursor.fetchone()
                     if row:
                         raw = row['form_data']
                         form_data = json.loads(raw) if isinstance(raw, str) else raw
