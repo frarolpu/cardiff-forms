@@ -1018,14 +1018,14 @@ def download_form(form_identifier):
                                 mimetype='application/pdf'
                             )
                         elif row['form_data']:
-                            # Paused form — no PDF, serve JSON
-                            import json as _json
-                            json_bytes = _json.dumps(row['form_data'], indent=2).encode('utf-8')
+                            # Paused form — no stored PDF, generate one on-the-fly
+                            pdf_filename = row['filename'].replace('.json', '.pdf')
+                            pdf_buffer = create_pdf(row['form_data'])
                             return send_file(
-                                BytesIO(json_bytes),
+                                pdf_buffer,
                                 as_attachment=True,
-                                download_name=row['filename'],
-                                mimetype='application/json'
+                                download_name=pdf_filename,
+                                mimetype='application/pdf'
                             )
                 except Exception as db_err:
                     log_error(f"Database query error: {str(db_err)}")
@@ -1053,14 +1053,14 @@ def download_form(form_identifier):
                                 mimetype='application/pdf'
                             )
                         elif row['form_data']:
-                            # Paused form — no PDF, serve JSON
-                            import json as _json
-                            json_bytes = _json.dumps(row['form_data'], indent=2).encode('utf-8')
+                            # Paused form — no stored PDF, generate one on-the-fly
+                            pdf_filename = row['filename'].replace('.json', '.pdf')
+                            pdf_buffer = create_pdf(row['form_data'])
                             return send_file(
-                                BytesIO(json_bytes),
+                                pdf_buffer,
                                 as_attachment=True,
-                                download_name=row['filename'],
-                                mimetype='application/json'
+                                download_name=pdf_filename,
+                                mimetype='application/pdf'
                             )
                 except Exception as db_err:
                     log_error(f"Database filename lookup error: {str(db_err)}")
