@@ -571,6 +571,15 @@ def save_form():
         # Generate PDF
         pdf_buffer = create_pdf(data)
         pdf_data = pdf_buffer.getvalue()
+        del pdf_buffer  # free BytesIO immediately — we have the bytes
+
+        # Strip photo blobs from form_data before storing as JSONB:
+        # photos are already embedded in pdf_data BYTEA — no need to duplicate them in JSON
+        import copy as _copy
+        data_for_json = _copy.copy(data)
+        data_for_json.pop('beforePhotos', None)
+        data_for_json.pop('afterPhotos', None)
+        data_for_json.pop('photos', None)
         
         # Always save JSON file for form recovery (works with both DB and filesystem)
         try:
@@ -579,7 +588,7 @@ def save_form():
             json_filename = filename.replace('.pdf', '.json')
             json_path = saved_forms_dir / json_filename
             with open(json_path, 'w') as f:
-                json.dump(data, f, indent=2)
+                json.dump(data_for_json, f, indent=2)
             log_error(f"Saved form data to: {json_path}")
         except Exception as json_err:
             log_error(f"Warning: Could not save JSON file: {str(json_err)}")
@@ -596,7 +605,7 @@ def save_form():
                     cursor = conn.cursor()
                     cursor.execute(
                         'INSERT INTO saved_forms (section, filename, status, pdf_data, form_data) VALUES (%s, %s, %s, %s, %s)',
-                        (section, filename, status, pdf_data, json.dumps(data))
+                        (section, filename, status, pdf_data, json.dumps(data_for_json))
                     )
                     log_error(f"Saved to database: {filename} with status {status}")
                     conn.commit()
@@ -623,6 +632,16 @@ def save_form():
                         conn.commit()
                     except Exception as cleanup_err:
                         log_error(f"Warning: Could not delete old pending DB rows: {str(cleanup_err)}")
+
+                    # Delete old pending row if supervisor/council is completing it (by its DB id)
+                    pending_form_id = data.get('pending_form_id') or data.get('pending_council_form_id')
+                    if pending_form_id:
+                        try:
+                            cursor.execute("DELETE FROM saved_forms WHERE id = %s", (int(pending_form_id),))
+                            conn.commit()
+                            log_error(f"Deleted old pending row with DB id {pending_form_id} after supervisor/council save")
+                        except Exception as pf_err:
+                            log_error(f"Warning: could not delete old pending row {pending_form_id}: {pf_err}")
 
                     # Delete old paused row if this form was resumed from a pause
                     resumed_db_id = data.get('resumed_db_id')
@@ -686,6 +705,23 @@ def save_form():
             with open(pdf_path, 'wb') as f:
                 f.write(pdf_data)
             log_error(f"WARNING: Saved to filesystem only (no DB) — will be lost on restart: {filename}")
+
+            # Clean up old PENDING files on filesystem (same logic as DB path)
+            try:
+                if status == 'complete':
+                    for f_ in saved_forms_dir.glob(f'{section}_*_PENDING_*.pdf'):
+                        f_.unlink(); log_error(f"FS: Deleted PENDING file: {f_.name}")
+                    for f_ in saved_forms_dir.glob(f'{section}_*_PENDING_*.json'):
+                        f_.unlink(); log_error(f"FS: Deleted PENDING JSON: {f_.name}")
+                elif status == 'pending_council':
+                    for f_ in saved_forms_dir.glob(f'{section}_*_PENDING_SUPERVISOR.pdf'):
+                        if f_.name != filename:
+                            f_.unlink(); log_error(f"FS: Deleted PENDING_SUPERVISOR file: {f_.name}")
+                    for f_ in saved_forms_dir.glob(f'{section}_*_PENDING_SUPERVISOR.json'):
+                        f_.unlink(); log_error(f"FS: Deleted PENDING_SUPERVISOR JSON: {f_.name}")
+            except Exception as fs_clean_err:
+                log_error(f"Warning: filesystem cleanup error: {str(fs_clean_err)}")
+
             return jsonify({
                 'success': True,
                 'message': f'Form {section} saved successfully as {status}',

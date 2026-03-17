@@ -3583,6 +3583,17 @@
             if (councilName && councilInitials && councilDate) {
                 formStatus = 'complete'; // All three signed
             }
+
+            // Validate supervisor signature is filled when supervisor is completing this form
+            if (isPendingFormOpen && (!supervisorName || !supervisorInitials || !supervisorDate)) {
+                showError('Supervisor signature (name, initials and date) is required before saving');
+                return;
+            }
+            // Validate council signature is filled when council is completing this form
+            if (isPendingCouncilFormOpen && (!councilName || !councilInitials || !councilDate)) {
+                showError('Council signature (name, initials and date) is required before saving');
+                return;
+            }
             
             // Collect all form data
             const formData = {
@@ -3616,7 +3627,9 @@
                 beforePhotos: beforePhotos,
                 afterPhotos: afterPhotos,
                 timestamp: new Date().toISOString(),
-                resumed_db_id: window.resumedFormDbId || null
+                resumed_db_id: window.resumedFormDbId || null,
+                pending_form_id: window.currentFormPendingId || null,
+                pending_council_form_id: window.currentFormCouncilId || null
             };
 
             // Disable save button to prevent double submission
@@ -3655,6 +3668,9 @@
                     } else {
                         showSuccess(`✓ Form COMPLETED and saved! Filename: ${result.filename}`);
                     }
+                    // Reload pending lists so the completed/advanced form disappears from the sidebar
+                    loadPendingForms();
+                    loadCouncilForms();
                     // Delay form reset by 2 seconds to allow success message to display
                     setTimeout(() => {
                         resetForm();
