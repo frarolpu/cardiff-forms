@@ -8,6 +8,7 @@ This folder contains the complete technical and functional documentation for the
 
 | File | Description |
 |------|-------------|
+| [user-manual.md](user-manual.md) | **Step-by-step guide for engineers, supervisors and council staff** |
 | [architecture.md](architecture.md) | System architecture, tech stack, directory layout |
 | [data-model.md](data-model.md) | JSON data structures, database schema, file naming |
 | [workflow.md](workflow.md) | Form lifecycle, user roles, signing flow, passwords |

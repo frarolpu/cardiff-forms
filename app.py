@@ -310,12 +310,26 @@ def create_pdf(form_data):
             available_width = pdf.epw - 2
             
             for task in tasks:
-                # Use checkbox representation
-                checkbox = 'X' if task.get('completed') else '_'
-                step_text = sanitize_text(str(task.get('step', '')))
-                # Use multi_cell for text wrapping, aligned left
-                pdf.set_x(pdf.l_margin)
-                pdf.multi_cell(available_width, 6, f"[{checkbox}] {step_text}", align='L')
+                description = sanitize_text(str(task.get('description', task.get('step', ''))))
+                step_num = task.get('step', '')
+                subtasks = task.get('subtasks')
+                if subtasks:
+                    # Parent task label (bold, no checkbox)
+                    pdf.set_x(pdf.l_margin)
+                    pdf.set_font(default_font, "B", 9)
+                    pdf.multi_cell(available_width, 6, f"{step_num}. {description}", align='L')
+                    pdf.set_font(default_font, "", 9)
+                    # Subtasks (indented, with checkbox)
+                    for subtask in subtasks:
+                        checkbox = 'X' if subtask.get('completed') else '_'
+                        sub_text = sanitize_text(str(subtask.get('description', '')))
+                        pdf.set_x(pdf.l_margin + 8)
+                        pdf.multi_cell(available_width - 8, 6, f"  [{checkbox}] {sub_text}", align='L')
+                else:
+                    # Regular task with checkbox
+                    checkbox = 'X' if task.get('completed') else '_'
+                    pdf.set_x(pdf.l_margin)
+                    pdf.multi_cell(available_width, 6, f"[{checkbox}] {description}", align='L')
             
             pdf.ln(1)
         
@@ -612,8 +626,10 @@ def save_form():
 
                     # ── Only delete old pending rows/files AFTER confirmed DB save ──
                     try:
-                        # Delete superseded DB rows for this section
-                        if status == 'complete':
+                        # Delete superseded DB rows for this section.
+                        # For matrix forms (edp is set) skip broad section delete — pending_form_id handles
+                        # the targeted deletion so we don't accidentally wipe other EDP rows.
+                        if status == 'complete' and not edp:
                             cursor.execute(
                                 "DELETE FROM saved_forms WHERE section = %s AND status IN ('pending_supervisor', 'pending_council') AND filename != %s",
                                 (section, filename)
@@ -621,7 +637,7 @@ def save_form():
                             deleted = cursor.rowcount
                             if deleted:
                                 log_error(f"Deleted {deleted} old pending DB rows for section {section}")
-                        elif status == 'pending_council':
+                        elif status == 'pending_council' and not edp:
                             cursor.execute(
                                 "DELETE FROM saved_forms WHERE section = %s AND status = 'pending_supervisor' AND filename != %s",
                                 (section, filename)
@@ -633,15 +649,16 @@ def save_form():
                     except Exception as cleanup_err:
                         log_error(f"Warning: Could not delete old pending DB rows: {str(cleanup_err)}")
 
-                    # Delete old pending row if supervisor/council is completing it (by its DB id)
-                    pending_form_id = data.get('pending_form_id') or data.get('pending_council_form_id')
-                    if pending_form_id:
-                        try:
-                            cursor.execute("DELETE FROM saved_forms WHERE id = %s", (int(pending_form_id),))
-                            conn.commit()
-                            log_error(f"Deleted old pending row with DB id {pending_form_id} after supervisor/council save")
-                        except Exception as pf_err:
-                            log_error(f"Warning: could not delete old pending row {pending_form_id}: {pf_err}")
+                    # Delete old pending rows (both supervisor and council ids may be set in same session)
+                    for _id_field in ['pending_form_id', 'pending_council_form_id']:
+                        _row_id = data.get(_id_field)
+                        if _row_id:
+                            try:
+                                cursor.execute("DELETE FROM saved_forms WHERE id = %s", (int(_row_id),))
+                                conn.commit()
+                                log_error(f"Deleted old pending row {_id_field}={_row_id} after save")
+                            except Exception as pf_err:
+                                log_error(f"Warning: could not delete old pending row {_row_id}: {pf_err}")
 
                     # Delete old paused row if this form was resumed from a pause
                     resumed_db_id = data.get('resumed_db_id')
@@ -659,15 +676,17 @@ def save_form():
                     # Clean up filesystem PENDING files only after DB success
                     try:
                         saved_forms_dir = Path('saved_forms')
+                        # For matrix forms scope cleanup to this EDP only so other EDPs' files survive
+                        glob_prefix = f'{section}_{edp}_' if edp else f'{section}_'
                         if status == 'complete':
-                            for f_ in saved_forms_dir.glob(f'{section}_*_PENDING_*.pdf'):
+                            for f_ in saved_forms_dir.glob(f'{glob_prefix}*_PENDING_*.pdf'):
                                 f_.unlink(); log_error(f"Deleted PENDING file: {f_.name}")
-                            for f_ in saved_forms_dir.glob(f'{section}_*_PENDING_*.json'):
+                            for f_ in saved_forms_dir.glob(f'{glob_prefix}*_PENDING_*.json'):
                                 f_.unlink(); log_error(f"Deleted PENDING JSON: {f_.name}")
                         elif status == 'pending_council':
-                            for f_ in saved_forms_dir.glob(f'{section}_*_PENDING_SUPERVISOR.pdf'):
+                            for f_ in saved_forms_dir.glob(f'{glob_prefix}*_PENDING_SUPERVISOR.pdf'):
                                 f_.unlink(); log_error(f"Deleted PENDING_SUPERVISOR file: {f_.name}")
-                            for f_ in saved_forms_dir.glob(f'{section}_*_PENDING_SUPERVISOR.json'):
+                            for f_ in saved_forms_dir.glob(f'{glob_prefix}*_PENDING_SUPERVISOR.json'):
                                 f_.unlink(); log_error(f"Deleted PENDING_SUPERVISOR JSON: {f_.name}")
                     except Exception as fs_clean_err:
                         log_error(f"Warning: filesystem PENDING cleanup error: {str(fs_clean_err)}")
@@ -706,18 +725,32 @@ def save_form():
                 f.write(pdf_data)
             log_error(f"WARNING: Saved to filesystem only (no DB) — will be lost on restart: {filename}")
 
+            # Delete old pending files (both supervisor and council ids may be set in same session)
+            for _id_field in ['pending_form_id', 'pending_council_form_id']:
+                _row_id = data.get(_id_field)
+                if _row_id:
+                    try:
+                        for f_ in saved_forms_dir.glob(f'{_row_id}_PENDING_*.pdf'):
+                            f_.unlink(); log_error(f"FS: Deleted old pending file: {f_.name}")
+                        for f_ in saved_forms_dir.glob(f'{_row_id}_PENDING_*.json'):
+                            f_.unlink(); log_error(f"FS: Deleted old pending JSON: {f_.name}")
+                    except Exception as pf_err:
+                        log_error(f"FS: Could not delete old pending file {_row_id}: {pf_err}")
+
             # Clean up old PENDING files on filesystem (same logic as DB path)
             try:
-                if status == 'complete':
-                    for f_ in saved_forms_dir.glob(f'{section}_*_PENDING_*.pdf'):
+                # For matrix forms scope cleanup to this EDP only so other EDPs' files survive
+                glob_prefix = f'{section}_{edp}_' if edp else f'{section}_'
+                if status == 'complete' and not edp:
+                    for f_ in saved_forms_dir.glob(f'{glob_prefix}*_PENDING_*.pdf'):
                         f_.unlink(); log_error(f"FS: Deleted PENDING file: {f_.name}")
-                    for f_ in saved_forms_dir.glob(f'{section}_*_PENDING_*.json'):
+                    for f_ in saved_forms_dir.glob(f'{glob_prefix}*_PENDING_*.json'):
                         f_.unlink(); log_error(f"FS: Deleted PENDING JSON: {f_.name}")
-                elif status == 'pending_council':
-                    for f_ in saved_forms_dir.glob(f'{section}_*_PENDING_SUPERVISOR.pdf'):
+                elif status == 'pending_council' and not edp:
+                    for f_ in saved_forms_dir.glob(f'{glob_prefix}*_PENDING_SUPERVISOR.pdf'):
                         if f_.name != filename:
                             f_.unlink(); log_error(f"FS: Deleted PENDING_SUPERVISOR file: {f_.name}")
-                    for f_ in saved_forms_dir.glob(f'{section}_*_PENDING_SUPERVISOR.json'):
+                    for f_ in saved_forms_dir.glob(f'{glob_prefix}*_PENDING_SUPERVISOR.json'):
                         f_.unlink(); log_error(f"FS: Deleted PENDING_SUPERVISOR JSON: {f_.name}")
             except Exception as fs_clean_err:
                 log_error(f"Warning: filesystem cleanup error: {str(fs_clean_err)}")

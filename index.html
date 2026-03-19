@@ -2052,11 +2052,20 @@
                     }
 
                     setTimeout(() => {
-                        const checkboxes = document.getElementById('taskList').querySelectorAll('input[type="checkbox"]');
-                        checkboxes.forEach((checkbox, index) => {
-                            if (formData.tasks[index] && formData.tasks[index].completed) {
-                                checkbox.checked = true;
+                        // Build data-step map from saved tasks (handles subtask structure)
+                        const stepMap = {};
+                        (formData.tasks || []).forEach(task => {
+                            const taskNum = String(task.step);
+                            if (task.subtasks && task.subtasks.length > 0) {
+                                task.subtasks.forEach((subtask, i) => {
+                                    stepMap[`${taskNum}-${i + 1}`] = subtask.completed || false;
+                                });
+                            } else {
+                                stepMap[taskNum] = task.completed || false;
                             }
+                        });
+                        document.getElementById('taskList').querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                            if (cb.dataset.step in stepMap) cb.checked = stepMap[cb.dataset.step];
                         });
                     }, 100);
 
@@ -2092,6 +2101,52 @@
             const modal = document.getElementById('passwordModal');
             modal.classList.add('active');
             document.getElementById('supervisorPassword').focus();
+        }
+
+        /**
+         * Resolve tasks for display: uses original form template from allForms to reconstruct
+         * task hierarchy (with subtasks), then maps completion states from the saved task data.
+         * Handles both old flat-saved format and new nested format transparently.
+         */
+        function resolveTasksForDisplay(formData) {
+            const savedTasks = formData.tasks || [];
+
+            // If saved data already has subtask structure, use it directly
+            if (savedTasks.some(t => t.subtasks && t.subtasks.length > 0)) {
+                return savedTasks;
+            }
+
+            // Look up original form template so we can restore hierarchy
+            const templateForm = allForms.find(f => f.section === formData.section);
+            if (!templateForm || !templateForm.tasks || !templateForm.tasks.length) {
+                return savedTasks; // fallback: no template found
+            }
+
+            // Build step → [completed, completed, ...] map from saved flat tasks
+            // (old getCompletedTasks grouped all subtask checkboxes under the same step number)
+            const stepCompletions = {};
+            savedTasks.forEach(t => {
+                const k = String(t.step);
+                if (!stepCompletions[k]) stepCompletions[k] = [];
+                stepCompletions[k].push(t.completed || false);
+            });
+
+            return templateForm.tasks.map(t => {
+                const k = String(t.step);
+                const completions = stepCompletions[k] || [];
+                if (t.subtasks && t.subtasks.length > 0) {
+                    const resolvedSubtasks = t.subtasks.map((sub, i) => ({
+                        ...sub,
+                        completed: completions[i] !== undefined ? completions[i] : false
+                    }));
+                    return {
+                        ...t,
+                        subtasks: resolvedSubtasks,
+                        completed: resolvedSubtasks.every(s => s.completed)
+                    };
+                }
+                return { ...t, completed: completions[0] || false };
+            });
         }
 
         // After password is validated, load the actual form data
@@ -2176,13 +2231,12 @@
                     displayAfterPhotos();
                 }
                 
-                // Restore Cross Bore Door selection if applicable
-                if (formData.cross_bore_door) {
-                    window.selectedCrossBoreDoor = formData.cross_bore_door;
-                    const crossBoreDoorSelector = document.getElementById('crossBoreDoorSelector');
-                    if (crossBoreDoorSelector) {
-                        crossBoreDoorSelector.value = formData.cross_bore_door;
-                    }
+                // Restore Cross Bore Door selection if applicable (always reset first to avoid stale values)
+                window.selectedCrossBoreDoor = formData.cross_bore_door || null;
+                const _cbdSel = document.getElementById('crossBoreDoorSelector');
+                if (_cbdSel) {
+                    _cbdSel.value = formData.cross_bore_door || '';
+                    _cbdSel.disabled = true; // Read-only for supervisor review
                 }
                 
                 // Set form as pending
@@ -2190,8 +2244,11 @@
                 formStatus = 'pending';
                 window.currentFormPendingId = formId; // Store for save reference
                 window.currentFormFilename = filename;
+                const resolvedTasks = resolveTasksForDisplay(formData);
+                formData.tasks = resolvedTasks; // keep formData in sync for save
                 window.pendingFormData = formData; // Store entire form data for save
-                window.pendingFormTasks = formData.tasks; // Store original tasks to preserve them during save
+                window.pendingFormTasks = resolvedTasks; // Store resolved tasks to preserve hierarchy during save
+                window.selectedEDP = formData.edp || null; // Restore EDP selection for matrix forms
                 
                 // Protect engineer section (supervisor is already unlocked from password)
                 setEngineerSectionReadOnly(true); // Protect engineer section
@@ -2203,21 +2260,28 @@
                 }
                 
                 // Load tasks and restore their completed states
-                if (formData.tasks) {
-                    loadTasks(formData.tasks);
+                if (resolvedTasks.length) {
+                    loadTasks(resolvedTasks);
                     
-                    // Restore task checkbox states after rendering
+                    // Explicitly restore checked states and disable all task checkboxes
                     setTimeout(() => {
-                        const taskList = document.getElementById('taskList');
-                        const checkboxes = taskList.querySelectorAll('input[type="checkbox"]');
-                        
-                        checkboxes.forEach((checkbox, index) => {
-                            if (formData.tasks[index] && formData.tasks[index].completed) {
-                                checkbox.checked = true;
+                        // Build data-step → completed map from resolved task data
+                        const stepCheckMap = {};
+                        resolvedTasks.forEach(task => {
+                            const taskNum = String(task.step);
+                            if (task.subtasks && task.subtasks.length > 0) {
+                                task.subtasks.forEach((sub, i) => {
+                                    stepCheckMap[`${taskNum}-${i + 1}`] = sub.completed || false;
+                                });
                             } else {
-                                checkbox.checked = false;
+                                stepCheckMap[taskNum] = task.completed || false;
                             }
-                            // Disable task checkboxes since engineer already completed them
+                        });
+                        const taskList = document.getElementById('taskList');
+                        taskList.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                            if (checkbox.dataset.step in stepCheckMap) {
+                                checkbox.checked = stepCheckMap[checkbox.dataset.step];
+                            }
                             checkbox.disabled = true;
                             checkbox.style.cursor = 'not-allowed';
                         });
@@ -2225,11 +2289,19 @@
                 }
                 
                 // Update header
-                document.getElementById('formTitle').textContent = `Section ${formData.section} (PENDING - Complete Supervisor Signature)`;
+                const edpSuffix = formData.edp ? ` - ${formData.edp}` : '';
+                const doorSuffix = formData.cross_bore_door ? ` - ${formData.cross_bore_door}` : '';
+                document.getElementById('formTitle').textContent = `Section ${formData.section}${edpSuffix}${doorSuffix} (PENDING - Complete Supervisor Signature)`;
                 
                 let infoHTML = `<strong>Section:</strong> ${formData.section}`;
                 if (formData.equipment_name || formData.equipment) {
                     infoHTML += ` | <strong>Equipment:</strong> ${formData.equipment_name || formData.equipment}`;
+                }
+                if (formData.edp) {
+                    infoHTML += ` | <strong>EDP:</strong> <span class="info-badge">${formData.edp}</span>`;
+                }
+                if (formData.cross_bore_door) {
+                    infoHTML += ` | <strong>Door:</strong> <span class="info-badge">${formData.cross_bore_door}</span>`;
                 }
                 document.getElementById('sectionInfo').innerHTML = infoHTML;
                 
@@ -2335,14 +2407,12 @@
                     displayAfterPhotos();
                 }
                 
-                // Restore Cross Bore Door selection if applicable
-                if (formData.cross_bore_door) {
-                    window.selectedCrossBoreDoor = formData.cross_bore_door;
-                    const crossBoreDoorSelector = document.getElementById('crossBoreDoorSelector');
-                    if (crossBoreDoorSelector) {
-                        crossBoreDoorSelector.value = formData.cross_bore_door;
-                        crossBoreDoorSelector.disabled = true; // Read-only for council
-                    }
+                // Restore Cross Bore Door selection if applicable (always reset first to avoid stale values)
+                window.selectedCrossBoreDoor = formData.cross_bore_door || null;
+                const _cbdSelC = document.getElementById('crossBoreDoorSelector');
+                if (_cbdSelC) {
+                    _cbdSelC.value = formData.cross_bore_door || '';
+                    _cbdSelC.disabled = !!formData.cross_bore_door; // Read-only for council only if applicable
                 }
                 
                 // Set form as pending council
@@ -2352,6 +2422,7 @@
                 window.currentFormFilename = filename;
                 window.pendingCouncilFormData = formData;
                 window.pendingFormTasks = formData.tasks;
+                window.selectedEDP = formData.edp || null; // Restore EDP selection for matrix forms
                 
                 // Protect all other sections (council only fills council section)
                 setEngineerSectionReadOnly(true);
@@ -2390,18 +2461,28 @@
                 }
                 
                 // Load tasks as read-only
-                if (formData.tasks) {
-                    loadTasks(formData.tasks);
+                const resolvedTasksC = resolveTasksForDisplay(formData);
+                formData.tasks = resolvedTasksC;
+                if (resolvedTasksC.length) {
+                    loadTasks(resolvedTasksC);
                     
+                    // Explicitly restore checked states and disable all task checkboxes
                     setTimeout(() => {
-                        const taskList = document.getElementById('taskList');
-                        const checkboxes = taskList.querySelectorAll('input[type="checkbox"]');
-                        
-                        checkboxes.forEach((checkbox, index) => {
-                            if (formData.tasks[index] && formData.tasks[index].completed) {
-                                checkbox.checked = true;
+                        const stepCheckMapC = {};
+                        resolvedTasksC.forEach(task => {
+                            const taskNum = String(task.step);
+                            if (task.subtasks && task.subtasks.length > 0) {
+                                task.subtasks.forEach((sub, i) => {
+                                    stepCheckMapC[`${taskNum}-${i + 1}`] = sub.completed || false;
+                                });
                             } else {
-                                checkbox.checked = false;
+                                stepCheckMapC[taskNum] = task.completed || false;
+                            }
+                        });
+                        const taskList = document.getElementById('taskList');
+                        taskList.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                            if (checkbox.dataset.step in stepCheckMapC) {
+                                checkbox.checked = stepCheckMapC[checkbox.dataset.step];
                             }
                             checkbox.disabled = true;
                             checkbox.style.cursor = 'not-allowed';
@@ -2410,11 +2491,19 @@
                 }
                 
                 // Update header
-                document.getElementById('formTitle').textContent = `Section ${formData.section} (PENDING COUNCIL - Complete Council Approval)`;
+                const edpSuffix = formData.edp ? ` - ${formData.edp}` : '';
+                const doorSuffix = formData.cross_bore_door ? ` - ${formData.cross_bore_door}` : '';
+                document.getElementById('formTitle').textContent = `Section ${formData.section}${edpSuffix}${doorSuffix} (PENDING COUNCIL - Complete Council Approval)`;
                 
                 let infoHTML = `<strong>Section:</strong> ${formData.section}`;
                 if (formData.equipment_name || formData.equipment) {
                     infoHTML += ` | <strong>Equipment:</strong> ${formData.equipment_name || formData.equipment}`;
+                }
+                if (formData.edp) {
+                    infoHTML += ` | <strong>EDP:</strong> <span class="info-badge">${formData.edp}</span>`;
+                }
+                if (formData.cross_bore_door) {
+                    infoHTML += ` | <strong>Door:</strong> <span class="info-badge">${formData.cross_bore_door}</span>`;
                 }
                 document.getElementById('sectionInfo').innerHTML = infoHTML;
                 
@@ -2640,10 +2729,10 @@
             if (crossBoreSectionList.includes(form.section)) {
                 crossBoreDoorSection.style.display = 'block';
                 crossBoreDoorSelector.value = window.selectedCrossBoreDoor || '';
-                window.selectedCrossBoreDoor = null;  // Reset
+                window.selectedCrossBoreDoor = crossBoreDoorSelector.value || null;  // Keep in sync with rendered value
             } else {
                 crossBoreDoorSection.style.display = 'none';
-                window.selectedCrossBoreDoor = null;  // Reset
+                window.selectedCrossBoreDoor = null;
             }
 
             // Set current dates
@@ -3171,7 +3260,7 @@
                     // Build subtasks HTML
                     let subtasksHTML = task.subtasks.map((subtask, subtaskIndex) => `
                         <div style="display: flex; align-items: flex-start; margin-bottom: 6px; margin-left: 8px;">
-                            <input type="checkbox" class="task-checkbox" data-step="${taskNumber}-${subtaskIndex + 1}" style="margin-top: 3px; margin-right: 8px; flex-shrink: 0;">
+                            <input type="checkbox" class="task-checkbox" data-step="${taskNumber}-${subtaskIndex + 1}" ${subtask.completed ? 'checked' : ''} style="margin-top: 3px; margin-right: 8px; flex-shrink: 0;">
                             <span style="font-size: 14px;">• ${subtask.description}</span>
                         </div>
                     `).join('');
@@ -3197,7 +3286,7 @@
                     const taskItem = document.createElement('div');
                     taskItem.className = 'task-item';
                     taskItem.innerHTML = `
-                        <input type="checkbox" class="task-checkbox" data-step="${taskNumber}">
+                        <input type="checkbox" class="task-checkbox" data-step="${taskNumber}" ${task.completed ? 'checked' : ''}>
                         <div class="task-text">
                             <span class="task-number">${taskNumber}.</span>
                             <span class="task-description">${taskDescription}</span>
@@ -3401,16 +3490,48 @@
         });
 
         function getCompletedTasks() {
+            // Build a map from data-step to checked state
+            const stepMap = {};
+            document.querySelectorAll('.task-checkbox').forEach(cb => {
+                stepMap[cb.dataset.step] = cb.checked;
+            });
+
+            // Use source task structure to preserve subtask hierarchy
+            const sourceTasks = (window.currentForm && window.currentForm.tasks)
+                ? window.currentForm.tasks
+                : (window.pendingFormData && window.pendingFormData.tasks)
+                    ? window.pendingFormData.tasks
+                    : null;
+
+            if (sourceTasks) {
+                return sourceTasks.map(task => {
+                    const taskNum = String(task.step);
+                    const entry = {
+                        step: taskNum,
+                        description: task.description || task.step,
+                    };
+                    if (task.subtasks && task.subtasks.length > 0) {
+                        entry.subtasks = task.subtasks.map((subtask, i) => ({
+                            description: subtask.description,
+                            completed: stepMap[`${taskNum}-${i + 1}`] || false
+                        }));
+                        entry.completed = entry.subtasks.every(s => s.completed);
+                    } else {
+                        entry.completed = stepMap[taskNum] || false;
+                    }
+                    return entry;
+                });
+            }
+
+            // Fallback: flat list (forms without template in window.currentForm)
             const tasks = [];
             document.querySelectorAll('.task-checkbox').forEach(checkbox => {
                 const taskItem = checkbox.closest('.task-item');
-                const description = taskItem.querySelector('.task-description').textContent;
-                const step = parseInt(checkbox.dataset.step);
-                const completed = checkbox.checked;
+                const description = taskItem ? (taskItem.querySelector('.task-description')?.textContent || '') : '';
                 tasks.push({
-                    step: step,
+                    step: checkbox.dataset.step,
                     description: description,
-                    completed: completed
+                    completed: checkbox.checked
                 });
             });
             return tasks;
@@ -3557,15 +3678,8 @@
                 // Use the tasks that were loaded from the API
                 tasks = window.pendingFormTasks || [];
             } else {
-                // For new forms, collect task completions from checkboxes
-                document.querySelectorAll('.task-checkbox').forEach(checkbox => {
-                    const taskItem = checkbox.closest('.task-item');
-                    const description = taskItem.querySelector('.task-description').textContent;
-                    tasks.push({
-                        step: description,
-                        completed: checkbox.checked
-                    });
-                });
+                // For new forms, collect task completions using the structured helper
+                tasks = getCompletedTasks();
             }
 
             // Determine form status based on who has signed
@@ -3610,8 +3724,8 @@
                 council_comments: document.getElementById('councilComments').value,
                 materials_used: document.getElementById('materialsUsed').value,
                 tasks: tasks,
-                edp: window.selectedEDP || null,
-                cross_bore_door: window.selectedCrossBoreDoor || null,
+                edp: form.edp || (form.is_matrix ? window.selectedEDP : null) || null,
+                cross_bore_door: form.cross_bore_door || window.selectedCrossBoreDoor || null,
                 status: formStatus,
                 signatures: {
                     engineer: engineerName,
