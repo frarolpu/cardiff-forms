@@ -684,9 +684,9 @@
             }
             document.getElementById('pinError').textContent = '';
             const { id, filename } = _deleteTarget;
-            // Prefer DB id if it looks like a real integer, otherwise use filename
-            const identifier = (id && !isNaN(id) && String(id) === String(parseInt(id)))
-                ? String(id) : filename;
+            // Always use filename — works for both filesystem and DB (backend accepts filename too).
+            // Numeric ids from filesystem mode are just positional indices, not real identifiers.
+            const identifier = filename;
             try {
                 const resp = await fetch(`/api/delete-form/${encodeURIComponent(identifier)}`, {
                     method: 'DELETE'
