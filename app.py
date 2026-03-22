@@ -1358,6 +1358,52 @@ def resume_paused_form(identifier):
         return jsonify({'success': False, 'message': str(e)}), 500
 
 
+@app.route('/api/delete-form/<identifier>', methods=['DELETE'])
+def delete_form(identifier):
+    """Permanently delete any saved form by DB id or filename (admin use only)"""
+    try:
+        if USE_DATABASE:
+            conn = get_db_connection()
+            if conn:
+                try:
+                    cursor = conn.cursor()
+                    if identifier.isdigit():
+                        cursor.execute("DELETE FROM saved_forms WHERE id = %s", (int(identifier),))
+                    else:
+                        cursor.execute("DELETE FROM saved_forms WHERE filename = %s", (identifier,))
+                    deleted = cursor.rowcount
+                    conn.commit()
+                    cursor.close()
+                    conn.close()
+                    if deleted:
+                        log_error(f"Admin deleted form: {identifier}")
+                        return jsonify({'success': True, 'message': 'Form deleted'}), 200
+                    return jsonify({'success': False, 'message': 'Form not found in database'}), 404
+                except Exception as db_err:
+                    log_error(f"DB error deleting form: {str(db_err)}")
+                    try: conn.close()
+                    except: pass
+                    return jsonify({'success': False, 'message': str(db_err)}), 500
+        # Filesystem fallback — delete by filename
+        saved_forms_dir = Path('saved_forms')
+        deleted_any = False
+        target_pdf = saved_forms_dir / identifier
+        target_json = saved_forms_dir / identifier.replace('.pdf', '.json')
+        if target_pdf.exists():
+            target_pdf.unlink()
+            deleted_any = True
+        if target_json.exists():
+            target_json.unlink()
+            deleted_any = True
+        if deleted_any:
+            log_error(f"Admin deleted form (filesystem): {identifier}")
+            return jsonify({'success': True, 'message': 'Form deleted'}), 200
+        return jsonify({'success': False, 'message': 'Form not found'}), 404
+    except Exception as e:
+        log_error(f"Delete form error: {str(e)}")
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+
 @app.route('/api/delete-paused-form/<identifier>', methods=['DELETE'])
 def delete_paused_form(identifier):
     """Permanently delete a paused form by DB id (preferred) or PIN"""

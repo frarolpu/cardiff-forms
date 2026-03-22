@@ -203,6 +203,100 @@
             background: #218838;
         }
 
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-delete:hover {
+            background: #b02a37;
+            transform: translateY(-1px);
+        }
+
+        .delete-modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 380px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            animation: slideIn 0.3s;
+            text-align: center;
+        }
+
+        .delete-modal-content h2 {
+            margin: 0 0 8px 0;
+            color: #dc3545;
+            font-size: 20px;
+        }
+
+        .delete-modal-content p {
+            color: #555;
+            margin: 0 0 20px 0;
+            font-size: 14px;
+        }
+
+        .pin-input {
+            width: 100%;
+            padding: 12px;
+            font-size: 22px;
+            letter-spacing: 8px;
+            text-align: center;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+        }
+
+        .pin-input:focus {
+            border-color: #dc3545;
+            outline: none;
+        }
+
+        .pin-error {
+            color: #dc3545;
+            font-size: 13px;
+            margin-bottom: 12px;
+            min-height: 18px;
+        }
+
+        .delete-btn-row {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .delete-btn-row button {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-confirm-delete {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-confirm-delete:hover { background: #b02a37; }
+
+        .btn-cancel-delete {
+            background: #e9ecef;
+            color: #333;
+        }
+
+        .btn-cancel-delete:hover { background: #ced4da; }
+
         .empty-state {
             text-align: center;
             padding: 60px 20px;
@@ -421,6 +515,25 @@
         </div>
     </div>
 
+    <!-- Modal for deleting a form (PIN protected) -->
+    <div id="deleteModal" class="modal">
+        <div class="delete-modal-content">
+            <h2>&#128274; Delete Form</h2>
+            <p id="deleteModalDesc">Enter PIN to permanently delete this report.</p>
+            <input type="password" id="deletePinInput" class="pin-input"
+                inputmode="numeric" pattern="[0-9]*" maxlength="6"
+                placeholder="&#9679;&#9679;&#9679;&#9679;"
+                onkeydown="if(event.key==='Enter') executeDelete()"
+                oninput="this.value=this.value.replace(/[^0-9]/g,'')"
+            />
+            <div class="pin-error" id="pinError"></div>
+            <div class="delete-btn-row">
+                <button class="btn-cancel-delete" onclick="closeDeleteModal()">Cancel</button>
+                <button class="btn-confirm-delete" onclick="executeDelete()">Delete</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal for viewing form details -->
     <div id="viewModal" class="modal">
         <div class="modal-content">
@@ -482,6 +595,7 @@
                         <div class="actions">
                             <button class="btn-view" onclick="viewForm('${form.filename}')">View</button>
                             <button class="btn-download" onclick="downloadForm('${form.filename}')">Download</button>
+                            <button class="btn-delete" onclick="confirmDelete('${form.id}', '${form.filename}')">Delete</button>
                         </div>
                     </td>
                 </tr>
@@ -543,6 +657,53 @@
             document.getElementById('viewModal').style.display = 'none';
         }
 
+        let _deleteTarget = { id: null, filename: null };
+
+        function confirmDelete(id, filename) {
+            _deleteTarget = { id, filename };
+            document.getElementById('deleteModalDesc').textContent =
+                `Enter PIN to permanently delete: ${filename}`;
+            document.getElementById('deletePinInput').value = '';
+            document.getElementById('pinError').textContent = '';
+            document.getElementById('deleteModal').style.display = 'block';
+            setTimeout(() => document.getElementById('deletePinInput').focus(), 100);
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').style.display = 'none';
+            _deleteTarget = { id: null, filename: null };
+        }
+
+        async function executeDelete() {
+            const pin = document.getElementById('deletePinInput').value.trim();
+            if (pin !== '1234') {
+                document.getElementById('pinError').textContent = 'Incorrect PIN. Please try again.';
+                document.getElementById('deletePinInput').value = '';
+                document.getElementById('deletePinInput').focus();
+                return;
+            }
+            document.getElementById('pinError').textContent = '';
+            const { id, filename } = _deleteTarget;
+            // Prefer DB id if it looks like a real integer, otherwise use filename
+            const identifier = (id && !isNaN(id) && String(id) === String(parseInt(id)))
+                ? String(id) : filename;
+            try {
+                const resp = await fetch(`/api/delete-form/${encodeURIComponent(identifier)}`, {
+                    method: 'DELETE'
+                });
+                const result = await resp.json();
+                closeDeleteModal();
+                if (result.success) {
+                    loadSavedForms();
+                } else {
+                    alert(`Could not delete: ${result.message}`);
+                }
+            } catch (err) {
+                closeDeleteModal();
+                alert(`Error: ${err.message}`);
+            }
+        }
+
         function displayError(message) {
             const tbody = document.getElementById('formsBody');
             tbody.innerHTML = `
@@ -565,12 +726,12 @@
             displayForms(filtered);
         });
 
-        // Close modal when clicking outside
+        // Close modals when clicking outside
         window.onclick = (event) => {
-            const modal = document.getElementById('viewModal');
-            if (event.target == modal) {
-                modal.style.display = 'none';
-            }
+            const viewModal = document.getElementById('viewModal');
+            const deleteModal = document.getElementById('deleteModal');
+            if (event.target == viewModal) viewModal.style.display = 'none';
+            if (event.target == deleteModal) closeDeleteModal();
         };
 
         // Load forms on page load
