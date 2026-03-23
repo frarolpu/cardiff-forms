@@ -1335,14 +1335,34 @@ def resume_paused_form(identifier):
         # Fallback: filesystem (local dev)
         saved_forms_dir = Path('saved_forms')
         if saved_forms_dir.exists():
+            # Primary: identifier is the base_id (e.g. '2.43.4_20260323_120000')
+            # File is named '{base_id}_PAUSED_{pin}.json'
+            for json_file in saved_forms_dir.glob(f'{identifier}_PAUSED_*.json'):
+                try:
+                    with open(json_file, 'r') as f:
+                        form_data = json.load(f)
+                    pin_val = json_file.stem.split('_PAUSED_')[-1] if '_PAUSED_' in json_file.stem else ''
+                    return jsonify({
+                        'success': True,
+                        'data': form_data,
+                        'filename': identifier + '.pdf',
+                        'status': 'paused',
+                        'db_id': None,
+                        'pin': pin_val
+                    }), 200
+                except Exception as read_err:
+                    log_error(f"Error reading paused form: {read_err}")
+                    continue
+            # Fallback: identifier is a PIN (e.g. '1234') — manual PIN entry path
             for json_file in saved_forms_dir.glob(f'*_PAUSED_{identifier}.json'):
                 try:
                     with open(json_file, 'r') as f:
                         form_data = json.load(f)
+                    base_id = json_file.stem.split('_PAUSED_')[0] if '_PAUSED_' in json_file.stem else json_file.stem
                     return jsonify({
                         'success': True,
                         'data': form_data,
-                        'filename': json_file.stem.replace(f'_PAUSED_{identifier}', '') + '.pdf',
+                        'filename': base_id + '.pdf',
                         'status': 'paused',
                         'db_id': None,
                         'pin': identifier
@@ -1432,10 +1452,17 @@ def delete_paused_form(identifier):
         # Filesystem fallback
         saved_forms_dir = Path('saved_forms')
         deleted_any = False
-        for f_ in saved_forms_dir.glob(f'*_PAUSED_{identifier}.json'):
+        # Primary: identifier is the base_id (e.g. '2.43.4_20260323_120000')
+        for f_ in saved_forms_dir.glob(f'{identifier}_PAUSED_*.json'):
             f_.unlink(); deleted_any = True
-        for f_ in saved_forms_dir.glob(f'*_PAUSED_{identifier}.pdf'):
+        for f_ in saved_forms_dir.glob(f'{identifier}_PAUSED_*.pdf'):
             f_.unlink()
+        # Fallback: identifier is a PIN
+        if not deleted_any:
+            for f_ in saved_forms_dir.glob(f'*_PAUSED_{identifier}.json'):
+                f_.unlink(); deleted_any = True
+            for f_ in saved_forms_dir.glob(f'*_PAUSED_{identifier}.pdf'):
+                f_.unlink()
         if deleted_any:
             return jsonify({'success': True, 'message': 'Paused form deleted'}), 200
         return jsonify({'success': False, 'message': 'Paused form not found'}), 404

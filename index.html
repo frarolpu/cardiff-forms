@@ -1988,9 +1988,9 @@
                     </div>
                     <div style="display:flex; gap:8px; margin-top:6px;">
                         <button class="btn btn-primary" style="flex:1; padding:6px 8px; font-size:12px;"
-                            onclick="event.stopPropagation(); resumePausedFormDirect(${form.id})">▶ Resume</button>
+                            onclick="event.stopPropagation(); resumePausedFormDirect('${form.id}')">▶ Resume</button>
                         <button class="btn" style="flex:0 0 auto; padding:6px 8px; font-size:12px; background:#dc2626; color:#fff; border:none; border-radius:4px; cursor:pointer;"
-                            onclick="event.stopPropagation(); deletePausedForm(${form.id})">🗑 Delete</button>
+                            onclick="event.stopPropagation(); deletePausedForm('${form.id}')">🗑 Delete</button>
                     </div>
                 `;
                 
@@ -2017,8 +2017,8 @@
                         locations:   formData.locations   || [],
                         frequencies: formData.frequencies || [],
                         tasks:       formData.tasks       || [],
-                        is_matrix:   false,
-                        edps:        []
+                        is_matrix:   formData.is_matrix   || false,
+                        edps:        formData.edps        || []
                     };
 
                     document.getElementById('noFormSelected').style.display = 'none';
@@ -2027,6 +2027,16 @@
                     isPendingCouncilFormOpen = false;
 
                     loadFormData(syntheticForm);
+
+                    // Restore EDP selection if one was chosen before pausing:
+                    // freeze the dropdown and render the saved tasks immediately
+                    if (formData.is_matrix && formData.edp) {
+                        const edpSel = document.getElementById('edpSelector');
+                        edpSel.value = formData.edp;
+                        edpSel.disabled = true;
+                        window.selectedEDP = formData.edp;
+                        loadTasks(syntheticForm.tasks);
+                    }
 
                     document.getElementById('inspectionDate').value = formData.inspectionDate || '';
                     document.getElementById('inspector').value = formData.inspector || '';
@@ -3103,16 +3113,9 @@
             const pin = generatePIN();
             window.currentPausedPIN = pin;
             
-            // Collect all current form data (same as save)
-            const tasks = [];
-            document.querySelectorAll('.task-checkbox').forEach(checkbox => {
-                const taskItem = checkbox.closest('.task-item');
-                const description = taskItem.querySelector('.task-description').textContent;
-                tasks.push({
-                    step: description,
-                    completed: checkbox.checked
-                });
-            });
+            // Collect all current form data — use getCompletedTasks() to preserve
+            // subtask structure and correct step numbering
+            const tasks = getCompletedTasks();
 
             const formData = {
                 section: form.section,
@@ -3120,6 +3123,8 @@
                 drawing_ref: form.drawing_ref,
                 locations: form.locations,
                 frequencies: form.frequencies,
+                is_matrix: form.is_matrix || false,
+                edps: form.edps || [],
                 inspectionDate: document.getElementById('inspectionDate').value,
                 inspector: document.getElementById('inspector').value,
                 engineer_comments: document.getElementById('engineerComments').value,
