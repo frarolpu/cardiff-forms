@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cardiff Spare Parts</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; color: #2c3e50; }
+        input, textarea, select, button { font-family: inherit; }
+
+        /* ── Header ─────────────────────────────────────────────── */
+        .app-header {
+            background: linear-gradient(135deg, #1a1f3a 0%, #2d3a5c 100%);
+            padding: 0 20px; height: 60px;
+            display: flex; align-items: center; justify-content: space-between;
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.35);
+        }
+        .header-left { display: flex; align-items: center; gap: 20px; }
+        .back-link {
+            color: rgba(255,255,255,0.65); text-decoration: none; font-size: 13px;
+            padding: 5px 10px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.2);
+            transition: all .2s; white-space: nowrap;
+        }
+        .back-link:hover { color: white; background: rgba(255,255,255,0.1); }
+        .header-title { color: white; font-size: 18px; font-weight: 700; letter-spacing: 0.3px; }
+        .header-subtitle { color: rgba(255,255,255,0.5); font-size: 12px; margin-top: 1px; }
+        .header-right { display: flex; gap: 8px; }
+        .btn-scan {
+            background: rgba(255,255,255,0.12); color: white;
+            border: 1px solid rgba(255,255,255,0.25); padding: 7px 14px;
+            border-radius: 6px; cursor: pointer; font-size: 13px; transition: all .2s;
+        }
+        .btn-scan:hover { background: rgba(255,255,255,0.22); }
+        .btn-add {
+            background: linear-gradient(135deg, #0084ff, #005ce6); color: white;
+            border: none; padding: 7px 16px; border-radius: 6px;
+            cursor: pointer; font-size: 13px; font-weight: 600; transition: all .2s;
+        }
+        .btn-add:hover { background: linear-gradient(135deg, #0092ff, #006aff); }
+
+        /* ── Main layout ─────────────────────────────────────────── */
+        .layout { display: flex; margin-top: 60px; height: calc(100vh - 60px); }
+
+        /* ── Parts panel (left list) ─────────────────────────────── */
+        .parts-panel {
+            width: 360px; flex-shrink: 0;
+            background: white; border-right: 1px solid #e0e5eb;
+            display: flex; flex-direction: column; overflow: hidden;
+        }
+        .filter-bar {
+            padding: 12px 14px; background: #f8f9fa;
+            border-bottom: 1px solid #e0e5eb; display: flex; flex-direction: column; gap: 7px;
+        }
+        .filter-bar input {
+            width: 100%; padding: 9px 13px; border: 1px solid #ced4da;
+            border-radius: 6px; font-size: 13px; outline: none; transition: border-color .2s;
+        }
+        .filter-bar input:focus { border-color: #0084ff; box-shadow: 0 0 0 3px rgba(0,132,255,0.1); }
+        .filter-bar select {
+            width: 100%; padding: 8px 11px; border: 1px solid #ced4da;
+            border-radius: 6px; font-size: 13px; background: white; outline: none; cursor: pointer;
+        }
+        .parts-count {
+            padding: 7px 14px; font-size: 12px; color: #6c757d;
+            background: #f8f9fa; border-bottom: 1px solid #e0e5eb;
+        }
+        .parts-list { flex: 1; overflow-y: auto; }
+
+        .part-card {
+            padding: 12px 15px; border-bottom: 1px solid #f0f2f5;
+            cursor: pointer; transition: background .15s; border-left: 3px solid transparent;
+        }
+        .part-card:hover { background: #f8f9fa; }
+        .part-card.selected { background: #e8f4ff; border-left-color: #0084ff; }
+        .part-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+        .part-number { font-size: 11px; font-weight: 700; color: #0084ff; font-family: monospace; letter-spacing: 0.5px; }
+        .qty-badge { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 10px; }
+        .qty-0 { background: #fee2e2; color: #dc2626; }
+        .qty-low { background: #fef3c7; color: #d97706; }
+        .qty-ok { background: #dcfce7; color: #16a34a; }
+        .part-name { font-size: 14px; font-weight: 600; color: #1a1f3a; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .part-meta { font-size: 12px; color: #6c757d; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .cat-badge { font-size: 11px; padding: 1px 7px; border-radius: 10px; background: #e8f4ff; color: #0084ff; font-weight: 600; }
+
+        .empty-list { text-align: center; padding: 50px 20px; color: #adb5bd; font-size: 14px; }
+
+        /* ── Detail panel (right) ────────────────────────────────── */
+        .detail-panel { flex: 1; overflow-y: auto; background: #f0f2f5; }
+        .detail-empty {
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: center; height: 100%; color: #adb5bd; text-align: center; gap: 14px;
+        }
+        .detail-empty-icon { font-size: 48px; opacity: .35; }
+        .detail-empty p { font-size: 15px; }
+
+        .detail-content { padding: 22px; max-width: 820px; }
+
+        .detail-top {
+            background: white; border-radius: 12px; padding: 22px;
+            margin-bottom: 18px; box-shadow: 0 1px 5px rgba(0,0,0,0.08);
+            display: flex; gap: 22px; align-items: flex-start;
+        }
+        .detail-info { flex: 1; min-width: 0; }
+        .detail-part-number { font-size: 12px; color: #0084ff; font-weight: 700; letter-spacing: 1px; font-family: monospace; margin-bottom: 5px; }
+        .detail-name { font-size: 21px; font-weight: 700; color: #1a1f3a; margin-bottom: 10px; word-break: break-word; }
+        .detail-badges { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 14px; }
+        .badge-cat { padding: 3px 11px; border-radius: 12px; font-size: 12px; font-weight: 600; background: #e8f4ff; color: #0084ff; }
+        .badge-cond { padding: 3px 11px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+        .cond-New          { background: #dcfce7; color: #16a34a; }
+        .cond-Used         { background: #dbeafe; color: #1d4ed8; }
+        .cond-Damaged      { background: #fef3c7; color: #d97706; }
+        .cond-Refurbishment{ background: #f3e8ff; color: #7c3aed; }
+        .cond-Missing      { background: #fee2e2; color: #dc2626; }
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+        .info-item label { font-size: 10px; color: #6c757d; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 2px; }
+        .info-item span { font-size: 13px; color: #2c3e50; font-weight: 500; }
+        .detail-description { font-size: 13px; color: #475569; margin-bottom: 14px; line-height: 1.6; }
+        .detail-notes { font-size: 12px; color: #6c757d; background: #f8f9fa; padding: 8px 12px; border-radius: 6px; line-height: 1.5; }
+
+        .qr-block {
+            flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 6px;
+            padding: 14px; background: #f8f9fa; border-radius: 10px; cursor: pointer;
+        }
+        .qr-block p { font-size: 10px; color: #6c757d; text-align: center; max-width: 90px; }
+        .qr-block:hover { background: #e8f4ff; }
+
+        /* ── Stock row ──────────────────────────────────────────── */
+        .stock-row {
+            background: white; border-radius: 12px; padding: 16px 22px;
+            margin-bottom: 18px; box-shadow: 0 1px 5px rgba(0,0,0,0.08);
+            display: flex; align-items: center; justify-content: space-between; gap: 16px;
+        }
+        .stock-display { display: flex; align-items: baseline; gap: 8px; }
+        .stock-number { font-size: 46px; font-weight: 700; line-height: 1; }
+        .stock-number.qty-0 { color: #dc2626; }
+        .stock-number.qty-low { color: #d97706; }
+        .stock-number.qty-ok { color: #16a34a; }
+        .stock-unit { font-size: 15px; color: #6c757d; }
+        .stock-label { font-size: 11px; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+        .stock-btns { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+
+        .btn-mv {
+            padding: 9px 18px; border-radius: 8px; border: 1px solid; cursor: pointer;
+            font-size: 13px; font-weight: 600; transition: all .2s;
+        }
+        .btn-checkout { background: #fff0f0; color: #dc2626; border-color: #fecaca; }
+        .btn-checkout:hover { background: #fee2e2; }
+        .btn-return   { background: #f0fff4; color: #16a34a; border-color: #bbf7d0; }
+        .btn-return:hover { background: #dcfce7; }
+        .btn-adjust   { background: #eff6ff; color: #1d4ed8; border-color: #bfdbfe; }
+        .btn-adjust:hover { background: #dbeafe; }
+
+        /* ── Action bar ─────────────────────────────────────────── */
+        .action-bar { display: flex; gap: 9px; margin-bottom: 18px; flex-wrap: wrap; }
+        .btn-secondary {
+            background: white; color: #475569; border: 1px solid #cbd5e1;
+            padding: 8px 15px; border-radius: 7px; cursor: pointer; font-size: 13px;
+            font-weight: 500; transition: all .2s;
+        }
+        .btn-secondary:hover { background: #f8f9fa; border-color: #94a3b8; }
+        .btn-del {
+            background: white; color: #dc2626; border: 1px solid #fca5a5;
+            padding: 8px 15px; border-radius: 7px; cursor: pointer; font-size: 13px;
+            font-weight: 500; transition: all .2s;
+        }
+        .btn-del:hover { background: #fee2e2; }
+
+        /* ── Movement history ────────────────────────────────────── */
+        .movements-card {
+            background: white; border-radius: 12px; padding: 20px 22px;
+            box-shadow: 0 1px 5px rgba(0,0,0,0.08);
+        }
+        .movements-title { font-size: 14px; font-weight: 700; color: #1a1f3a; margin-bottom: 14px; }
+        .mv-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid #f3f4f6; }
+        .mv-row:last-child { border-bottom: none; }
+        .mv-icon {
+            width: 32px; height: 32px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0;
+        }
+        .mv-icon-checkout    { background: #fee2e2; }
+        .mv-icon-return      { background: #dcfce7; }
+        .mv-icon-adjustment  { background: #dbeafe; }
+        .mv-icon-initial     { background: #f3f4f6; }
+        .mv-body { flex: 1; min-width: 0; }
+        .mv-action { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 1px; }
+        .mv-action-checkout   { color: #dc2626; }
+        .mv-action-return     { color: #16a34a; }
+        .mv-action-adjustment { color: #1d4ed8; }
+        .mv-action-initial    { color: #6b7280; }
+        .mv-person { font-size: 13px; color: #374151; }
+        .mv-reason { font-size: 12px; color: #9ca3af; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .mv-right { text-align: right; flex-shrink: 0; }
+        .mv-qty { font-size: 15px; font-weight: 700; }
+        .mv-qty-neg { color: #dc2626; }
+        .mv-qty-pos { color: #16a34a; }
+        .mv-date { font-size: 11px; color: #9ca3af; }
+        .no-movements { text-align: center; padding: 24px; color: #9ca3af; font-size: 13px; }
+
+        /* ── Modals ──────────────────────────────────────────────── */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.55);
+            z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 16px;
+        }
+        .modal {
+            background: white; border-radius: 12px; width: 100%; max-width: 480px;
+            max-height: 92vh; overflow-y: auto; box-shadow: 0 25px 60px rgba(0,0,0,0.35);
+        }
+        .modal-lg { max-width: 560px; }
+        .modal-header {
+            padding: 18px 22px 14px; border-bottom: 1px solid #f0f2f5;
+            display: flex; justify-content: space-between; align-items: center;
+            position: sticky; top: 0; background: white; z-index: 1;
+        }
+        .modal-header h3 { font-size: 16px; font-weight: 700; color: #1a1f3a; }
+        .modal-close {
+            background: none; border: none; font-size: 20px; cursor: pointer;
+            color: #9ca3af; padding: 2px 7px; border-radius: 4px; line-height: 1;
+        }
+        .modal-close:hover { background: #f0f2f5; color: #374151; }
+        .modal-body { padding: 18px 22px; }
+        .modal-footer {
+            padding: 14px 22px 18px; border-top: 1px solid #f0f2f5;
+            display: flex; gap: 9px; justify-content: flex-end;
+        }
+
+        .form-group { margin-bottom: 14px; }
+        .form-group label { display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 5px; }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%; padding: 9px 11px; border: 1px solid #ced4da;
+            border-radius: 6px; font-size: 14px; outline: none; transition: border-color .2s;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: #0084ff; box-shadow: 0 0 0 3px rgba(0,132,255,0.1);
+        }
+        .form-group textarea { resize: vertical; min-height: 68px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #0084ff, #005ce6); color: white;
+            border: none; padding: 10px 22px; border-radius: 7px;
+            cursor: pointer; font-size: 14px; font-weight: 600; transition: all .2s;
+        }
+        .btn-primary:hover { background: linear-gradient(135deg, #0091ff, #006aff); }
+        .btn-primary:disabled { opacity: .55; cursor: not-allowed; }
+        .btn-cancel {
+            background: white; color: #475569; border: 1px solid #cbd5e1;
+            padding: 10px 18px; border-radius: 7px; cursor: pointer; font-size: 14px;
+        }
+        .btn-cancel:hover { background: #f8f9fa; }
+
+        /* movement modal accent */
+        .mv-modal-checkout .modal-header { border-top: 4px solid #dc2626; border-radius: 12px 12px 0 0; }
+        .mv-modal-return   .modal-header { border-top: 4px solid #16a34a; border-radius: 12px 12px 0 0; }
+        .mv-modal-adjustment .modal-header { border-top: 4px solid #1d4ed8; border-radius: 12px 12px 0 0; }
+
+        /* ── QR Scanner modal ────────────────────────────────────── */
+        #qr-reader { width: 100%; border-radius: 8px; overflow: hidden; min-height: 250px; }
+        .scanner-hint { text-align: center; font-size: 13px; color: #6c757d; margin-top: 12px; }
+
+        /* ── QR Zoom modal ────────────────────────────────────────── */
+        .qr-zoom-wrap { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 10px; }
+        .qr-zoom-url { font-size: 11px; color: #9ca3af; word-break: break-all; text-align: center; }
+
+        /* ── Print label ─────────────────────────────────────────── */
+        .label-preview {
+            border: 1px dashed #ccc; border-radius: 6px; padding: 10px;
+            display: inline-flex; flex-direction: column; align-items: center;
+            gap: 6px; width: 200px; margin: 0 auto; background: white;
+        }
+        .label-preview .lbl-number { font-family: monospace; font-size: 14px; font-weight: 700; color: #1a1f3a; }
+        .label-preview .lbl-name { font-size: 11px; text-align: center; color: #374151; max-width: 180px; word-break: break-word; }
+        .label-preview .lbl-loc { font-size: 10px; color: #9ca3af; }
+        .label-preview .lbl-cat { font-size: 10px; color: #0084ff; }
+        .print-info { font-size: 12px; color: #6c757d; text-align: center; margin-top: 10px; line-height: 1.6; }
+
+        @media print {
+            .no-print { display: none !important; }
+            body > *:not(#printArea) { display: none; }
+            #printArea { display: block !important; }
+            .print-label-sheet { display: flex; flex-wrap: wrap; gap: 4mm; padding: 5mm; }
+            .print-label {
+                border: 1px dashed #999; padding: 4mm; width: 62mm;
+                display: flex; flex-direction: column; align-items: center;
+                gap: 3mm; break-inside: avoid;
+            }
+            .print-label .pl-num { font-family: monospace; font-size: 10pt; font-weight: bold; }
+            .print-label .pl-name { font-size: 7pt; text-align: center; word-break: break-word; max-width: 58mm; }
+            .print-label .pl-loc { font-size: 7pt; color: #666; }
+            /* Inventory summary print styles */
+            .print-inventory { font-family: Arial, sans-serif; padding: 10mm; }
+            .print-inventory h1 { font-size: 16pt; margin-bottom: 2mm; }
+            .print-inventory .inv-meta { font-size: 9pt; color: #555; margin-bottom: 6mm; }
+            .print-inventory table { width: 100%; border-collapse: collapse; font-size: 8pt; }
+            .print-inventory th { background: #1a1f3a; color: white; padding: 3mm 2mm; text-align: left; }
+            .print-inventory td { padding: 2.5mm 2mm; border-bottom: 0.5pt solid #ddd; vertical-align: top; }
+            .print-inventory tr:nth-child(even) td { background: #f4f6f9; }
+            .print-inventory .inv-footer { margin-top: 6mm; font-size: 8pt; color: #888; text-align: right; }
+            .print-inventory .badge-cat { font-size: 7pt; background: #e8f4fd; color: #1a5276; padding: 0.5mm 1.5mm; border-radius: 2mm; }
+            .print-inventory .qty-low { color: #c0392b; font-weight: bold; }
+        }
+        #printArea { display: none; }
+
+        /* ── Toast ───────────────────────────────────────────────── */
+        .toast {
+            position: fixed; bottom: 24px; right: 24px;
+            padding: 11px 20px; border-radius: 8px; color: white; font-size: 13px; font-weight: 600;
+            z-index: 9999; transform: translateY(20px); opacity: 0; transition: all .3s;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.25); pointer-events: none;
+        }
+        .toast.show { transform: translateY(0); opacity: 1; }
+        .toast-success { background: #16a34a; }
+        .toast-error   { background: #dc2626; }
+        .toast-info    { background: #1d4ed8; }
+
+        /* ── Responsive ──────────────────────────────────────────── */
+        @media (max-width: 760px) {
+            .parts-panel { width: 100%; position: absolute; left: 0; top: 60px; bottom: 0; z-index: 10; }
+            .detail-panel { width: 100%; position: absolute; left: 0; top: 60px; bottom: 0; display: none; }
+            .layout.show-detail .parts-panel { display: none; }
+            .layout.show-detail .detail-panel { display: block; }
+            .detail-content { padding: 14px; }
+            .info-grid { grid-template-columns: 1fr; }
+            .detail-top { flex-direction: column; }
+            .form-row { grid-template-columns: 1fr; }
+            .header-title .subtitle-hide { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ── Header ──────────────────────────────────────────────────────────── -->
+<header class="app-header no-print">
+    <div class="header-left">
+        <a href="/" class="back-link">← Reports</a>
+        <div>
+            <div class="header-title">Cardiff Spare Parts</div>
+            <div class="header-subtitle">Inventory Management</div>
+        </div>
+    </div>
+    <div class="header-right">
+        <button class="btn-scan" onclick="openScanner()">📷 Scan QR</button>
+        <button class="btn-scan" onclick="printInventory()">📋 Print Inventory</button>
+        <button class="btn-add" onclick="openAddModal()">+ Add Part</button>
+    </div>
+</header>
+
+<!-- ── Layout ────────────────────────────────────────────────────────── -->
+<div class="layout no-print" id="mainLayout">
+
+    <!-- Left: parts list -->
+    <div class="parts-panel" id="partsPanel">
+        <div class="filter-bar">
+            <input id="searchInput" type="text" placeholder="🔍  Search name, number, location…" oninput="filterParts()">
+            <select id="categoryFilter" onchange="filterParts()">
+                <option value="">All Categories</option>
+                <option>Mechanical</option>
+                <option>Electrical</option>
+                <option>Hydraulic / Pneumatic</option>
+                <option>Fasteners</option>
+                <option>Consumables</option>
+                <option>Tools</option>
+                <option>Other</option>
+            </select>
+        </div>
+        <div class="parts-count" id="partsCount">Loading…</div>
+        <div class="parts-list" id="partsList"><div class="empty-list">Loading parts…</div></div>
+    </div>
+
+    <!-- Right: detail -->
+    <div class="detail-panel" id="detailPanel">
+        <div class="detail-empty" id="detailEmpty">
+            <div class="detail-empty-icon">⚙️</div>
+            <p>Select a part to view details</p>
+            <p style="font-size:13px;">or click <strong>+ Add Part</strong> to register new stock</p>
+        </div>
+        <div class="detail-content" id="detailContent" style="display:none;"></div>
+    </div>
+</div>
+
+<!-- ── Print area (hidden, shown only on print) ────────────────────────── -->
+<div id="printArea"></div>
+
+<!-- ── Toast ────────────────────────────────────────────────────────────── -->
+<div class="toast" id="toast"></div>
+
+<!-- ── Modal: Add / Edit Part ───────────────────────────────────────────── -->
+<div class="modal-overlay" id="partModal" style="display:none;">
+    <div class="modal modal-lg">
+        <div class="modal-header">
+            <h3 id="partModalTitle">Add New Part</h3>
+            <button class="modal-close" onclick="closePartModal()">✕</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Name <span style="color:#dc2626">*</span></label>
+                    <input id="fName" type="text" placeholder="e.g. Drive Belt Type A" maxlength="255">
+                </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <select id="fCategory">
+                        <option>Mechanical</option>
+                        <option>Electrical</option>
+                        <option>Hydraulic / Pneumatic</option>
+                        <option>Fasteners</option>
+                        <option>Consumables</option>
+                        <option>Tools</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea id="fDescription" placeholder="Optional — technical details, model numbers, specs…"></textarea>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Storage Location</label>
+                    <input id="fLocation" type="text" placeholder="e.g. Shelf A3, Bay 2">
+                </div>
+                <div class="form-group">
+                    <label>Condition</label>
+                    <select id="fCondition">
+                        <option>New</option>
+                        <option>Used</option>
+                        <option>Damaged</option>
+                        <option>Refurbishment</option>
+                        <option>Missing</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Initial Quantity</label>
+                    <input id="fQuantity" type="number" min="0" value="0" placeholder="0">
+                </div>
+                <div class="form-group">
+                    <label>Unit</label>
+                    <select id="fUnit">
+                        <option>each</option>
+                        <option>metres</option>
+                        <option>kg</option>
+                        <option>litres</option>
+                        <option>box</option>
+                        <option>pair</option>
+                        <option>set</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Notes</label>
+                <textarea id="fNotes" placeholder="Internal notes — supplier, Council ref, etc." style="min-height:54px;"></textarea>
+            </div>
+            <div class="form-group" id="fCreatedByGroup">
+                <label>Your Name (for stock log)</label>
+                <input id="fCreatedBy" type="text" placeholder="e.g. John Smith">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-cancel" onclick="closePartModal()">Cancel</button>
+            <button class="btn-primary" id="partModalSaveBtn" onclick="savePartForm()">Save Part</button>
+        </div>
+    </div>
+</div>
+
+<!-- ── Modal: Stock Movement ────────────────────────────────────────────── -->
+<div class="modal-overlay" id="movementModal" style="display:none;">
+    <div class="modal" id="movementModalInner">
+        <div class="modal-header">
+            <h3 id="movementModalTitle">Checkout</h3>
+            <button class="modal-close" onclick="closeMovementModal()">✕</button>
+        </div>
+        <div class="modal-body">
+            <div id="movementCurrentStock" style="background:#f8f9fa;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:13px;font-weight:600;color:#374151;"></div>
+            <div class="form-group">
+                <label>Quantity <span style="color:#dc2626">*</span></label>
+                <input id="mvQty" type="number" min="1" value="1" placeholder="1">
+            </div>
+            <div class="form-group">
+                <label>Your Name</label>
+                <input id="mvPerson" type="text" placeholder="e.g. John Smith" maxlength="255">
+            </div>
+            <div class="form-group">
+                <label>Reason / Notes</label>
+                <textarea id="mvReason" placeholder="e.g. Used on maintenance job 2.5.1, Ref: MAINT-2026-042" style="min-height:60px;"></textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-cancel" onclick="closeMovementModal()">Cancel</button>
+            <button class="btn-primary" id="mvSaveBtn" onclick="submitMovement()">Confirm</button>
+        </div>
+    </div>
+</div>
+
+<!-- ── Modal: QR Scanner ─────────────────────────────────────────────────── -->
+<div class="modal-overlay" id="scannerModal" style="display:none;" onclick="if(event.target===this)closeScanner()">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>Scan Part QR Code</h3>
+            <button class="modal-close" onclick="closeScanner()">✕</button>
+        </div>
+        <div class="modal-body">
+            <div id="qr-reader"></div>
+            <p class="scanner-hint">Point your camera at a Cardiff Parts QR code</p>
+        </div>
+    </div>
+</div>
+
+<!-- ── Modal: QR Zoom ───────────────────────────────────────────────────── -->
+<div class="modal-overlay" id="qrZoomModal" style="display:none;" onclick="if(event.target===this)closeQrZoom()">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 id="qrZoomTitle">QR Code</h3>
+            <button class="modal-close" onclick="closeQrZoom()">✕</button>
+        </div>
+        <div class="modal-body">
+            <div class="qr-zoom-wrap">
+                <div id="qrZoomCanvas"></div>
+                <p class="qr-zoom-url" id="qrZoomUrl"></p>
+                <button class="btn-primary" onclick="printCurrentLabel()" style="margin-top:4px;">🖨 Print Label</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// ── State ──────────────────────────────────────────────────────────────────
+let allParts = [];
+let selectedPart = null;
+let currentMovementAction = '';
+let editingPartId = null;
+let scannerInstance = null;
+
+// ── Init ───────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+    loadParts().then(() => {
+        // Auto-open part if URL has ?id=CDF-XXXX (from QR scan)
+        const params = new URLSearchParams(window.location.search);
+        const scanId = params.get('id');
+        if (scanId) {
+            const part = allParts.find(p => p.part_number === scanId);
+            if (part) selectPart(part.id);
+            else showToast(`Part "${escHtml(scanId)}" not found`, 'error');
+        }
+    });
+});
+
+// ── Load & filter ──────────────────────────────────────────────────────────
+async function loadParts() {
+    try {
+        const res = await fetch('/api/parts');
+        const data = await res.json();
+        if (data.success) {
+            allParts = data.parts;
+            renderPartsList(allParts);
+        } else {
+            showToast(data.message || 'Failed to load parts', 'error');
+        }
+    } catch (e) {
+        showToast('Network error loading parts', 'error');
+    }
+}
+
+function filterParts() {
+    const search = document.getElementById('searchInput').value.toLowerCase().trim();
+    const cat = document.getElementById('categoryFilter').value;
+    let filtered = allParts;
+    if (search) {
+        filtered = filtered.filter(p =>
+            p.name.toLowerCase().includes(search) ||
+            p.part_number.toLowerCase().includes(search) ||
+            (p.description || '').toLowerCase().includes(search) ||
+            (p.location || '').toLowerCase().includes(search)
+        );
+    }
+    if (cat) {
+        filtered = filtered.filter(p => p.category === cat);
+    }
+    renderPartsList(filtered);
+}
+
+function renderPartsList(parts) {
+    const el = document.getElementById('partsList');
+    const count = document.getElementById('partsCount');
+    count.textContent = parts.length + ' part' + (parts.length !== 1 ? 's' : '');
+    if (parts.length === 0) {
+        el.innerHTML = '<div class="empty-list">No parts found</div>';
+        return;
+    }
+    el.innerHTML = parts.map(p => `
+        <div class="part-card${p.id === (selectedPart && selectedPart.id) ? ' selected' : ''}"
+             onclick="selectPart(${p.id})">
+            <div class="part-card-header">
+                <span class="part-number">${esc(p.part_number)}</span>
+                <span class="qty-badge ${qtyClass(p.quantity)}">${p.quantity} ${esc(p.unit)}</span>
+            </div>
+            <div class="part-name">${esc(p.name)}</div>
+            <div class="part-meta">
+                <span class="cat-badge">${esc(p.category)}</span>
+                ${p.location ? `<span>📍 ${esc(p.location)}</span>` : ''}
+                <span>${esc(p.condition)}</span>
+            </div>
+        </div>
+    `).join('');
+}
+
+// ── Select & render detail ─────────────────────────────────────────────────
+async function selectPart(id) {
+    try {
+        const res = await fetch(`/api/parts/${id}`);
+        const data = await res.json();
+        if (!data.success) { showToast(data.message || 'Could not load part', 'error'); return; }
+        selectedPart = data.part;
+        // Re-render list to update selected highlight
+        filterParts();
+        // Show detail
+        document.getElementById('detailEmpty').style.display = 'none';
+        const dc = document.getElementById('detailContent');
+        dc.style.display = 'block';
+        dc.innerHTML = buildDetailHTML(data.part, data.movements);
+        generateQR('qrInline', buildQrUrl(data.part.part_number));
+        // Mobile: show detail panel
+        document.getElementById('mainLayout').classList.add('show-detail');
+    } catch (e) {
+        showToast('Network error loading part detail', 'error');
+    }
+}
+
+function buildDetailHTML(part, movements) {
+    const condClass = 'cond-' + (part.condition || 'New').replace(/\s/g, '');
+    const qc = qtyClass(part.quantity);
+    return `
+        <div class="detail-top">
+            <div class="detail-info">
+                <div class="detail-part-number">${esc(part.part_number)}</div>
+                <div class="detail-name">${esc(part.name)}</div>
+                <div class="detail-badges">
+                    <span class="badge-cat">${esc(part.category)}</span>
+                    <span class="badge-cond ${condClass}">${esc(part.condition)}</span>
+                </div>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <label>Location</label>
+                        <span>${part.location ? esc(part.location) : '<em style="color:#adb5bd">Not set</em>'}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Unit</label>
+                        <span>${esc(part.unit)}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Added</label>
+                        <span>${fmtDate(part.created_at)}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Last updated</label>
+                        <span>${fmtDate(part.updated_at)}</span>
+                    </div>
+                </div>
+                ${part.description ? `<div class="detail-description">${esc(part.description)}</div>` : ''}
+                ${part.notes ? `<div class="detail-notes">📝 ${esc(part.notes)}</div>` : ''}
+            </div>
+            <div class="qr-block" onclick="openQrZoom()" title="Click to enlarge / print">
+                <div id="qrInline"></div>
+                <p>Tap to enlarge<br>or print label</p>
+            </div>
+        </div>
+
+        <div class="stock-row">
+            <div>
+                <div class="stock-display">
+                    <span class="stock-number ${qc}">${part.quantity}</span>
+                    <span class="stock-unit">${esc(part.unit)}</span>
+                </div>
+                <div class="stock-label">Current Stock</div>
+            </div>
+            <div class="stock-btns">
+                <button class="btn-mv btn-checkout" onclick="openMovementModal('checkout')">− Checkout</button>
+                <button class="btn-mv btn-return"   onclick="openMovementModal('return')">+ Return</button>
+                <button class="btn-mv btn-adjust"   onclick="openMovementModal('adjustment')">± Adjust</button>
+            </div>
+        </div>
+
+        <div class="action-bar">
+            <button class="btn-secondary" onclick="openEditModal()">✏️ Edit Part</button>
+            <button class="btn-secondary" onclick="openQrZoom()">🖨 Print Label</button>
+            <button class="btn-secondary no-print" style="margin-left:auto;" onclick="showListMobile()">← Back to list</button>
+            <button class="btn-del" onclick="confirmDeletePart()">🗑 Delete</button>
+        </div>
+
+        <div class="movements-card">
+            <div class="movements-title">Stock Movement History</div>
+            ${buildMovementsHTML(movements)}
+        </div>
+    `;
+}
+
+function buildMovementsHTML(movements) {
+    if (!movements || movements.length === 0) {
+        return '<div class="no-movements">No movements recorded yet</div>';
+    }
+    return movements.map(m => {
+        const icons = { checkout: '📤', return: '📥', adjustment: '🔧', initial: '📦' };
+        const iconClass = `mv-icon-${m.action}`;
+        const qtySign = m.quantity_change >= 0 ? '+' : '';
+        const qtyColor = m.quantity_change >= 0 ? 'mv-qty-pos' : 'mv-qty-neg';
+        return `
+            <div class="mv-row">
+                <div class="mv-icon ${iconClass}">${icons[m.action] || '•'}</div>
+                <div class="mv-body">
+                    <div class="mv-action mv-action-${m.action}">${esc(m.action)}</div>
+                    <div class="mv-person">${m.person_name ? esc(m.person_name) : '<em style="color:#adb5bd">Unknown</em>'}</div>
+                    ${m.reason ? `<div class="mv-reason">${esc(m.reason)}</div>` : ''}
+                </div>
+                <div class="mv-right">
+                    <div class="mv-qty ${qtyColor}">${qtySign}${m.quantity_change}</div>
+                    <div class="mv-date">${fmtDate(m.created_at)}</div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// ── QR Code ────────────────────────────────────────────────────────────────
+function buildQrUrl(partNumber) {
+    return `${window.location.origin}/parts?id=${encodeURIComponent(partNumber)}`;
+}
+
+function generateQR(elementId, url) {
+    const el = document.getElementById(elementId);
+    if (!el) return;
+    el.innerHTML = '';
+    new QRCode(el, { text: url, width: 90, height: 90, correctLevel: QRCode.CorrectLevel.M });
+}
+
+function openQrZoom() {
+    if (!selectedPart) return;
+    const url = buildQrUrl(selectedPart.part_number);
+    document.getElementById('qrZoomTitle').textContent = selectedPart.part_number + ' — QR Code';
+    document.getElementById('qrZoomUrl').textContent = url;
+    const canvas = document.getElementById('qrZoomCanvas');
+    canvas.innerHTML = '';
+    new QRCode(canvas, { text: url, width: 220, height: 220, correctLevel: QRCode.CorrectLevel.M });
+    document.getElementById('qrZoomModal').style.display = 'flex';
+}
+function closeQrZoom() { document.getElementById('qrZoomModal').style.display = 'none'; }
+
+// ── Print label ────────────────────────────────────────────────────────────
+function printCurrentLabel() {
+    if (!selectedPart) return;
+    const url = buildQrUrl(selectedPart.part_number);
+    const printArea = document.getElementById('printArea');
+
+    // Build a QR image using a temp canvas via qrcode.js
+    const tempDiv = document.createElement('div');
+    tempDiv.style.position = 'absolute';
+    tempDiv.style.left = '-9999px';
+    document.body.appendChild(tempDiv);
+    const qr = new QRCode(tempDiv, { text: url, width: 200, height: 200, correctLevel: QRCode.CorrectLevel.M });
+
+    setTimeout(() => {
+        const img = tempDiv.querySelector('img') || tempDiv.querySelector('canvas');
+        const qrSrc = img ? (img.src || img.toDataURL()) : '';
+        document.body.removeChild(tempDiv);
+
+        printArea.innerHTML = `
+            <div class="print-label-sheet">
+                <div class="print-label">
+                    ${qrSrc ? `<img src="${qrSrc}" width="160" height="160">` : ''}
+                    <div class="pl-num">${esc(selectedPart.part_number)}</div>
+                    <div class="pl-name">${esc(selectedPart.name)}</div>
+                    ${selectedPart.location ? `<div class="pl-loc">📍 ${esc(selectedPart.location)}</div>` : ''}
+                </div>
+            </div>
+        `;
+        closeQrZoom();
+        window.print();
+    }, 300);
+}
+
+// ── Print Inventory summary ──────────────────────────────────────────────
+function printInventory() {
+    const parts = allParts;
+    if (!parts || parts.length === 0) { showToast('No parts to print.', 'error'); return; }
+    const now = new Date().toLocaleString('en-GB', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
+    const totalParts = parts.length;
+    const totalStock = parts.reduce((s, p) => s + (p.quantity || 0), 0);
+    const lowStock   = parts.filter(p => (p.quantity || 0) <= 2);
+
+    const rows = parts.map(p => {
+        const qty = p.quantity || 0;
+        const qtyClass = qty <= 2 ? 'qty-low' : '';
+        return `<tr>
+            <td style="font-family:monospace;font-weight:600">${esc(p.part_number)}</td>
+            <td>${esc(p.name)}${p.description ? `<br><span style="color:#888;font-size:7pt">${esc(p.description.substring(0,60))}${p.description.length>60?'…':''}</span>` : ''}</td>
+            <td><span class="badge-cat">${esc(p.category||'Other')}</span></td>
+            <td>${esc(p.location||'—')}</td>
+            <td class="${qtyClass}" style="text-align:center">${qty}</td>
+            <td>${esc(p.unit||'each')}</td>
+            <td>${esc(p.condition||'')}</td>
+            <td style="font-size:7pt;color:#888">${esc(p.notes||'')}</td>
+        </tr>`;
+    }).join('');
+
+    const lowStockNote = lowStock.length > 0
+        ? `<p style="color:#c0392b;font-size:9pt;margin-top:4mm">⚠️ ${lowStock.length} part(s) at low stock (≤2): ${lowStock.map(p=>p.part_number).join(', ')}</p>`
+        : '';
+
+    document.getElementById('printArea').innerHTML = `
+        <div class="print-inventory">
+            <h1>Cardiff Spare Parts — Inventory Summary</h1>
+            <div class="inv-meta">
+                Printed: ${now} &nbsp;|&nbsp; Total parts: ${totalParts} &nbsp;|&nbsp; Total units in stock: ${totalStock}
+            </div>
+            ${lowStockNote}
+            <table>
+                <thead><tr>
+                    <th>Part No.</th><th>Name / Description</th><th>Category</th>
+                    <th>Location</th><th style="text-align:center">Qty</th>
+                    <th>Unit</th><th>Condition</th><th>Notes</th>
+                </tr></thead>
+                <tbody>${rows}</tbody>
+            </table>
+            <div class="inv-footer">Cardiff Maintenance System — Spare Parts Inventory — ${now}</div>
+        </div>
+    `;
+    window.print();
+}
+
+// ── Add / Edit modal ───────────────────────────────────────────────────────
+function openAddModal() {
+    editingPartId = null;
+    document.getElementById('partModalTitle').textContent = 'Add New Part';
+    document.getElementById('partModalSaveBtn').textContent = 'Save Part';
+    document.getElementById('fCreatedByGroup').style.display = 'block';
+    clearPartForm();
+    document.getElementById('partModal').style.display = 'flex';
+    setTimeout(() => document.getElementById('fName').focus(), 100);
+}
+
+function openEditModal() {
+    if (!selectedPart) return;
+    editingPartId = selectedPart.id;
+    document.getElementById('partModalTitle').textContent = 'Edit Part — ' + selectedPart.part_number;
+    document.getElementById('partModalSaveBtn').textContent = 'Save Changes';
+    document.getElementById('fCreatedByGroup').style.display = 'none';
+    document.getElementById('fName').value        = selectedPart.name || '';
+    document.getElementById('fCategory').value    = selectedPart.category || 'Other';
+    document.getElementById('fDescription').value = selectedPart.description || '';
+    document.getElementById('fLocation').value    = selectedPart.location || '';
+    document.getElementById('fCondition').value   = selectedPart.condition || 'New';
+    document.getElementById('fQuantity').value    = selectedPart.quantity || 0;
+    document.getElementById('fUnit').value        = selectedPart.unit || 'each';
+    document.getElementById('fNotes').value       = selectedPart.notes || '';
+    document.getElementById('partModal').style.display = 'flex';
+    setTimeout(() => document.getElementById('fName').focus(), 100);
+}
+
+function clearPartForm() {
+    ['fName','fDescription','fLocation','fNotes','fCreatedBy'].forEach(id => {
+        document.getElementById(id).value = '';
+    });
+    document.getElementById('fCategory').value  = 'Mechanical';
+    document.getElementById('fCondition').value = 'New';
+    document.getElementById('fQuantity').value  = '0';
+    document.getElementById('fUnit').value      = 'each';
+}
+
+function closePartModal() { document.getElementById('partModal').style.display = 'none'; }
+
+async function savePartForm() {
+    const name = document.getElementById('fName').value.trim();
+    if (!name) { showToast('Part name is required', 'error'); document.getElementById('fName').focus(); return; }
+
+    const payload = {
+        name,
+        description: document.getElementById('fDescription').value.trim(),
+        category:    document.getElementById('fCategory').value,
+        location:    document.getElementById('fLocation').value.trim(),
+        condition:   document.getElementById('fCondition').value,
+        quantity:    parseInt(document.getElementById('fQuantity').value) || 0,
+        unit:        document.getElementById('fUnit').value,
+        notes:       document.getElementById('fNotes').value.trim(),
+        created_by:  document.getElementById('fCreatedBy').value.trim()
+    };
+
+    const btn = document.getElementById('partModalSaveBtn');
+    btn.disabled = true; btn.textContent = 'Saving…';
+
+    try {
+        const url    = editingPartId ? `/api/parts/${editingPartId}` : '/api/parts';
+        const method = editingPartId ? 'PUT' : 'POST';
+        const res    = await fetch(url, { method, headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+        const data   = await res.json();
+        if (data.success) {
+            closePartModal();
+            showToast(editingPartId ? 'Part updated' : `Part ${data.part.part_number} created`, 'success');
+            await loadParts();
+            if (data.part) selectPart(data.part.id);
+        } else {
+            showToast(data.message || 'Save failed', 'error');
+        }
+    } catch (e) {
+        showToast('Network error', 'error');
+    }
+    btn.disabled = false; btn.textContent = editingPartId ? 'Save Changes' : 'Save Part';
+}
+
+// ── Movement modal ─────────────────────────────────────────────────────────
+const MV_CONFIG = {
+    checkout:   { title: 'Checkout — Take from Stock', accentClass: 'mv-modal-checkout',   btnText: 'Confirm Checkout' },
+    return:     { title: 'Return — Bring Back to Stock', accentClass: 'mv-modal-return',   btnText: 'Confirm Return'   },
+    adjustment: { title: 'Stock Adjustment',            accentClass: 'mv-modal-adjustment', btnText: 'Apply Adjustment' }
+};
+
+function openMovementModal(action) {
+    if (!selectedPart) return;
+    currentMovementAction = action;
+    const cfg = MV_CONFIG[action];
+    document.getElementById('movementModalTitle').textContent = cfg.title;
+    document.getElementById('mvSaveBtn').textContent = cfg.btnText;
+    const inner = document.getElementById('movementModalInner');
+    inner.className = 'modal ' + cfg.accentClass;
+    document.getElementById('movementCurrentStock').textContent =
+        `Current stock: ${selectedPart.quantity} ${selectedPart.unit}  ·  ${selectedPart.name}`;
+    document.getElementById('mvQty').value    = '1';
+    document.getElementById('mvPerson').value = '';
+    document.getElementById('mvReason').value = '';
+    document.getElementById('movementModal').style.display = 'flex';
+    setTimeout(() => document.getElementById('mvQty').select(), 100);
+}
+function closeMovementModal() { document.getElementById('movementModal').style.display = 'none'; }
+
+async function submitMovement() {
+    const qty = parseInt(document.getElementById('mvQty').value);
+    if (!qty || qty < 1) { showToast('Quantity must be at least 1', 'error'); return; }
+
+    const payload = {
+        action:      currentMovementAction,
+        quantity:    qty,
+        person_name: document.getElementById('mvPerson').value.trim(),
+        reason:      document.getElementById('mvReason').value.trim()
+    };
+
+    const btn = document.getElementById('mvSaveBtn');
+    btn.disabled = true; btn.textContent = 'Saving…';
+
+    try {
+        const res  = await fetch(`/api/parts/${selectedPart.id}/movement`, {
+            method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.success) {
+            closeMovementModal();
+            showToast(`Stock updated — now ${data.new_quantity} ${selectedPart.unit}`, 'success');
+            await loadParts();
+            selectPart(selectedPart.id);
+        } else {
+            showToast(data.message || 'Failed to record movement', 'error');
+        }
+    } catch (e) {
+        showToast('Network error', 'error');
+    }
+    btn.disabled = false;
+    btn.textContent = MV_CONFIG[currentMovementAction]?.btnText || 'Confirm';
+}
+
+// ── Delete ─────────────────────────────────────────────────────────────────
+async function confirmDeletePart() {
+    if (!selectedPart) return;
+    if (!confirm(`Delete "${selectedPart.name}" (${selectedPart.part_number})?\n\nThis will also delete all movement history. This cannot be undone.`)) return;
+    try {
+        const res  = await fetch(`/api/parts/${selectedPart.id}`, { method: 'DELETE' });
+        const data = await res.json();
+        if (data.success) {
+            showToast('Part deleted', 'success');
+            selectedPart = null;
+            document.getElementById('detailContent').style.display = 'none';
+            document.getElementById('detailEmpty').style.display = 'flex';
+            document.getElementById('mainLayout').classList.remove('show-detail');
+            await loadParts();
+        } else {
+            showToast(data.message || 'Delete failed', 'error');
+        }
+    } catch (e) {
+        showToast('Network error', 'error');
+    }
+}
+
+// ── QR Scanner ─────────────────────────────────────────────────────────────
+function openScanner() {
+    document.getElementById('scannerModal').style.display = 'flex';
+    setTimeout(() => {
+        if (typeof Html5Qrcode === 'undefined') {
+            showToast('Scanner library not loaded — check internet connection', 'error');
+            closeScanner(); return;
+        }
+        try {
+            scannerInstance = new Html5Qrcode('qr-reader');
+            scannerInstance.start(
+                { facingMode: 'environment' },
+                { fps: 10, qrbox: { width: 240, height: 240 } },
+                (text) => onScanSuccess(text),
+                () => {}
+            ).catch(() => {
+                // try front camera as fallback
+                scannerInstance.start(
+                    { facingMode: 'user' },
+                    { fps: 10, qrbox: { width: 240, height: 240 } },
+                    (text) => onScanSuccess(text),
+                    () => {}
+                ).catch(er => {
+                    showToast('Camera access denied or unavailable', 'error');
+                    closeScanner();
+                });
+            });
+        } catch (err) {
+            showToast('Could not start scanner: ' + err, 'error');
+            closeScanner();
+        }
+    }, 200);
+}
+
+function onScanSuccess(text) {
+    try {
+        const url = new URL(text);
+        const id  = url.searchParams.get('id');
+        if (id && id.startsWith('CDF-')) {
+            closeScanner();
+            const part = allParts.find(p => p.part_number === id);
+            if (part) {
+                selectPart(part.id);
+                showToast(`Scanned: ${id}`, 'success');
+            } else {
+                showToast(`Part not found: ${id}`, 'error');
+            }
+        } else {
+            showToast('Not a valid Cardiff Parts QR code', 'error');
+        }
+    } catch {
+        showToast('Invalid QR code', 'error');
+    }
+}
+
+function closeScanner() {
+    document.getElementById('scannerModal').style.display = 'none';
+    if (scannerInstance) {
+        scannerInstance.stop().catch(() => {}).then(() => { scannerInstance = null; });
+    }
+}
+
+// ── Mobile nav ─────────────────────────────────────────────────────────────
+function showListMobile() {
+    document.getElementById('mainLayout').classList.remove('show-detail');
+}
+
+// ── Utilities ──────────────────────────────────────────────────────────────
+function qtyClass(qty) {
+    if (qty <= 0) return 'qty-0';
+    if (qty <= 3) return 'qty-low';
+    return 'qty-ok';
+}
+
+function esc(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+// Alias used in inline HTML (same function)
+function escHtml(s) { return esc(s); }
+
+function fmtDate(iso) {
+    if (!iso) return '—';
+    try {
+        const d = new Date(iso);
+        return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
+               + ' ' + d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+    } catch { return iso; }
+}
+
+let _toastTimer;
+function showToast(msg, type = 'info') {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.className = `toast toast-${type}`;
+    void el.offsetWidth; // force reflow
+    el.classList.add('show');
+    clearTimeout(_toastTimer);
+    _toastTimer = setTimeout(() => el.classList.remove('show'), 3500);
+}
+
+// ── Keyboard shortcuts ─────────────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+        closePartModal(); closeMovementModal(); closeScanner(); closeQrZoom();
+    }
+    // Ctrl/Cmd+N → add part
+    if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
+        e.preventDefault(); openAddModal();
+    }
+});
+</script>
+</body>
+</html>

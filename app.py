@@ -146,6 +146,34 @@ def init_db():
         cursor.execute('''
             ALTER TABLE saved_forms ADD COLUMN IF NOT EXISTS pin VARCHAR(20)
         ''')
+        # Spare parts inventory tables
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS spare_parts (
+                id SERIAL PRIMARY KEY,
+                part_number VARCHAR(20) UNIQUE NOT NULL,
+                name VARCHAR(255) NOT NULL,
+                description TEXT DEFAULT '',
+                category VARCHAR(50) DEFAULT 'Other',
+                location VARCHAR(100) DEFAULT '',
+                quantity INTEGER DEFAULT 0,
+                unit VARCHAR(50) DEFAULT 'each',
+                condition VARCHAR(50) DEFAULT 'New',
+                notes TEXT DEFAULT '',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS part_movements (
+                id SERIAL PRIMARY KEY,
+                part_id INTEGER REFERENCES spare_parts(id) ON DELETE CASCADE,
+                action VARCHAR(20) NOT NULL,
+                quantity_change INTEGER NOT NULL,
+                person_name VARCHAR(255) DEFAULT '',
+                reason TEXT DEFAULT '',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
         conn.commit()
         cursor.close()
         conn.close()
@@ -1500,6 +1528,411 @@ def debug_status():
             info['error'] = 'Could not connect to database'
     return jsonify(info), 200
 
+
+# ── Spare Parts Management ────────────────────────────────────────────────────
+
+_PARTS_STORE_PATH = Path('spare_parts_store.json')
+
+def _load_parts_store():
+    if _PARTS_STORE_PATH.exists():
+        try:
+            with open(_PARTS_STORE_PATH, 'r') as f:
+                return json.load(f)
+        except Exception:
+            pass
+    return {'parts': [], 'movements': [], 'next_id': 1}
+
+def _save_parts_store(store):
+    with open(_PARTS_STORE_PATH, 'w') as f:
+        json.dump(store, f, indent=2)
+
+def _add_movement_to_store(store, part_id, action, qty_change, person, reason):
+    movements = store.setdefault('movements', [])
+    next_mv_id = max((m['id'] for m in movements), default=0) + 1
+    m = {
+        'id': next_mv_id,
+        'part_id': part_id,
+        'action': action,
+        'quantity_change': qty_change,
+        'person_name': person,
+        'reason': reason,
+        'created_at': datetime.now().isoformat()
+    }
+    movements.append(m)
+    return m
+
+def _serialize_part(row):
+    p = dict(row)
+    if p.get('created_at') and not isinstance(p['created_at'], str):
+        p['created_at'] = p['created_at'].isoformat()
+    if p.get('updated_at') and not isinstance(p['updated_at'], str):
+        p['updated_at'] = p['updated_at'].isoformat()
+    return p
+
+def _serialize_movement(row):
+    m = dict(row)
+    if m.get('created_at') and not isinstance(m['created_at'], str):
+        m['created_at'] = m['created_at'].isoformat()
+    return m
+
+
+@app.route('/parts')
+def parts_page():
+    return send_from_directory('.', 'parts.html')
+
+
+@app.route('/api/parts', methods=['GET'])
+def get_parts():
+    """List all spare parts with optional ?search= and ?category="""
+    try:
+        search = request.args.get('search', '').strip()
+        category = request.args.get('category', '').strip()
+
+        if USE_DATABASE:
+            conn = get_db_connection()
+            if conn:
+                try:
+                    cursor = conn.cursor(cursor_factory=RealDictCursor)
+                    conditions = []
+                    params = []
+                    if search:
+                        conditions.append(
+                            "(LOWER(name) LIKE %s OR LOWER(part_number) LIKE %s OR LOWER(description) LIKE %s OR LOWER(location) LIKE %s)"
+                        )
+                        like = f'%{search.lower()}%'
+                        params.extend([like, like, like, like])
+                    if category:
+                        conditions.append("category = %s")
+                        params.append(category)
+                    query = "SELECT * FROM spare_parts"
+                    if conditions:
+                        query += " WHERE " + " AND ".join(conditions)
+                    query += " ORDER BY id DESC"
+                    cursor.execute(query, params)
+                    parts = [_serialize_part(r) for r in cursor.fetchall()]
+                    cursor.close()
+                    conn.close()
+                    return jsonify({'success': True, 'parts': parts}), 200
+                except Exception as db_err:
+                    log_error(f"Get parts DB error: {db_err}")
+                    try: conn.close()
+                    except: pass
+                    return jsonify({'success': False, 'message': str(db_err)}), 500
+
+        # Filesystem fallback
+        store = _load_parts_store()
+        parts = list(reversed(store.get('parts', [])))
+        if search:
+            s = search.lower()
+            parts = [p for p in parts if
+                     s in p.get('name', '').lower() or
+                     s in p.get('part_number', '').lower() or
+                     s in p.get('description', '').lower() or
+                     s in p.get('location', '').lower()]
+        if category:
+            parts = [p for p in parts if p.get('category') == category]
+        return jsonify({'success': True, 'parts': parts}), 200
+    except Exception as e:
+        log_error(f"Get parts error: {e}")
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+
+@app.route('/api/parts', methods=['POST'])
+def create_part():
+    """Create a new spare part with auto-assigned CDF-XXXX number"""
+    try:
+        data = request.json or {}
+        name = data.get('name', '').strip()
+        if not name:
+            return jsonify({'success': False, 'message': 'Part name is required'}), 400
+
+        if USE_DATABASE:
+            conn = get_db_connection()
+            if conn:
+                try:
+                    cursor = conn.cursor(cursor_factory=RealDictCursor)
+                    cursor.execute("SELECT COALESCE(MAX(id), 0) + 1 AS next_id FROM spare_parts")
+                    next_id = cursor.fetchone()['next_id']
+                    part_number = f"CDF-{next_id:04d}"
+                    cursor.execute("""
+                        INSERT INTO spare_parts
+                            (part_number, name, description, category, location, quantity, unit, condition, notes)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                        RETURNING *
+                    """, (
+                        part_number, name,
+                        data.get('description', ''),
+                        data.get('category', 'Other'),
+                        data.get('location', ''),
+                        int(data.get('quantity', 0)),
+                        data.get('unit', 'each'),
+                        data.get('condition', 'New'),
+                        data.get('notes', '')
+                    ))
+                    new_part = _serialize_part(cursor.fetchone())
+                    if new_part.get('quantity', 0) > 0:
+                        cursor.execute("""
+                            INSERT INTO part_movements (part_id, action, quantity_change, person_name, reason)
+                            VALUES (%s, 'initial', %s, %s, 'Initial stock entry')
+                        """, (new_part['id'], new_part['quantity'], data.get('created_by', 'System')))
+                    conn.commit()
+                    cursor.close()
+                    conn.close()
+                    return jsonify({'success': True, 'part': new_part}), 201
+                except Exception as db_err:
+                    log_error(f"Create part DB error: {db_err}")
+                    try: conn.rollback(); conn.close()
+                    except: pass
+                    return jsonify({'success': False, 'message': str(db_err)}), 500
+
+        # Filesystem fallback
+        store = _load_parts_store()
+        next_id = store.get('next_id', 1)
+        part_number = f"CDF-{next_id:04d}"
+        now = datetime.now().isoformat()
+        new_part = {
+            'id': next_id,
+            'part_number': part_number,
+            'name': name,
+            'description': data.get('description', ''),
+            'category': data.get('category', 'Other'),
+            'location': data.get('location', ''),
+            'quantity': int(data.get('quantity', 0)),
+            'unit': data.get('unit', 'each'),
+            'condition': data.get('condition', 'New'),
+            'notes': data.get('notes', ''),
+            'created_at': now,
+            'updated_at': now
+        }
+        store['parts'].append(new_part)
+        if new_part['quantity'] > 0:
+            _add_movement_to_store(store, next_id, 'initial', new_part['quantity'],
+                                   data.get('created_by', 'System'), 'Initial stock entry')
+        store['next_id'] = next_id + 1
+        _save_parts_store(store)
+        return jsonify({'success': True, 'part': new_part}), 201
+    except Exception as e:
+        log_error(f"Create part error: {e}")
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+
+@app.route('/api/parts/<int:part_id>', methods=['GET'])
+def get_part(part_id):
+    """Get a single spare part with its full movement history"""
+    try:
+        if USE_DATABASE:
+            conn = get_db_connection()
+            if conn:
+                try:
+                    cursor = conn.cursor(cursor_factory=RealDictCursor)
+                    cursor.execute("SELECT * FROM spare_parts WHERE id = %s", (part_id,))
+                    row = cursor.fetchone()
+                    if not row:
+                        cursor.close(); conn.close()
+                        return jsonify({'success': False, 'message': 'Part not found'}), 404
+                    part = _serialize_part(row)
+                    cursor.execute(
+                        "SELECT * FROM part_movements WHERE part_id = %s ORDER BY created_at DESC LIMIT 50",
+                        (part_id,)
+                    )
+                    movements = [_serialize_movement(r) for r in cursor.fetchall()]
+                    cursor.close(); conn.close()
+                    return jsonify({'success': True, 'part': part, 'movements': movements}), 200
+                except Exception as db_err:
+                    log_error(f"Get part DB error: {db_err}")
+                    try: conn.close()
+                    except: pass
+                    return jsonify({'success': False, 'message': str(db_err)}), 500
+
+        # Filesystem fallback
+        store = _load_parts_store()
+        part = next((p for p in store['parts'] if p['id'] == part_id), None)
+        if not part:
+            return jsonify({'success': False, 'message': 'Part not found'}), 404
+        movements = sorted(
+            [m for m in store.get('movements', []) if m['part_id'] == part_id],
+            key=lambda x: x.get('created_at', ''), reverse=True
+        )[:50]
+        return jsonify({'success': True, 'part': part, 'movements': movements}), 200
+    except Exception as e:
+        log_error(f"Get part error: {e}")
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+
+@app.route('/api/parts/<int:part_id>', methods=['PUT'])
+def update_part(part_id):
+    """Update spare part details (not quantity — use /movement for that)"""
+    try:
+        data = request.json or {}
+        if USE_DATABASE:
+            conn = get_db_connection()
+            if conn:
+                try:
+                    cursor = conn.cursor(cursor_factory=RealDictCursor)
+                    cursor.execute("""
+                        UPDATE spare_parts SET
+                            name        = COALESCE(%s, name),
+                            description = COALESCE(%s, description),
+                            category    = COALESCE(%s, category),
+                            location    = COALESCE(%s, location),
+                            unit        = COALESCE(%s, unit),
+                            condition   = COALESCE(%s, condition),
+                            notes       = COALESCE(%s, notes),
+                            updated_at  = CURRENT_TIMESTAMP
+                        WHERE id = %s RETURNING *
+                    """, (
+                        data.get('name') or None,
+                        data.get('description') if 'description' in data else None,
+                        data.get('category') or None,
+                        data.get('location') if 'location' in data else None,
+                        data.get('unit') or None,
+                        data.get('condition') or None,
+                        data.get('notes') if 'notes' in data else None,
+                        part_id
+                    ))
+                    row = cursor.fetchone()
+                    conn.commit()
+                    cursor.close(); conn.close()
+                    if not row:
+                        return jsonify({'success': False, 'message': 'Part not found'}), 404
+                    return jsonify({'success': True, 'part': _serialize_part(row)}), 200
+                except Exception as db_err:
+                    log_error(f"Update part DB error: {db_err}")
+                    try: conn.rollback(); conn.close()
+                    except: pass
+                    return jsonify({'success': False, 'message': str(db_err)}), 500
+
+        # Filesystem fallback
+        store = _load_parts_store()
+        for i, p in enumerate(store['parts']):
+            if p['id'] == part_id:
+                for field in ['name', 'description', 'category', 'location', 'unit', 'condition', 'notes']:
+                    if field in data:
+                        store['parts'][i][field] = data[field]
+                store['parts'][i]['updated_at'] = datetime.now().isoformat()
+                _save_parts_store(store)
+                return jsonify({'success': True, 'part': store['parts'][i]}), 200
+        return jsonify({'success': False, 'message': 'Part not found'}), 404
+    except Exception as e:
+        log_error(f"Update part error: {e}")
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+
+@app.route('/api/parts/<int:part_id>', methods=['DELETE'])
+def delete_part(part_id):
+    """Delete a spare part and its movement history"""
+    try:
+        if USE_DATABASE:
+            conn = get_db_connection()
+            if conn:
+                try:
+                    cursor = conn.cursor()
+                    cursor.execute("DELETE FROM spare_parts WHERE id = %s", (part_id,))
+                    if cursor.rowcount == 0:
+                        conn.commit(); cursor.close(); conn.close()
+                        return jsonify({'success': False, 'message': 'Part not found'}), 404
+                    conn.commit(); cursor.close(); conn.close()
+                    return jsonify({'success': True}), 200
+                except Exception as db_err:
+                    log_error(f"Delete part DB error: {db_err}")
+                    try: conn.rollback(); conn.close()
+                    except: pass
+                    return jsonify({'success': False, 'message': str(db_err)}), 500
+
+        # Filesystem fallback
+        store = _load_parts_store()
+        orig = len(store['parts'])
+        store['parts'] = [p for p in store['parts'] if p['id'] != part_id]
+        if len(store['parts']) == orig:
+            return jsonify({'success': False, 'message': 'Part not found'}), 404
+        store['movements'] = [m for m in store.get('movements', []) if m['part_id'] != part_id]
+        _save_parts_store(store)
+        return jsonify({'success': True}), 200
+    except Exception as e:
+        log_error(f"Delete part error: {e}")
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+
+@app.route('/api/parts/<int:part_id>/movement', methods=['POST'])
+def add_part_movement(part_id):
+    """Log a stock movement: checkout (take), return (bring back), adjustment"""
+    try:
+        data = request.json or {}
+        action = data.get('action', '').strip()
+        if action not in ('checkout', 'return', 'adjustment'):
+            return jsonify({'success': False, 'message': 'action must be: checkout, return, or adjustment'}), 400
+        try:
+            qty = int(data.get('quantity', 1))
+            if qty <= 0:
+                return jsonify({'success': False, 'message': 'Quantity must be a positive integer'}), 400
+        except (ValueError, TypeError):
+            return jsonify({'success': False, 'message': 'Invalid quantity'}), 400
+
+        person = data.get('person_name', '').strip()
+        reason = data.get('reason', '').strip()
+        # checkout removes stock, return/adjustment adds
+        qty_change = -qty if action == 'checkout' else qty
+
+        if USE_DATABASE:
+            conn = get_db_connection()
+            if conn:
+                try:
+                    cursor = conn.cursor(cursor_factory=RealDictCursor)
+                    cursor.execute(
+                        "SELECT id, quantity FROM spare_parts WHERE id = %s FOR UPDATE",
+                        (part_id,)
+                    )
+                    part_row = cursor.fetchone()
+                    if not part_row:
+                        conn.close()
+                        return jsonify({'success': False, 'message': 'Part not found'}), 404
+                    new_qty = part_row['quantity'] + qty_change
+                    if new_qty < 0:
+                        conn.close()
+                        return jsonify({
+                            'success': False,
+                            'message': f'Insufficient stock. Current quantity: {part_row["quantity"]}'
+                        }), 400
+                    cursor.execute(
+                        "UPDATE spare_parts SET quantity = %s, updated_at = CURRENT_TIMESTAMP WHERE id = %s",
+                        (new_qty, part_id)
+                    )
+                    cursor.execute("""
+                        INSERT INTO part_movements (part_id, action, quantity_change, person_name, reason)
+                        VALUES (%s, %s, %s, %s, %s) RETURNING *
+                    """, (part_id, action, qty_change, person, reason))
+                    movement = _serialize_movement(cursor.fetchone())
+                    conn.commit(); cursor.close(); conn.close()
+                    return jsonify({'success': True, 'new_quantity': new_qty, 'movement': movement}), 200
+                except Exception as db_err:
+                    log_error(f"Add movement DB error: {db_err}")
+                    try: conn.rollback(); conn.close()
+                    except: pass
+                    return jsonify({'success': False, 'message': str(db_err)}), 500
+
+        # Filesystem fallback
+        store = _load_parts_store()
+        part = next((p for p in store['parts'] if p['id'] == part_id), None)
+        if not part:
+            return jsonify({'success': False, 'message': 'Part not found'}), 404
+        new_qty = part['quantity'] + qty_change
+        if new_qty < 0:
+            return jsonify({
+                'success': False,
+                'message': f'Insufficient stock. Current quantity: {part["quantity"]}'
+            }), 400
+        for p in store['parts']:
+            if p['id'] == part_id:
+                p['quantity'] = new_qty
+                p['updated_at'] = datetime.now().isoformat()
+        movement = _add_movement_to_store(store, part_id, action, qty_change, person, reason)
+        _save_parts_store(store)
+        return jsonify({'success': True, 'new_quantity': new_qty, 'movement': movement}), 200
+    except Exception as e:
+        log_error(f"Add movement error: {e}")
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+# ─────────────────────────────────────────────────────────────────────────────
 
 if __name__ == '__main__':
     # Use environment variable to determine if running in production
