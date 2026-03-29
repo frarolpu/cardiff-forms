@@ -11,39 +11,47 @@
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; color: #2c3e50; }
         input, textarea, select, button { font-family: inherit; }
 
+        /* ── CSS variable for header height (updated per breakpoint) ── */
+        :root { --hh: 60px; }
+
         /* ── Header ─────────────────────────────────────────────── */
         .app-header {
             background: linear-gradient(135deg, #1a1f3a 0%, #2d3a5c 100%);
-            padding: 0 20px; height: 60px;
+            padding: 0 20px;
+            min-height: var(--hh); height: auto;
             display: flex; align-items: center; justify-content: space-between;
             position: fixed; top: 0; left: 0; right: 0; z-index: 100;
             box-shadow: 0 2px 12px rgba(0,0,0,0.35);
+            gap: 10px;
         }
-        .header-left { display: flex; align-items: center; gap: 20px; }
+        .header-left { display: flex; align-items: center; gap: 14px; flex: 1; min-width: 0; }
         .back-link {
             color: rgba(255,255,255,0.65); text-decoration: none; font-size: 13px;
             padding: 5px 10px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.2);
-            transition: all .2s; white-space: nowrap;
+            transition: all .2s; white-space: nowrap; flex-shrink: 0;
         }
         .back-link:hover { color: white; background: rgba(255,255,255,0.1); }
-        .header-title { color: white; font-size: 18px; font-weight: 700; letter-spacing: 0.3px; }
-        .header-subtitle { color: rgba(255,255,255,0.5); font-size: 12px; margin-top: 1px; }
-        .header-right { display: flex; gap: 8px; }
+        .header-title { color: white; font-size: 17px; font-weight: 700; letter-spacing: 0.3px;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .header-subtitle { color: rgba(255,255,255,0.5); font-size: 11px; margin-top: 1px; white-space: nowrap; }
+        .header-right { display: flex; gap: 7px; align-items: center; flex-shrink: 0; }
         .btn-scan {
             background: rgba(255,255,255,0.12); color: white;
-            border: 1px solid rgba(255,255,255,0.25); padding: 7px 14px;
+            border: 1px solid rgba(255,255,255,0.25); padding: 7px 13px;
             border-radius: 6px; cursor: pointer; font-size: 13px; transition: all .2s;
+            white-space: nowrap;
         }
         .btn-scan:hover { background: rgba(255,255,255,0.22); }
         .btn-add {
             background: linear-gradient(135deg, #0084ff, #005ce6); color: white;
-            border: none; padding: 7px 16px; border-radius: 6px;
+            border: none; padding: 7px 14px; border-radius: 6px;
             cursor: pointer; font-size: 13px; font-weight: 600; transition: all .2s;
+            white-space: nowrap;
         }
         .btn-add:hover { background: linear-gradient(135deg, #0092ff, #006aff); }
 
         /* ── Main layout ─────────────────────────────────────────── */
-        .layout { display: flex; margin-top: 60px; height: calc(100vh - 60px); }
+        .layout { display: flex; margin-top: var(--hh); height: calc(100vh - var(--hh)); }
 
         /* ── Parts panel (left list) ─────────────────────────────── */
         .parts-panel {
@@ -317,16 +325,37 @@
         .toast-info    { background: #1d4ed8; }
 
         /* ── Responsive ──────────────────────────────────────────── */
+
+        /* Phone: header wraps to 2 rows — row 1: back+title, row 2: buttons */
+        @media (max-width: 600px) {
+            :root { --hh: 110px; }
+            .app-header {
+                flex-wrap: wrap;
+                padding: 10px 12px;
+                row-gap: 0;
+                align-items: center;
+            }
+            .header-left { flex: 1; }
+            .header-right {
+                width: 100%;
+                justify-content: flex-end;
+                padding-top: 8px;
+                margin-top: 2px;
+                border-top: 1px solid rgba(255,255,255,0.12);
+            }
+            .btn-scan, .btn-add { padding: 8px 11px; font-size: 12px; }
+            .btn-long-label { display: none; }
+        }
+
         @media (max-width: 760px) {
-            .parts-panel { width: 100%; position: absolute; left: 0; top: 60px; bottom: 0; z-index: 10; }
-            .detail-panel { width: 100%; position: absolute; left: 0; top: 60px; bottom: 0; display: none; }
+            .parts-panel { width: 100%; position: absolute; left: 0; top: var(--hh); bottom: 0; z-index: 10; }
+            .detail-panel { width: 100%; position: absolute; left: 0; top: var(--hh); bottom: 0; display: none; }
             .layout.show-detail .parts-panel { display: none; }
             .layout.show-detail .detail-panel { display: block; }
             .detail-content { padding: 14px; }
             .info-grid { grid-template-columns: 1fr; }
             .detail-top { flex-direction: column; }
             .form-row { grid-template-columns: 1fr; }
-            .header-title .subtitle-hide { display: none; }
         }
     </style>
 </head>
@@ -343,7 +372,7 @@
     </div>
     <div class="header-right">
         <button class="btn-scan" onclick="openScanner()">📷 Scan QR</button>
-        <button class="btn-scan" onclick="printInventory()">📋 Print Inventory</button>
+        <button class="btn-scan" onclick="printInventory()">📋 Print<span class="btn-long-label"> Inventory</span></button>
         <button class="btn-add" onclick="openAddModal()">+ Add Part</button>
     </div>
 </header>

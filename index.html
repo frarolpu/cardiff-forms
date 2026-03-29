@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, viewport-fit=cover">
     <title>Maintenance Forms - Digitalized</title>
 
     <style>
@@ -34,6 +34,7 @@
             min-height: 100vh;
         }
 
+        /* ── Sidebar ── */
         .sidebar {
             width: 280px;
             background: linear-gradient(180deg, #1a1f3a 0%, #2d3a5c 100%);
@@ -45,7 +46,42 @@
             left: 0;
             top: 0;
             color: white;
+            transition: transform 0.28s cubic-bezier(.4,0,.2,1);
+            z-index: 500;
         }
+
+        /* Sidebar hamburger toggle – visible on tablets ≤ 1200px */
+        .sidebar-toggle {
+            display: none;
+            position: fixed;
+            top: 12px;
+            left: 12px;
+            z-index: 600;
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            border: none;
+            background: #1a1f3a;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,.35);
+            transition: background .2s;
+            touch-action: manipulation;
+        }
+        .sidebar-toggle:hover { background: #0084ff; }
+
+        /* Dim overlay behind open sidebar on tablet */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,.45);
+            z-index: 490;
+        }
+        .sidebar-overlay.active { display: block; }
 
         .sidebar h2 {
             color: white;
@@ -204,6 +240,7 @@
             flex: 1;
             padding: 40px;
             background: #f8f9fa;
+            transition: margin-left 0.28s cubic-bezier(.4,0,.2,1);
         }
 
         .container {
@@ -303,10 +340,11 @@
             padding: 12px 15px;
             border: 1px solid #d4d9e3;
             border-radius: 6px;
-            font-size: 14px;
+            font-size: 15px;
             font-family: inherit;
             background: white;
             transition: all 0.2s;
+            min-height: 48px;
         }
 
         .form-group input:focus,
@@ -332,9 +370,10 @@
 
         .task-item {
             display: flex;
-            align-items: flex-start;
-            padding: 12px;
+            align-items: center;
+            padding: 14px 12px;
             border-bottom: 1px solid #eee;
+            min-height: 52px;
         }
 
         .task-item:last-child {
@@ -343,11 +382,13 @@
 
         .task-item input[type="checkbox"] {
             margin-right: 12px;
-            margin-top: 2px;
+            margin-top: 0;
             cursor: pointer;
-            width: 20px;
-            height: 20px;
+            width: 24px;
+            height: 24px;
+            min-width: 24px;
             accent-color: #0a2463;
+            flex-shrink: 0;
         }
 
         .task-text {
@@ -405,7 +446,8 @@
             transition: all 0.25s;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            min-height: 44px;
+            min-height: 48px;
+            touch-action: manipulation;
         }
 
         .btn-clear {
@@ -559,6 +601,25 @@
             border-radius: 10px;
         }
 
+        /* Sticky bottom action bar on tablets */
+        @media (max-width: 1200px) and (min-width: 600px) {
+            .form-actions {
+                position: sticky;
+                bottom: 0;
+                z-index: 100;
+                border-radius: 0;
+                margin-top: 0;
+                padding: 14px 20px;
+                box-shadow: 0 -3px 16px rgba(0,0,0,.12);
+                gap: 12px;
+            }
+            .form-actions button {
+                flex: 1;
+                min-width: 100px;
+                max-width: 240px;
+            }
+        }
+
         .form-actions button {
             min-width: 140px;
             padding: 14px 28px;
@@ -659,25 +720,81 @@
             margin: 2px;
         }
 
-        @media (max-width: 1024px) {
+        /* ── 9" tablet landscape (≈ 960-1200 px wide) ── */
+        @media (max-width: 1200px) {
+            .sidebar-toggle { display: flex; }
+
             .sidebar {
-                width: 250px;
+                width: 300px;
+                transform: translateX(-100%);
+                padding-top: 20px;
+            }
+            .sidebar.open {
+                transform: translateX(0);
             }
 
             .main-content {
-                margin-left: 250px;
+                margin-left: 0;
+                padding: 16px;
+                padding-top: 64px; /* room for toggle btn */
+            }
+
+            .container {
+                max-width: 100%;
+                border-radius: 8px;
+            }
+
+            .form-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .signature-row {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 14px;
+            }
+
+            .header {
+                padding: 18px 20px;
+                gap: 12px;
+            }
+
+            .header h1 { font-size: 20px; }
+
+            .content { padding: 20px; }
+
+            .task-description { font-size: 1em; }
+
+            .qa-key {
+                padding: 20px 10px;
+                font-size: 28px;
+            }
+
+            .qa-display {
+                font-size: 52px;
+                min-height: 96px;
+            }
+
+            .form-section h2 {
+                font-size: 15px;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 260px;
             }
         }
 
         /* Tablet landscape and small laptops */
         @media (max-width: 900px) {
             .sidebar {
-                width: 220px;
+                width: 260px;
             }
 
             .main-content {
-                margin-left: 220px;
-                padding: 15px;
+                margin-left: 0;
+                padding: 14px;
+                padding-top: 64px;
             }
 
             .header {
@@ -1293,12 +1410,14 @@
                 flex-direction: column;
             }
 
-            .sidebar {
-                display: none;
+            .sidebar,
+            .sidebar-toggle,
+            .sidebar-overlay {
+                display: none !important;
             }
 
             .main-content {
-                margin-left: 0;
+                margin-left: 0 !important;
                 padding: 0;
             }
 
@@ -1314,9 +1433,14 @@
     </style>
 </head>
 <body>
+    <!-- Sidebar hamburger toggle (shown on tablets ≤ 1200 px) -->
+    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle menu" onclick="toggleSidebar()">☰</button>
+    <!-- Dim overlay when sidebar open on tablet -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
     <div class="wrapper">
         <!-- SIDEBAR -->
-        <div class="sidebar">
+        <div class="sidebar" id="mainSidebar">
             <h2>Forms</h2>
             
             <!-- Tab buttons -->
@@ -1684,6 +1808,41 @@
         window.pendingCouncilFormData = null;
         window.selectedCrossBoreDoor = null;
 
+        /* ── Sidebar toggle (tablet) ── */
+        function isTabletMode() {
+            return window.innerWidth <= 1200;
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('mainSidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            const btn     = document.getElementById('sidebarToggle');
+            const isOpen  = sidebar.classList.contains('open');
+            if (isOpen) {
+                sidebar.classList.remove('open');
+                overlay.classList.remove('active');
+                btn.textContent = '☰';
+            } else {
+                sidebar.classList.add('open');
+                overlay.classList.add('active');
+                btn.textContent = '✕';
+            }
+        }
+
+        function closeSidebar() {
+            const sidebar = document.getElementById('mainSidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            const btn     = document.getElementById('sidebarToggle');
+            sidebar.classList.remove('open');
+            overlay.classList.remove('active');
+            btn.textContent = '☰';
+        }
+
+        /* Auto-close sidebar when a form is selected on tablet */
+        function maybeCloseSidebar() {
+            if (isTabletMode()) closeSidebar();
+        }
+
         // Load form data
         async function loadForms() {
             try {
@@ -1883,6 +2042,7 @@
         async function loadPendingFormForSupervisorCompletion(formId, filename) {
             // First, require password BEFORE loading the form
             window.pendingFormToLoad = { formId, filename };
+            maybeCloseSidebar();
             showSupervisorPasswordModal();
         }
 
@@ -2649,6 +2809,9 @@
             isPendingFormOpen = false;
             isPendingCouncilFormOpen = false;
             updatePauseButtonVisibility();
+
+            // Auto-close sidebar on tablet after selection
+            maybeCloseSidebar();
         }
 
         function loadFormData(form) {
