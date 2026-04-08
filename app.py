@@ -174,6 +174,10 @@ def init_db():
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         ''')
+        # Add photos column to spare_parts (safe to run multiple times)
+        cursor.execute('''
+            ALTER TABLE spare_parts ADD COLUMN IF NOT EXISTS photos JSONB DEFAULT '[]'::jsonb
+        ''')
         conn.commit()
         cursor.close()
         conn.close()
@@ -1567,6 +1571,21 @@ def _serialize_part(row):
         p['created_at'] = p['created_at'].isoformat()
     if p.get('updated_at') and not isinstance(p['updated_at'], str):
         p['updated_at'] = p['updated_at'].isoformat()
+    # Ensure photos is always a list of {data, added_at} objects
+    photos = p.get('photos')
+    if photos is None:
+        p['photos'] = []
+    elif isinstance(photos, str):
+        try:
+            photos = json.loads(photos)
+        except Exception:
+            photos = []
+        p['photos'] = photos
+    # Normalise legacy plain-string entries → {data, added_at} objects
+    p['photos'] = [
+        ph if isinstance(ph, dict) else {'data': ph, 'added_at': None}
+        for ph in p['photos']
+    ]
     return p
 
 def _serialize_movement(row):
@@ -1850,6 +1869,117 @@ def delete_part(part_id):
         return jsonify({'success': True}), 200
     except Exception as e:
         log_error(f"Delete part error: {e}")
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+
+@app.route('/api/parts/<int:part_id>/photos', methods=['POST'])
+def add_part_photo(part_id):
+    """Add a photo (base64 JPEG) to a spare part — max 10 photos"""
+    try:
+        data = request.json or {}
+        photo = data.get('photo', '').strip()
+        if not photo or not photo.startswith('data:image'):
+            return jsonify({'success': False, 'message': 'Invalid photo data'}), 400
+
+        if USE_DATABASE:
+            conn = get_db_connection()
+            if conn:
+                try:
+                    cursor = conn.cursor(cursor_factory=RealDictCursor)
+                    cursor.execute("SELECT photos FROM spare_parts WHERE id = %s", (part_id,))
+                    row = cursor.fetchone()
+                    if not row:
+                        cursor.close(); conn.close()
+                        return jsonify({'success': False, 'message': 'Part not found'}), 404
+                    photos = row['photos'] or []
+                    if isinstance(photos, str):
+                        try: photos = json.loads(photos)
+                        except: photos = []
+                    if len(photos) >= 10:
+                        cursor.close(); conn.close()
+                        return jsonify({'success': False, 'message': 'Maximum 10 photos per part'}), 400
+                    photos.append({'data': photo, 'added_at': datetime.now().isoformat()})
+                    cursor.execute(
+                        "UPDATE spare_parts SET photos = %s::jsonb, updated_at = CURRENT_TIMESTAMP WHERE id = %s RETURNING *",
+                        (json.dumps(photos), part_id)
+                    )
+                    updated = _serialize_part(cursor.fetchone())
+                    conn.commit(); cursor.close(); conn.close()
+                    return jsonify({'success': True, 'part': updated}), 200
+                except Exception as db_err:
+                    log_error(f"Add photo DB error: {db_err}")
+                    try: conn.rollback(); conn.close()
+                    except: pass
+                    return jsonify({'success': False, 'message': str(db_err)}), 500
+
+        # Filesystem fallback
+        store = _load_parts_store()
+        for p in store['parts']:
+            if p['id'] == part_id:
+                photos = p.get('photos', [])
+                if len(photos) >= 10:
+                    return jsonify({'success': False, 'message': 'Maximum 10 photos per part'}), 400
+                photos.append({'data': photo, 'added_at': datetime.now().isoformat()})
+                p['photos'] = photos
+                p['updated_at'] = datetime.now().isoformat()
+                _save_parts_store(store)
+                return jsonify({'success': True, 'part': p}), 200
+        return jsonify({'success': False, 'message': 'Part not found'}), 404
+    except Exception as e:
+        log_error(f"Add photo error: {e}")
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+
+@app.route('/api/parts/<int:part_id>/photos/<int:photo_idx>', methods=['DELETE'])
+def delete_part_photo(part_id, photo_idx):
+    """Delete a photo by index from a spare part"""
+    try:
+        if USE_DATABASE:
+            conn = get_db_connection()
+            if conn:
+                try:
+                    cursor = conn.cursor(cursor_factory=RealDictCursor)
+                    cursor.execute("SELECT photos FROM spare_parts WHERE id = %s", (part_id,))
+                    row = cursor.fetchone()
+                    if not row:
+                        cursor.close(); conn.close()
+                        return jsonify({'success': False, 'message': 'Part not found'}), 404
+                    photos = row['photos'] or []
+                    if isinstance(photos, str):
+                        try: photos = json.loads(photos)
+                        except: photos = []
+                    if photo_idx < 0 or photo_idx >= len(photos):
+                        cursor.close(); conn.close()
+                        return jsonify({'success': False, 'message': 'Photo index out of range'}), 400
+                    photos.pop(photo_idx)
+                    cursor.execute(
+                        "UPDATE spare_parts SET photos = %s::jsonb, updated_at = CURRENT_TIMESTAMP WHERE id = %s RETURNING *",
+                        (json.dumps(photos), part_id)
+                    )
+                    updated = _serialize_part(cursor.fetchone())
+                    conn.commit(); cursor.close(); conn.close()
+                    return jsonify({'success': True, 'part': updated}), 200
+                except Exception as db_err:
+                    log_error(f"Delete photo DB error: {db_err}")
+                    try: conn.rollback(); conn.close()
+                    except: pass
+                    return jsonify({'success': False, 'message': str(db_err)}), 500
+
+        # Filesystem fallback
+        store = _load_parts_store()
+        for p in store['parts']:
+            if p['id'] == part_id:
+                photos = p.get('photos', [])
+                if photo_idx < 0 or photo_idx >= len(photos):
+                    return jsonify({'success': False, 'message': 'Photo index out of range'}), 400
+                photos.pop(photo_idx)
+                p['photos'] = photos
+                p['updated_at'] = datetime.now().isoformat()
+                _save_parts_store(store)
+                return jsonify({'success': True, 'part': p}), 200
+        return jsonify({'success': False, 'message': 'Part not found'}), 404
+    except Exception as e:
+        log_error(f"Delete photo error: {e}")
         return jsonify({'success': False, 'message': str(e)}), 500
 
 

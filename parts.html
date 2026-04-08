@@ -105,7 +105,16 @@
         .detail-empty-icon { font-size: 48px; opacity: .35; }
         .detail-empty p { font-size: 15px; }
 
-        .detail-content { padding: 22px; max-width: 820px; }
+        .detail-content { padding: 22px; }
+
+        /* ── 2-column detail body ───────────────────────────────────── */
+        .detail-body {
+            display: grid;
+            grid-template-columns: 1fr 270px;
+            gap: 20px;
+            align-items: start;
+        }
+        .detail-main { min-width: 0; }
 
         .detail-top {
             background: white; border-radius: 12px; padding: 22px;
@@ -356,7 +365,74 @@
             .info-grid { grid-template-columns: 1fr; }
             .detail-top { flex-direction: column; }
             .form-row { grid-template-columns: 1fr; }
+            .detail-body { grid-template-columns: 1fr; }
+            .detail-photos-col { position: static; }
+            .photo-timeline { max-height: 360px; }
         }
+        @media (min-width: 761px) and (max-width: 1150px) {
+            .detail-body { grid-template-columns: 1fr; }
+            .detail-photos-col { position: static; }
+            .photo-timeline { max-height: 400px; }
+        }
+
+        /* ── Photos timeline column ─────────────────────────────────── */
+        .detail-photos-col {
+            position: sticky;
+            top: 0;
+            background: white;
+            border-radius: 12px;
+            padding: 18px 16px;
+            box-shadow: 0 1px 5px rgba(0,0,0,0.08);
+        }
+        .photos-col-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 14px; padding-bottom: 11px;
+            border-bottom: 2px solid #f0f2f5;
+        }
+        .photos-col-title { font-size: 13px; font-weight: 700; color: #1a1f3a; }
+        .photo-timeline { max-height: calc(100vh - 220px); overflow-y: auto; padding-right: 2px; }
+        .tl-item { display: flex; gap: 10px; }
+        .tl-spine {
+            display: flex; flex-direction: column; align-items: center;
+            flex-shrink: 0; width: 12px;
+        }
+        .tl-dot {
+            width: 10px; height: 10px; border-radius: 50%;
+            background: #0084ff; flex-shrink: 0; margin-top: 5px;
+        }
+        .tl-line { width: 2px; flex: 1; background: #e0e5eb; min-height: 16px; margin: 3px 0; }
+        .tl-item:last-child .tl-line { visibility: hidden; }
+        .tl-body { flex: 1; min-width: 0; padding-bottom: 14px; }
+        .tl-img-wrap { position: relative; border-radius: 8px; overflow: hidden; margin-bottom: 5px; }
+        .tl-img-wrap img { width: 100%; display: block; cursor: zoom-in; }
+        .tl-del {
+            position: absolute; top: 5px; right: 5px;
+            background: rgba(220,53,69,0.82); color: white; border: none;
+            border-radius: 50%; width: 22px; height: 22px; font-size: 13px; line-height: 1;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            opacity: 0; transition: opacity .18s;
+        }
+        .tl-img-wrap:hover .tl-del { opacity: 1; }
+        .tl-caption { font-size: 11px; color: #9ca3af; }
+        .tl-empty { font-size: 13px; color: #9ca3af; text-align: center; padding: 22px 8px; line-height: 1.6; }
+        .btn-add-photo {
+            background: #f0f7ff; color: #0084ff; border: 1px dashed #0084ff;
+            padding: 4px 11px; border-radius: 7px; cursor: pointer; font-size: 12px; font-weight: 600;
+            transition: background .18s; white-space: nowrap;
+        }
+        .btn-add-photo:hover { background: #daeeff; }
+        /* Lightbox */
+        .lightbox-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.88);
+            z-index: 2000; display: flex; align-items: center; justify-content: center; padding: 20px;
+        }
+        .lightbox-img { max-width: 100%; max-height: 90vh; border-radius: 8px; object-fit: contain; }
+        .lightbox-close {
+            position: fixed; top: 18px; right: 18px; background: rgba(255,255,255,0.18);
+            color: white; border: none; border-radius: 50%; width: 42px; height: 42px;
+            font-size: 22px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+        }
+        .lightbox-close:hover { background: rgba(255,255,255,0.32); }
     </style>
 </head>
 <body>
@@ -662,67 +738,109 @@ async function selectPart(id) {
 function buildDetailHTML(part, movements) {
     const condClass = 'cond-' + (part.condition || 'New').replace(/\s/g, '');
     const qc = qtyClass(part.quantity);
+    const photos = part.photos || [];
+
+    const photosHTML = photos.length > 0
+        ? photos.map((ph, idx) => {
+            const src = ph.data || ph;
+            const caption = fmtPhotoDate(ph.added_at);
+            return `
+            <div class="tl-item">
+                <div class="tl-spine">
+                    <div class="tl-dot"></div>
+                    <div class="tl-line"></div>
+                </div>
+                <div class="tl-body">
+                    <div class="tl-img-wrap">
+                        <img src="${src}" alt="Photo ${idx + 1}" onclick="openPhotoLightbox(${idx})">
+                        <button class="tl-del" onclick="deletePartPhoto(${idx})" title="Remove">&times;</button>
+                    </div>
+                    <div class="tl-caption">${caption}</div>
+                </div>
+            </div>`;
+        }).join('')
+        : '<div class="tl-empty">No photos yet.<br>Click <strong>+ Add Photo</strong><br>to upload one.</div>';
+
     return `
-        <div class="detail-top">
-            <div class="detail-info">
-                <div class="detail-part-number">${esc(part.part_number)}</div>
-                <div class="detail-name">${esc(part.name)}</div>
-                <div class="detail-badges">
-                    <span class="badge-cat">${esc(part.category)}</span>
-                    <span class="badge-cond ${condClass}">${esc(part.condition)}</span>
-                </div>
-                <div class="info-grid">
-                    <div class="info-item">
-                        <label>Location</label>
-                        <span>${part.location ? esc(part.location) : '<em style="color:#adb5bd">Not set</em>'}</span>
-                    </div>
-                    <div class="info-item">
-                        <label>Unit</label>
-                        <span>${esc(part.unit)}</span>
-                    </div>
-                    <div class="info-item">
-                        <label>Added</label>
-                        <span>${fmtDate(part.created_at)}</span>
-                    </div>
-                    <div class="info-item">
-                        <label>Last updated</label>
-                        <span>${fmtDate(part.updated_at)}</span>
-                    </div>
-                </div>
-                ${part.description ? `<div class="detail-description">${esc(part.description)}</div>` : ''}
-                ${part.notes ? `<div class="detail-notes">📝 ${esc(part.notes)}</div>` : ''}
-            </div>
-            <div class="qr-block" onclick="openQrZoom()" title="Click to enlarge / print">
-                <div id="qrInline"></div>
-                <p>Tap to enlarge<br>or print label</p>
-            </div>
-        </div>
+        <div class="detail-body">
 
-        <div class="stock-row">
-            <div>
-                <div class="stock-display">
-                    <span class="stock-number ${qc}">${part.quantity}</span>
-                    <span class="stock-unit">${esc(part.unit)}</span>
+            <div class="detail-main">
+                <div class="detail-top">
+                    <div class="detail-info">
+                        <div class="detail-part-number">${esc(part.part_number)}</div>
+                        <div class="detail-name">${esc(part.name)}</div>
+                        <div class="detail-badges">
+                            <span class="badge-cat">${esc(part.category)}</span>
+                            <span class="badge-cond ${condClass}">${esc(part.condition)}</span>
+                        </div>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <label>Location</label>
+                                <span>${part.location ? esc(part.location) : '<em style="color:#adb5bd">Not set</em>'}</span>
+                            </div>
+                            <div class="info-item">
+                                <label>Unit</label>
+                                <span>${esc(part.unit)}</span>
+                            </div>
+                            <div class="info-item">
+                                <label>Added</label>
+                                <span>${fmtDate(part.created_at)}</span>
+                            </div>
+                            <div class="info-item">
+                                <label>Last updated</label>
+                                <span>${fmtDate(part.updated_at)}</span>
+                            </div>
+                        </div>
+                        ${part.description ? `<div class="detail-description">${esc(part.description)}</div>` : ''}
+                        ${part.notes ? `<div class="detail-notes">📝 ${esc(part.notes)}</div>` : ''}
+                    </div>
+                    <div class="qr-block" onclick="openQrZoom()" title="Click to enlarge / print">
+                        <div id="qrInline"></div>
+                        <p>Tap to enlarge<br>or print label</p>
+                    </div>
                 </div>
-                <div class="stock-label">Current Stock</div>
-            </div>
-            <div class="stock-btns">
-                <button class="btn-mv btn-checkout" onclick="openMovementModal('checkout')">− Checkout</button>
-                <button class="btn-mv btn-return"   onclick="openMovementModal('return')">+ Return</button>
-                <button class="btn-mv btn-adjust"   onclick="openMovementModal('adjustment')">± Adjust</button>
-            </div>
-        </div>
 
-        <div class="action-bar">
-            <button class="btn-secondary" onclick="openEditModal()">✏️ Edit Part</button>
-            <button class="btn-secondary" onclick="openQrZoom()">🖨 Print Label</button>
-            <button class="btn-secondary no-print" style="margin-left:auto;" onclick="showListMobile()">← Back to list</button>
-            <button class="btn-del" onclick="confirmDeletePart()">🗑 Delete</button>
-        </div>
+                <div class="stock-row">
+                    <div>
+                        <div class="stock-display">
+                            <span class="stock-number ${qc}">${part.quantity}</span>
+                            <span class="stock-unit">${esc(part.unit)}</span>
+                        </div>
+                        <div class="stock-label">Current Stock</div>
+                    </div>
+                    <div class="stock-btns">
+                        <button class="btn-mv btn-checkout" onclick="openMovementModal('checkout')">− Checkout</button>
+                        <button class="btn-mv btn-return"   onclick="openMovementModal('return')">+ Return</button>
+                        <button class="btn-mv btn-adjust"   onclick="openMovementModal('adjustment')">± Adjust</button>
+                    </div>
+                </div>
 
-        <div class="movements-card">
-            <div class="movements-title">Stock Movement History</div>
-            ${buildMovementsHTML(movements)}
+                <div class="action-bar">
+                    <button class="btn-secondary" onclick="openEditModal()">✏️ Edit Part</button>
+                    <button class="btn-secondary" onclick="openQrZoom()">🖨 Print Label</button>
+                    <button class="btn-secondary no-print" style="margin-left:auto;" onclick="showListMobile()">← Back to list</button>
+                    <button class="btn-del" onclick="confirmDeletePart()">🗑 Delete</button>
+                </div>
+
+                <div class="movements-card">
+                    <div class="movements-title">Stock Movement History</div>
+                    ${buildMovementsHTML(movements)}
+                </div>
+            </div>
+
+            <div class="detail-photos-col no-print">
+                <div class="photos-col-header">
+                    <span class="photos-col-title">📷 Photos</span>
+                    <label class="btn-add-photo">
+                        + Add Photo
+                        <input type="file" accept="image/*" style="display:none" onchange="addPartPhoto(this)">
+                    </label>
+                </div>
+                <div class="photo-timeline">
+                    ${photosHTML}
+                </div>
+            </div>
+
         </div>
     `;
 }
@@ -751,6 +869,96 @@ function buildMovementsHTML(movements) {
             </div>
         `;
     }).join('');
+}
+
+// ── Photos ─────────────────────────────────────────────────────────────────
+function fmtPhotoDate(addedAt) {
+    if (!addedAt) return 'Unknown date';
+    try {
+        return new Date(addedAt).toLocaleString('en-GB', {
+            day: '2-digit', month: 'short', year: 'numeric',
+            hour: '2-digit', minute: '2-digit'
+        });
+    } catch { return addedAt; }
+}
+
+function resizeImageToBase64(file, maxW = 1200) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = e => {
+            const img = new Image();
+            img.onload = () => {
+                const ratio = img.width > maxW ? maxW / img.width : 1;
+                const w = Math.round(img.width * ratio);
+                const h = Math.round(img.height * ratio);
+                const canvas = document.createElement('canvas');
+                canvas.width = w; canvas.height = h;
+                canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                resolve(canvas.toDataURL('image/jpeg', 0.82));
+            };
+            img.onerror = reject;
+            img.src = e.target.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
+}
+
+async function addPartPhoto(input) {
+    if (!selectedPart || !input.files || !input.files[0]) return;
+    const file = input.files[0];
+    input.value = '';
+    try {
+        showToast('Uploading photo…', 'info');
+        const base64 = await resizeImageToBase64(file, 1200);
+        const res = await fetch(`/api/parts/${selectedPart.id}/photos`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ photo: base64 })
+        });
+        const data = await res.json();
+        if (data.success) {
+            selectedPart = data.part;
+            await selectPart(selectedPart.id);
+            showToast('Photo added', 'success');
+        } else {
+            showToast(data.message || 'Upload failed', 'error');
+        }
+    } catch (e) {
+        showToast('Network error uploading photo', 'error');
+    }
+}
+
+async function deletePartPhoto(idx) {
+    if (!selectedPart) return;
+    if (!confirm('Remove this photo?')) return;
+    try {
+        const res = await fetch(`/api/parts/${selectedPart.id}/photos/${idx}`, { method: 'DELETE' });
+        const data = await res.json();
+        if (data.success) {
+            selectedPart = data.part;
+            await selectPart(selectedPart.id);
+            showToast('Photo removed', 'success');
+        } else {
+            showToast(data.message || 'Could not remove photo', 'error');
+        }
+    } catch (e) {
+        showToast('Network error', 'error');
+    }
+}
+
+function openPhotoLightbox(idx) {
+    if (!selectedPart || !selectedPart.photos || !selectedPart.photos[idx]) return;
+    const ph = selectedPart.photos[idx];
+    const src = typeof ph === 'string' ? ph : (ph.data || ph);
+    const overlay = document.createElement('div');
+    overlay.className = 'lightbox-overlay';
+    overlay.innerHTML = `
+        <button class="lightbox-close" title="Close">&times;</button>
+        <img class="lightbox-img" src="${src}" alt="Photo">
+    `;
+    overlay.addEventListener('click', e => { if (e.target === overlay || e.target.classList.contains('lightbox-close')) overlay.remove(); });
+    document.body.appendChild(overlay);
 }
 
 // ── QR Code ────────────────────────────────────────────────────────────────

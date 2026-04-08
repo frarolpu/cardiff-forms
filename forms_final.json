@@ -1253,7 +1253,7 @@
     "tasks": [
       {
         "step": "1",
-        "description": "Check operation of firemanÃ¢â‚¬â„¢s socket outlets"
+        "description": "Check operation of fireman's socket outlets"
       },
       {
         "step": "2",
@@ -1286,6 +1286,10 @@
       {
         "step": "9",
         "description": "Check trace heating and thermostat settings (50ºC)"
+      },
+      {
+        "step": "10",
+        "description": "Check the operation of and lubricate all door hinges."
       },
       {
         "step": "11",
@@ -4615,11 +4619,15 @@
       },
       {
         "step": "3",
-        "description": "Check condition and connections on mains earth bars in"
+        "description": "Check condition and connections on mains earth bars in Tunnel Service Building"
       },
       {
         "step": "4",
         "description": "Carry out test on tunnel earthing system to BS 7671 and provide certificate of testing"
+      },
+      {
+        "step": "5",
+        "description": "Record and repair any corrosion, faults or damage found"
       }
     ]
   },
@@ -4880,7 +4888,7 @@
   {
     "section": "2.31.3",
     "equipment": "TUNNEL VENTILATION PANELS",
-    "drawing_ref": "",
+    "drawing_ref": "B15/4 -15/6",
     "locations": [
       "EASTBOUND BORE"
     ],
@@ -4890,7 +4898,7 @@
     "tasks": [
       {
         "step": "1",
-        "description": "Ensure that all electrical connections are tight and that the contactors within the fanÃ¢â‚¬â„¢s starters are in good order"
+        "description": "Ensure that all electrical connections are tight and that the contactors within the fan's starters are in good order"
       },
       {
         "step": "2",
@@ -4927,6 +4935,26 @@
       {
         "step": "10",
         "description": "Repair or replace any defective components as necessary"
+      },
+      {
+        "step": "11",
+        "description": "Measure and record starting & running currents for each fan in both directions"
+      },
+      {
+        "step": "12",
+        "description": "Measure and record IR readings for each fan."
+      },
+      {
+        "step": "13",
+        "description": "Carry out functional tests on RCD units using proprietary testing equipment."
+      },
+      {
+        "step": "14",
+        "description": "Clean interior of panels with vacuum cleaners."
+      },
+      {
+        "step": "15",
+        "description": "Clean panel exterior with proprietary stainless steel cleaning agent."
       }
     ],
     "is_matrix": true,
@@ -6781,7 +6809,7 @@
       },
       {
         "step": "5",
-        "description": "Lift up first chamber covers at portal approach, entrance (4) and exit (4). Clean all edges of frames and covers, Grease and replace.\nGrease and replace"
+        "description": "Lift up first chamber covers at portal approach, entrance (4) and exit (4). Clean all edges of frames and covers, Grease and replace."
       }
     ]
   },
@@ -7057,6 +7085,10 @@
       {
         "step": "7",
         "description": "Remove any Graffiti from any of the above."
+      },
+      {
+        "step": "8",
+        "description": "Carry out repair to any stone chipped damaged cladding panel. The damaged area should be rubbed back to base metal in affected area, primed and painted using metal paint, white or green as appropriate. The contractor is strongly advised to produce a rolling programme for this task to take place across all 4 closures/ year"
       }
     ]
   },
@@ -7290,12 +7322,30 @@
       "EASTBOUND BORE"
     ],
     "frequencies": [
-      "6 WEEKLY"
+      "ANNUAL"
     ],
     "tasks": [
       {
         "step": "1",
-        "description": "Carry out inspection of stage 1-3 LED Luminaires and replace any:\nFailed T-Line units with a spare that will be issued by Cardiff Council. \nFaulty DALI driver (Phillips XITANIUM 1-10V Dimming) a spare that will be issued by Cardiff Council\nFaulty RS485 DALI Gateway that will be issued by Cardiff Council\nFaulty plugs/sockets at driver or T-Line that will be issued by Cardiff Council"
+        "description": "Carry out inspection of stage 1-3 LED Luminaires and replace any:",
+        "subtasks": [
+          {
+            "description": "Failed T-Line units with a spare that will be issued by Cardiff Council.",
+            "tickbox": true
+          },
+          {
+            "description": "Faulty DALI driver (Phillips XITANIUM 1-10V Dimming) a spare that will be issued by Cardiff Council",
+            "tickbox": true
+          },
+          {
+            "description": "Faulty RS485 DALI Gateway that will be issued by Cardiff Council",
+            "tickbox": true
+          },
+          {
+            "description": "Faulty plugs/sockets at driver or T-Line that will be issued by Cardiff",
+            "tickbox": true
+          }
+        ]
       },
       {
         "step": "2",
@@ -7303,7 +7353,37 @@
       },
       {
         "step": "3",
-        "description": "Inspect scoutmaster control unit and rectify any hardware faults.\nClean monitor and Keyboard\nReplace fan filter and ensure fan is operational.\nArchive System data files and historical luminaire data\nCheck system for errors and rectify as necessary.\nCarry Out HDD maintenance.\nCarry out functional test of luminaires and B-Scout system communications and operations."
+        "description": "Please check",
+        "subtasks": [
+          {
+            "description": "Inspect scoutmaster control unit and rectify any hardware faults.",
+            "tickbox": true
+          },
+          {
+            "description": "Clean monitor and Keyboard",
+            "tickbox": true
+          },
+          {
+            "description": "Replace fan filter and ensure fan is operational.",
+            "tickbox": true
+          },
+          {
+            "description": "Archive System data files and historical luminaire data",
+            "tickbox": true
+          },
+          {
+            "description": "Check system for errors and rectify as necessary.",
+            "tickbox": true
+          },
+          {
+            "description": "Carry Out HDD maintenance.",
+            "tickbox": true
+          },
+          {
+            "description": "Carry out functional test of luminaires and B-Scout system communications and operations.",
+            "tickbox": true
+          }
+        ]
       },
       {
         "step": "4",
@@ -7312,6 +7392,10 @@
       {
         "step": "5",
         "description": "Check status of SCADA communications and rectify any errors / faults."
+      },
+      {
+        "step": "6",
+        "description": "Clean all T-Line LED Unit cases and lenses throughout the bore. (178 Units) and check security of all fixings and mountings."
       }
     ]
   },
@@ -7720,7 +7804,21 @@
       },
       {
         "step": "2",
-        "description": "Manually operate the system at each door position. Ensure that:\nEach arrow functions and is sequential.\nStrobe lighting on sign operates and sign is illuminated.\nAudible sound and white noise alert are operational"
+        "description": "Manually operate the system at each door position. Ensure that:",
+        "subtasks": [
+          {
+            "description": "Each arrow functions and is sequential.",
+            "tickbox": true
+          },
+          {
+            "description": "Strobe lighting on sign operates and sign is illuminated.",
+            "tickbox": true
+          },
+          {
+            "description": "Audible sound and white noise alert are operational",
+            "tickbox": true
+          }
+        ]
       },
       {
         "step": "3",
@@ -7741,6 +7839,10 @@
       {
         "step": "7",
         "description": "Check security of all fixings on LED Arrows, signs, and cable containment."
+      },
+      {
+        "step": "8",
+        "description": "Check zoning in conjunction with annual checks detailed on 2.41.3. Re-calibrate and rectify any issues where necessary"
       }
     ]
   },
