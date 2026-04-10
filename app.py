@@ -349,7 +349,7 @@ def create_pdf(form_data):
                     # Parent task label (bold, no checkbox)
                     pdf.set_x(pdf.l_margin)
                     pdf.set_font(default_font, "B", 9)
-                    pdf.multi_cell(available_width, 6, f"{step_num}. {description}", align='L')
+                    pdf.multi_cell(available_width, 6, description, align='L')
                     pdf.set_font(default_font, "", 9)
                     # Subtasks (indented, with checkbox)
                     for subtask in subtasks:
