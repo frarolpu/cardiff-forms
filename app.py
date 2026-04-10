@@ -311,7 +311,11 @@ def create_pdf(form_data):
         # Add EDP if this is a matrix form
         if form_data.get('edp'):
             info_items.insert(3, ("EDP:", form_data.get('edp', '')))
-        
+
+        # Add Cross Bore Door if present (sections 2.24.x)
+        if form_data.get('cross_bore_door'):
+            info_items.insert(3, ("Cross Bore Door:", sanitize_text(form_data.get('cross_bore_door', ''))))
+
         if form_data.get('locations'):
             info_items.append(("Locations:", ', '.join(form_data.get('locations', []))))
         
@@ -599,6 +603,7 @@ def save_form():
         # Create filename with timestamp and section number (include EDP if matrix form)
         section = data.get('section', 'unknown')
         edp = data.get('edp')  # Get EDP if present (matrix forms)
+        cross_bore_door = data.get('cross_bore_door')  # Get Cross Bore Door if present (sections 2.24.x)
         status = data.get('status', 'complete')  # Get status ('pending_supervisor', 'pending_council', or 'complete')
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
         
@@ -609,8 +614,13 @@ def save_form():
         else:
             status_suffix = f"_{status.upper()}"
         
+        # Sanitize cross_bore_door for use in filename (replace spaces with underscores)
+        cbd_slug = cross_bore_door.replace(' ', '_') if cross_bore_door else None
+
         if edp:
             filename = f"{section}_{edp}_{timestamp}{status_suffix}.pdf"
+        elif cbd_slug:
+            filename = f"{section}_{cbd_slug}_{timestamp}{status_suffix}.pdf"
         else:
             filename = f"{section}_{timestamp}{status_suffix}.pdf"
         
