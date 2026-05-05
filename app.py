@@ -629,13 +629,14 @@ def save_form():
         pdf_data = pdf_buffer.getvalue()
         del pdf_buffer  # free BytesIO immediately — we have the bytes
 
-        # Strip photo blobs from form_data before storing as JSONB:
-        # photos are already embedded in pdf_data BYTEA — no need to duplicate them in JSON
+        # Strip photo blobs from form_data before storing as JSONB only for complete forms.
+        # For pending forms, photos must be preserved so they survive into the final signed PDF.
         import copy as _copy
         data_for_json = _copy.copy(data)
-        data_for_json.pop('beforePhotos', None)
-        data_for_json.pop('afterPhotos', None)
-        data_for_json.pop('photos', None)
+        if status == 'complete':
+            data_for_json.pop('beforePhotos', None)
+            data_for_json.pop('afterPhotos', None)
+            data_for_json.pop('photos', None)
         
         # Always save JSON file for form recovery (works with both DB and filesystem)
         try:
