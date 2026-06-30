@@ -118,12 +118,15 @@
             background: white;
             border-radius: 10px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-            overflow: hidden;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            min-width: 0;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
+            min-width: 900px;
         }
 
         thead {
@@ -500,6 +503,34 @@
             color: #999;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+        }
+
+        @media (max-width: 768px) {
+            table {
+                min-width: 1000px;
+            }
+
+            .forms-table {
+                border-radius: 8px;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            .search-box {
+                min-width: 100%;
+            }
+
+            #mergeBar {
+                justify-content: center;
+            }
         }
     </style>
 </head>
