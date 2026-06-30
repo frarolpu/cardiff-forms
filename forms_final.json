@@ -554,7 +554,8 @@
         "id": "EDP-14",
         "name": "EDP-14"
       }
-    ]
+    ],
+    "task_matrix": true
   },
   {
     "section": "2.5.2",
@@ -658,7 +659,8 @@
         "id": "EDP-14",
         "name": "EDP-14"
       }
-    ]
+    ],
+    "task_matrix": true
   },
   {
     "section": "2.5.3",
@@ -890,7 +892,8 @@
         "id": "EDP-14",
         "name": "EDP-14"
       }
-    ]
+    ],
+    "task_matrix": true
   },
   {
     "section": "2.5.5",
@@ -1238,7 +1241,8 @@
         "id": "EP-14",
         "name": "EP-14"
       }
-    ]
+    ],
+    "task_matrix": true
   },
   {
     "section": "2.6.2",
@@ -1494,7 +1498,8 @@
         "id": "EP-14",
         "name": "EP-14"
       }
-    ]
+    ],
+    "task_matrix": true
   },
   {
     "section": "2.6.4",
@@ -3432,6 +3437,38 @@
         "step": "7",
         "description": "Check Alignment of drop bolts and re-align / adjust where issues are identified"
       }
+    ],
+    "task_matrix": true,
+    "is_matrix": true,
+    "edps": [
+      {
+        "id": "CBD-1",
+        "name": "Cross Bore Door 1"
+      },
+      {
+        "id": "CBD-2",
+        "name": "Cross Bore Door 2"
+      },
+      {
+        "id": "CBD-3",
+        "name": "Cross Bore Door 3"
+      },
+      {
+        "id": "CBD-4",
+        "name": "Cross Bore Door 4"
+      },
+      {
+        "id": "CBD-5",
+        "name": "Cross Bore Door 5"
+      },
+      {
+        "id": "CBD-6",
+        "name": "Cross Bore Door 6"
+      },
+      {
+        "id": "CBD-7",
+        "name": "Cross Bore Door 7"
+      }
     ]
   },
   {
@@ -3472,6 +3509,38 @@
       {
         "step": "7",
         "description": "Check alignment of drop bolts and realign where issues are identified"
+      }
+    ],
+    "task_matrix": true,
+    "is_matrix": true,
+    "edps": [
+      {
+        "id": "CBD-1",
+        "name": "Cross Bore Door 1"
+      },
+      {
+        "id": "CBD-2",
+        "name": "Cross Bore Door 2"
+      },
+      {
+        "id": "CBD-3",
+        "name": "Cross Bore Door 3"
+      },
+      {
+        "id": "CBD-4",
+        "name": "Cross Bore Door 4"
+      },
+      {
+        "id": "CBD-5",
+        "name": "Cross Bore Door 5"
+      },
+      {
+        "id": "CBD-6",
+        "name": "Cross Bore Door 6"
+      },
+      {
+        "id": "CBD-7",
+        "name": "Cross Bore Door 7"
       }
     ]
   },
@@ -3554,6 +3623,38 @@
       {
         "step": "7",
         "description": "Hand Clean door, framework, closing units and signs"
+      }
+    ],
+    "task_matrix": true,
+    "is_matrix": true,
+    "edps": [
+      {
+        "id": "CBD-1",
+        "name": "Cross Bore Door 1"
+      },
+      {
+        "id": "CBD-2",
+        "name": "Cross Bore Door 2"
+      },
+      {
+        "id": "CBD-3",
+        "name": "Cross Bore Door 3"
+      },
+      {
+        "id": "CBD-4",
+        "name": "Cross Bore Door 4"
+      },
+      {
+        "id": "CBD-5",
+        "name": "Cross Bore Door 5"
+      },
+      {
+        "id": "CBD-6",
+        "name": "Cross Bore Door 6"
+      },
+      {
+        "id": "CBD-7",
+        "name": "Cross Bore Door 7"
       }
     ]
   },
@@ -4783,7 +4884,8 @@
         "id": "VP-10",
         "name": "VP-10"
       }
-    ]
+    ],
+    "task_matrix": true
   },
   {
     "section": "2.31.2",
@@ -4883,7 +4985,8 @@
         "id": "VP-10",
         "name": "VP-10"
       }
-    ]
+    ],
+    "task_matrix": true
   },
   {
     "section": "2.31.3",
@@ -5279,7 +5382,8 @@
         "id": "FAN-10-4",
         "name": "FAN 10-4"
       }
-    ]
+    ],
+    "task_matrix": true
   },
   {
     "section": "2.32.2",
@@ -5459,7 +5563,8 @@
         "id": "FAN-10-4",
         "name": "FAN 10-4"
       }
-    ]
+    ],
+    "task_matrix": true
   },
   {
     "section": "2.32.3",
@@ -5663,7 +5768,8 @@
         "id": "FAN-10-4",
         "name": "FAN 10-4"
       }
-    ]
+    ],
+    "task_matrix": true
   },
   {
     "section": "2.32.4",

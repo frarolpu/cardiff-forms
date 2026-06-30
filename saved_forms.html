@@ -203,6 +203,40 @@
             background: #218838;
         }
 
+        .btn-edit {
+            background: #f59e0b;
+            color: white;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-edit:hover {
+            background: #d97706;
+            transform: translateY(-1px);
+        }
+
+        .btn-copy {
+            background: #8b5cf6;
+            color: white;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-copy:hover {
+            background: #7c3aed;
+            transform: translateY(-1px);
+        }
+
         .btn-delete {
             background: #dc3545;
             color: white;
@@ -490,15 +524,21 @@
             <button class="btn-refresh" onclick="loadSavedForms()">Refresh</button>
         </div>
 
+        <div id="mergeBar" style="display:none; background:#1a1f3a; color:#fff; padding:12px 20px; border-radius:8px; margin-bottom:16px; display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
+            <span id="mergeCount" style="font-weight:700; font-size:14px;">0 selected</span>
+            <button onclick="downloadMerged()" style="background:#28a745; color:#fff; border:none; border-radius:6px; padding:9px 20px; font-size:13px; font-weight:700; cursor:pointer;">&#8892; Download Merged PDF</button>
+            <button onclick="clearSelection()" style="background:rgba(255,255,255,0.15); color:#fff; border:none; border-radius:6px; padding:9px 14px; font-size:13px; cursor:pointer;">Clear</button>
+        </div>
+
         <div class="forms-table">
             <table>
                 <thead>
                     <tr>
+                        <th style="width:36px;"><input type="checkbox" id="selectAllCb" title="Select all" onchange="toggleSelectAll(this.checked)"></th>
                         <th>Section</th>
                         <th>Engineer</th>
                         <th>Supervisor</th>
-                        <th>Council</th>
-                        <th>Date</th>
+                        <th id="dateHeader" style="cursor:pointer; user-select:none;" onclick="toggleDateSort()">Date <span id="dateSortIcon">&#8597;</span></th>
                         <th>File</th>
                         <th>Actions</th>
                     </tr>
@@ -547,6 +587,79 @@
 
     <script>
         let allSavedForms = [];
+        let dateSortAsc = null; // null=unsorted, true=asc, false=desc
+        const selectedIds = new Set();
+
+        function updateMergeBar() {
+            const bar = document.getElementById('mergeBar');
+            const cnt = document.getElementById('mergeCount');
+            if (selectedIds.size > 0) {
+                bar.style.display = 'flex';
+                cnt.textContent = `${selectedIds.size} selected`;
+            } else {
+                bar.style.display = 'none';
+            }
+            const allCb = document.getElementById('selectAllCb');
+            if (allCb) allCb.checked = allSavedForms.length > 0 && selectedIds.size === allSavedForms.length;
+        }
+
+        function toggleSelectAll(checked) {
+            selectedIds.clear();
+            if (checked) allSavedForms.forEach(f => selectedIds.add(f.filename));
+            document.querySelectorAll('.row-cb').forEach(cb => { cb.checked = checked; });
+            updateMergeBar();
+        }
+
+        function toggleRowSelect(id, checked) {
+            if (checked) selectedIds.add(id);
+            else selectedIds.delete(id);
+            updateMergeBar();
+        }
+
+        function clearSelection() {
+            selectedIds.clear();
+            document.querySelectorAll('.row-cb').forEach(cb => { cb.checked = false; });
+            const allCb = document.getElementById('selectAllCb');
+            if (allCb) allCb.checked = false;
+            updateMergeBar();
+        }
+
+        async function downloadMerged() {
+            if (selectedIds.size === 0) return;
+            const btn = document.querySelector('#mergeBar button');
+            btn.textContent = 'Merging…'; btn.disabled = true;
+            try {
+                const resp = await fetch('/api/merge-pdfs', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ identifiers: Array.from(selectedIds) })
+                });
+                if (!resp.ok) { const j = await resp.json(); alert('Error: ' + j.message); return; }
+                const blob = await resp.blob();
+                const url  = URL.createObjectURL(blob);
+                const a    = document.createElement('a');
+                const cd   = resp.headers.get('Content-Disposition') || '';
+                const match = cd.match(/filename="?([^"]+)"?/);
+                a.download = match ? match[1] : 'Merged_Reports.pdf';
+                a.href = url;
+                document.body.appendChild(a); a.click(); document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            } catch(e) { alert('Download failed: ' + e.message); }
+            finally { btn.textContent = '\u2338 Download Merged PDF'; btn.disabled = false; }
+        }
+
+        function toggleDateSort() {
+            if (dateSortAsc === null || dateSortAsc === false) dateSortAsc = true;
+            else dateSortAsc = false;
+            const icon = document.getElementById('dateSortIcon');
+            icon.textContent = dateSortAsc ? '\u25B2' : '\u25BC';
+            const sorted = [...allSavedForms].sort((a, b) => {
+                const da = new Date(a.created_at || 0);
+                const db = new Date(b.created_at || 0);
+                return dateSortAsc ? da - db : db - da;
+            });
+            displayForms(sorted);
+        }
 
         async function loadSavedForms() {
             try {
@@ -582,19 +695,23 @@
             tbody.innerHTML = forms.map(form => {
                 const dateStr = form.created_at ? 
                     new Date(form.created_at).toLocaleDateString() : 'N/A';
+                const rowId = form.filename;  // always use filename as stable identifier
+                const isChecked = selectedIds.has(rowId);
                 
                 return `
                 <tr>
+                    <td style="text-align:center;"><input type="checkbox" class="row-cb" ${isChecked ? 'checked' : ''} onchange="toggleRowSelect('${rowId}', this.checked)"></td>
                     <td><span class="section-badge">${form.section}</span></td>
                     <td>${form.engineer || 'N/A'}</td>
                     <td>${form.supervisor || 'N/A'}</td>
-                    <td>${form.council || 'N/A'}</td>
                     <td>${dateStr}</td>
                     <td><small>${form.filename}</small></td>
                     <td>
                         <div class="actions">
                             <button class="btn-view" onclick="viewForm('${form.filename}')">View</button>
                             <button class="btn-download" onclick="downloadForm('${form.filename}')">Download</button>
+                            <button class="btn-edit" onclick="editForm('${form.filename}')">Edit</button>
+                            <button class="btn-copy" onclick="copyForm('${form.filename}')">Copy</button>
                             <button class="btn-delete" onclick="confirmDelete('${form.id}', '${form.filename}')">Delete</button>
                         </div>
                     </td>
@@ -637,11 +754,18 @@
 
         async function viewForm(filename) {
             try {
-                // Simply open the PDF in a new window using filename
                 window.open(`/api/download-form/${filename}`, '_blank');
             } catch (error) {
                 alert(`Error opening form: ${error.message}`);
             }
+        }
+
+        function editForm(filename) {
+            window.location.href = `/?edit=${encodeURIComponent(filename)}`;
+        }
+
+        function copyForm(filename) {
+            window.location.href = `/?copy=${encodeURIComponent(filename)}`;
         }
 
         function downloadForm(filename) {

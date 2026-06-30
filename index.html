@@ -376,6 +376,73 @@
             min-height: 52px;
         }
 
+        /* ── Task Matrix Table ── */
+        .matrix-wrapper {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 0 -4px;
+        }
+        .matrix-table {
+            border-collapse: collapse;
+            font-size: 11px;
+            min-width: 100%;
+            table-layout: fixed;
+        }
+        .matrix-table th, .matrix-table td {
+            border: 1px solid #c8cdd5;
+            text-align: center;
+            vertical-align: middle;
+        }
+        .matrix-asset-header {
+            background: #1a1f3a;
+            color: #fff;
+            padding: 6px 8px;
+            font-size: 12px;
+            font-weight: 700;
+            white-space: nowrap;
+            position: sticky;
+            left: 0;
+            z-index: 3;
+            min-width: 110px;
+            max-width: 140px;
+        }
+        .matrix-task-header {
+            background: #2d3a5c;
+            color: #fff;
+            padding: 6px 4px;
+            font-size: 12px;
+            font-weight: 700;
+            width: 42px;
+            min-width: 42px;
+            cursor: default;
+        }
+        .matrix-asset-name {
+            background: #f1f3f7;
+            font-weight: 600;
+            font-size: 12px;
+            white-space: nowrap;
+            padding: 6px 8px;
+            text-align: left;
+            position: sticky;
+            left: 0;
+            z-index: 1;
+            border-right: 2px solid #2d3a5c;
+            min-width: 110px;
+            max-width: 140px;
+        }
+        .matrix-cell {
+            width: 42px;
+            min-width: 42px;
+            height: 38px;
+            font-size: 18px;
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.1s;
+        }
+        .matrix-cell:hover { background: #e8f4ff; }
+        .matrix-ok   { background: #d4edda; color: #155724; font-weight: 700; }
+        .matrix-fail { background: #f8d7da; color: #721c24; font-weight: 700; }
+
         .task-item:last-child {
             border-bottom: none;
         }
@@ -1446,16 +1513,6 @@
             <!-- Tab buttons -->
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px; font-size: 12px;">
                 <button id="tabAllForms" class="sidebar-tab active" onclick="switchTab('all')">All Forms</button>
-                <button id="tabPendingSupervisor" class="sidebar-tab" onclick="switchTab('pending-supervisor')">
-                    <span>Pending Supervisor</span>
-                    <span id="pendingSupervisorCount" style="display: none; margin-left: 4px; background: #ff6b6b; padding: 2px 6px; border-radius: 12px; font-size: 10px;">0</span>
-                </button>
-            </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px; font-size: 12px;">
-                <button id="tabPendingCouncil" class="sidebar-tab" onclick="switchTab('pending-council')">
-                    <span>Pending Council</span>
-                    <span id="pendingCouncilCount" style="display: none; margin-left: 4px; background: #a78bfa; padding: 2px 6px; border-radius: 12px; font-size: 10px;">0</span>
-                </button>
                 <button id="tabPausedReports" class="sidebar-tab" onclick="switchTab('paused')">
                     <span>Paused Reports</span>
                     <span id="pausedReportsCount" style="display: none; margin-left: 4px; background: #fbbf24; padding: 2px 6px; border-radius: 12px; font-size: 10px;">0</span>
@@ -1472,12 +1529,6 @@
             
             <!-- All forms list -->
             <ul class="form-list" id="formList"></ul>
-            
-            <!-- Pending supervisor forms list (hidden by default) -->
-            <ul class="form-list" id="pendingSupervisorList" style="display: none;"></ul>
-            
-            <!-- Pending council forms list (hidden by default) -->
-            <ul class="form-list" id="pendingCouncilList" style="display: none;"></ul>
             
             <!-- Paused forms list (hidden by default) -->
             <ul class="form-list" id="pausedFormsList" style="display: none;"></ul>
@@ -1554,10 +1605,7 @@
                                         <label class="field-required">Inspection Date</label>
                                         <input type="date" id="inspectionDate" required>
                                     </div>
-                                    <div class="form-group">
-                                        <label>Inspector</label>
-                                        <input type="text" id="inspector" placeholder="Inspector name" required>
-                                    </div>
+
                                 </div>
 
                             <!-- EDP SELECTOR (for matrix forms) -->
@@ -1591,7 +1639,10 @@
 
                             <!-- TASKS -->
                             <div class="form-section">
-                                <h2>Tasks to Perform</h2>
+                                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+                                    <h2 style="margin: 0;">Tasks to Perform</h2>
+                                    <button type="button" id="allOkBtn" onclick="markAllTasksOK()" style="background: #2e7d32; color: #fff; border: none; border-radius: 6px; padding: 8px 18px; font-size: 14px; font-weight: 600; cursor: pointer; letter-spacing: 0.5px;">&#10003; All OK</button>
+                                </div>
                                 <div class="task-list" id="taskList"></div>
                             </div>
 
@@ -1607,15 +1658,13 @@
                                     <label>Contractor Supervisor Comments</label>
                                     <textarea id="supervisorComments" placeholder="Supervisor notes and observations..."></textarea>
                                 </div>
-                                <div class="form-group">
-                                    <label>Council Approval Comments</label>
-                                    <textarea id="councilComments" placeholder="Council approval notes..."></textarea>
-                                </div>
                                 <!-- Legacy comments field for backward compatibility -->
                                 <div class="form-group" style="display: none;">
                                     <label>Comments</label>
                                     <textarea id="comments" placeholder="Write any comments, issues or findings here..."></textarea>
                                 </div>
+                                <!-- Hidden stubs — council removed from UI but referenced in legacy JS -->
+                                <textarea id="councilComments" style="display:none;"></textarea>
                             </div>
 
                             <!-- MATERIALS USED -->
@@ -1681,7 +1730,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="signature-box disabled" id="supervisorBox">
+                                    <div class="signature-box active" id="supervisorBox">
                                         <h3>Contractor Supervisor</h3>
                                         <div class="form-row">
                                             <div class="form-group" style="flex: 1;">
@@ -1699,27 +1748,14 @@
                                         </div>
                                     </div>
 
-                                    <div class="signature-box disabled" id="councilBox">
-                                        <h3>Council Approval</h3>
-                                        <div class="form-row">
-                                            <div class="form-group" style="flex: 1;">
-                                                <label>Name</label>
-                                                <input type="text" id="councilName" placeholder="Full name">
-                                            </div>
-                                            <div class="form-group" style="flex: 0.5;">
-                                                <label>Initials</label>
-                                                <input type="text" id="councilInitials" placeholder="e.g. CC" maxlength="3">
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Date</label>
-                                            <input type="date" id="councilDate">
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
 
                             <!-- ACTIONS -->
+                            <!-- Hidden council stubs so legacy JS getElementById calls don't throw -->
+                            <input type="hidden" id="councilName">
+                            <input type="hidden" id="councilInitials">
+                            <input type="hidden" id="councilDate">
                             <div class="form-actions">
                                 <button type="button" class="btn btn-secondary" onclick="resetForm()">Clear</button>
                                 <button type="button" class="btn btn-secondary" id="pauseButton" onclick="pauseForm()" style="display: none;">Pause & Resume Later</button>
@@ -1800,13 +1836,11 @@
         let currentFormIndex = -1;
         let beforePhotos = [];
         let afterPhotos = [];
-        let formStatus = 'new'; // 'new', 'pending', or 'complete'
-        let isPendingFormOpen = false; // Track if we're editing a pending form (supervisor completing)
-        let isPendingCouncilFormOpen = false; // Track if we're editing a council form
-        window.pendingFormData = null;
-        window.pendingFormTasks = [];
-        window.pendingCouncilFormData = null;
         window.selectedCrossBoreDoor = null;
+        window.editOfFilename = null; // set when editing an existing report
+        // Legacy stubs — always false in the new workflow (pending flow removed)
+        let isPendingFormOpen = false;
+        let isPendingCouncilFormOpen = false;
 
         /* ── Sidebar toggle (tablet) ── */
         function isTabletMode() {
@@ -1859,9 +1893,6 @@
                 populateFormList();
                 console.log('Form list populated');
                 
-                // Also load pending forms count
-                loadPendingForms();
-                loadCouncilForms();
                 loadPausedForms();
                 
                 // Set today's date for inspection and approval dates
@@ -1875,6 +1906,16 @@
                 updatePauseButtonVisibility();
                 // Wire up Quick Access numpad
                 initQuickAccess();
+
+                // Handle ?edit= and ?copy= URL parameters
+                const urlParams = new URLSearchParams(window.location.search);
+                const editFilename = urlParams.get('edit');
+                const copyFilename = urlParams.get('copy');
+                if (editFilename) {
+                    loadFormForEdit(decodeURIComponent(editFilename), false);
+                } else if (copyFilename) {
+                    loadFormForEdit(decodeURIComponent(copyFilename), true);
+                }
             } catch (error) {
                 console.error('Error loading forms:', error);
                 console.error('Stack:', error.stack);
@@ -1996,108 +2037,123 @@
             try {
                 const response = await fetch('/api/pending-forms');
                 const result = await response.json();
-                
-                if (result.success && result.forms) {
-                    populatePendingSupervisorFormList(result.forms);
-                    
-                    // Update count badge
-                    const countBadge = document.getElementById('pendingSupervisorCount');
-                    if (result.count > 0) {
-                        countBadge.textContent = result.count;
-                        countBadge.style.display = 'inline-block';
-                    } else {
-                        countBadge.style.display = 'none';
-                    }
-                }
+                // (pending forms no longer used in new workflow)
             } catch (error) {
                 console.error('Error loading pending forms:', error);
             }
         }
 
-        function populatePendingSupervisorFormList(forms) {
-            const pendingList = document.getElementById('pendingSupervisorList');
-            pendingList.innerHTML = '';
-            
-            forms.forEach(form => {
-                const li = document.createElement('li');
-                li.className = 'pending-form-item';
-                
-                const createdDate = new Date(form.created_at).toLocaleDateString();
-                const createdTime = new Date(form.created_at).toLocaleTimeString();
-                
-                li.innerHTML = `
-                    <div class="pending-form-item-title">Section ${form.section}</div>
-                    <div class="pending-form-item-info">
-                        📋 Awaiting Supervisor Signature
-                        <br>Saved: ${createdDate} ${createdTime}
-                    </div>
-                `;
-                
-                li.onclick = () => loadPendingFormForSupervisorCompletion(form.id, form.filename);
-                pendingList.appendChild(li);
-            });
-        }
-
-        // Load a pending form for supervisor to complete
-        async function loadPendingFormForSupervisorCompletion(formId, filename) {
-            // First, require password BEFORE loading the form
-            window.pendingFormToLoad = { formId, filename };
-            maybeCloseSidebar();
-            showSupervisorPasswordModal();
-        }
-
-        // Load council forms from backend
-        async function loadCouncilForms() {
+        // Load a saved form for Edit (isCopy=false) or Copy (isCopy=true)
+        async function loadFormForEdit(filename, isCopy) {
             try {
-                const response = await fetch('/api/council-forms');
+                const response = await fetch(`/api/load-form/${encodeURIComponent(filename)}`);
                 const result = await response.json();
-                
-                if (result.success && result.forms) {
-                    populatePendingCouncilFormList(result.forms);
-                    
-                    // Update count badge
-                    const countBadge = document.getElementById('pendingCouncilCount');
-                    if (result.count > 0) {
-                        countBadge.textContent = result.count;
-                        countBadge.style.display = 'inline-block';
-                    } else {
-                        countBadge.style.display = 'none';
-                    }
+                if (!result.success) { showError('Could not load form: ' + result.message); return; }
+
+                const formData = result.data;
+                const section = formData.section;
+
+                // Find the matching form in allForms to set currentFormIndex
+                const cleanedForms = allForms.filter(f => f.tasks.length > 0);
+                const idx = cleanedForms.findIndex(f => f.section === section);
+                if (idx === -1) { showError(`Section ${section} not found in forms list`); return; }
+
+                currentFormIndex = idx;
+                const form = cleanedForms[idx];
+                window.currentForm = form;
+                const editOfValue = isCopy ? null : filename; // save before loadFormData clears it
+
+                // Show the form container and populate header/EDP/tasks via existing loadFormData
+                document.getElementById('noFormSelected').style.display = 'none';
+                document.getElementById('formContainer').style.display = 'block';
+                loadFormData(form);  // sets title, sectionInfo, EDP selector, tasks
+
+                // Restore editOfFilename AFTER loadFormData (which resets it to null)
+                window.editOfFilename = editOfValue;
+
+                // If EDP was saved, re-select it and reload tasks
+                if (formData.edp && form.is_matrix) {
+                    const edpSel = document.getElementById('edpSelector');
+                    if (edpSel) { edpSel.value = formData.edp; }
+                    window.selectedEDP = formData.edp;
+                    loadTasks(formData.tasks || form.tasks || []);
+                } else if (!form.is_matrix) {
+                    // Non-matrix: reload tasks with saved completion state
+                    loadTasks(formData.tasks || form.tasks || []);
                 }
-            } catch (error) {
-                console.error('Error loading council forms:', error);
+
+                // Restore date (Copy = today, Edit = original date)
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('inspectionDate').value = isCopy ? today : (formData.inspectionDate || today);
+                document.getElementById('engineerDate').value = isCopy ? today : (formData.signatures?.engineerDate || today);
+                document.getElementById('supervisorDate').value = isCopy ? today : (formData.signatures?.supervisorDate || today);
+                document.getElementById('councilDate').value = isCopy ? today : (formData.signatures?.councilDate || today);
+
+                // Restore text fields
+                document.getElementById('engineerComments').value = formData.engineer_comments || formData.comments || '';
+                document.getElementById('supervisorComments').value = isCopy ? '' : (formData.supervisor_comments || '');
+                document.getElementById('councilComments').value = isCopy ? '' : (formData.council_comments || '');
+                document.getElementById('materialsUsed').value = formData.materials_used || '';
+
+                // Restore signatures (Edit = restore, Copy = always blank)
+                document.getElementById('engineerName').value = isCopy ? '' : (formData.signatures?.engineer || '');
+                document.getElementById('engineerInitials').value = isCopy ? '' : (formData.signatures?.engineerInitials || '');
+                document.getElementById('supervisorName').value = '';
+                document.getElementById('supervisorInitials').value = '';
+                document.getElementById('councilName').value = '';
+                document.getElementById('councilInitials').value = '';
+
+                // Restore Cross Bore Door selection
+                window.selectedCrossBoreDoor = formData.cross_bore_door || null;
+                const cbdSec = document.getElementById('crossBoreDoorSection');
+                const crossBoreSections = ['2.24.1','2.24.2','2.24.3','2.24.4','2.24.5','2.24.6'];
+                if (crossBoreSections.includes(section) && formData.cross_bore_door) {
+                    cbdSec.style.display = 'block';
+                    document.getElementById('crossBoreDoorSelector').value = formData.cross_bore_door;
+                }
+
+                // Restore checkbox states OR matrix cells
+                if (form.task_matrix) {
+                    // Matrix form: restore cell states (Copy = blank matrix)
+                    window.matrixCells = (!isCopy && formData.matrix_cells) ? formData.matrix_cells : {};
+                    renderTaskMatrix(form);
+                } else if (formData.tasks) {
+                    const checkMap = {};
+                    formData.tasks.forEach(t => {
+                        const n = String(t.step || '');
+                        if (t.subtasks) t.subtasks.forEach((s, i) => { checkMap[`${n}-${i+1}`] = s.completed || false; });
+                        else checkMap[n] = t.completed || false;
+                    });
+                    document.querySelectorAll('#taskList input[type="checkbox"]').forEach(cb => {
+                        const v = checkMap[cb.dataset.step];
+                        if (v !== undefined) cb.checked = v;
+                    });
+                }
+
+                // Restore photos (Edit only — Copy leaves photos blank per requirements)
+                beforePhotos = isCopy ? [] : (formData.beforePhotos || []);
+                afterPhotos  = isCopy ? [] : (formData.afterPhotos  || []);
+                displayBeforePhotos();
+                displayAfterPhotos();
+
+                updatePauseButtonVisibility();
+                maybeCloseSidebar();
+
+                // Clean URL without reload
+                window.history.replaceState({}, document.title, '/');
+
+                // Show a banner indicating edit/copy mode
+                const badge = document.getElementById('formStatusBadge');
+                if (isCopy) {
+                    badge.innerHTML = '<div class="form-status-badge pending" style="background:#8b5cf6;">📋 COPY MODE — saving will create a new v01</div>';
+                } else {
+                    badge.innerHTML = `<div class="form-status-badge pending" style="background:#f59e0b;">✏️ EDIT MODE — saving as new version of ${filename}</div>`;
+                }
+
+            } catch (err) {
+                console.error('loadFormForEdit error:', err);
+                showError('Failed to load form for editing: ' + err.message);
             }
-        }
-
-        function populatePendingCouncilFormList(forms) {
-            const councilList = document.getElementById('pendingCouncilList');
-            councilList.innerHTML = '';
-            
-            forms.forEach(form => {
-                const li = document.createElement('li');
-                li.className = 'pending-form-item';
-                
-                const createdDate = new Date(form.created_at).toLocaleDateString();
-                const createdTime = new Date(form.created_at).toLocaleTimeString();
-                
-                li.innerHTML = `
-                    <div class="pending-form-item-title">Section ${form.section}</div>
-                    <div class="pending-form-item-info">
-                        ✓ Awaiting Council Approval
-                        <br>Saved: ${createdDate} ${createdTime}
-                    </div>
-                `;
-                
-                li.onclick = () => loadPendingFormForCouncilCompletion(form.id, form.filename);
-                councilList.appendChild(li);
-            });
-        }
-
-        // Load a pending form for council to approve
-        async function loadPendingFormForCouncilCompletion(formId, filename) {
-            // First, require password BEFORE loading the form
-            window.pendingCouncilFormToLoad = { formId, filename };
-            showCouncilPasswordModal();
         }
 
         // Load paused forms list
@@ -2200,7 +2256,6 @@
                     }
 
                     document.getElementById('inspectionDate').value = formData.inspectionDate || '';
-                    document.getElementById('inspector').value = formData.inspector || '';
                     document.getElementById('engineerComments').value = formData.engineer_comments || '';
                     document.getElementById('supervisorComments').value = formData.supervisor_comments || '';
                     document.getElementById('councilComments').value = formData.council_comments || '';
@@ -2339,7 +2394,6 @@
                 // Dynamically populate all form fields with matching data
                 const fieldMappings = {
                     'inspectionDate': 'inspectionDate',
-                    'inspector': 'inspector',
                     'engineerComments': ['comments', 'engineer_comments'],
                     'materialsUsed': ['materials_used', 'materialsUsed'],
                     'comments': 'comments',  // Legacy fallback
@@ -2507,7 +2561,6 @@
                 // Populate all form fields with the form data
                 const fieldMappings = {
                     'inspectionDate': 'inspectionDate',
-                    'inspector': 'inspector',
                     'engineerComments': ['comments', 'engineer_comments'],
                     'materialsUsed': ['materials_used', 'materialsUsed'],
                     'supervisorComments': ['supervisor_comments'],
@@ -2691,46 +2744,24 @@
         // Switch between All Forms and Pending Forms
         function switchTab(tab) {
             const allFormsList = document.getElementById('formList');
-            const pendingSupervisorList = document.getElementById('pendingSupervisorList');
-            const pendingCouncilList = document.getElementById('pendingCouncilList');
             const pausedFormsList = document.getElementById('pausedFormsList');
             const tabAllBtn = document.getElementById('tabAllForms');
-            const tabPendingSupervisorBtn = document.getElementById('tabPendingSupervisor');
-            const tabPendingCouncilBtn = document.getElementById('tabPendingCouncil');
             const tabPausedBtn = document.getElementById('tabPausedReports');
             
-            // Hide all lists
             allFormsList.style.display = 'none';
-            pendingSupervisorList.style.display = 'none';
-            pendingCouncilList.style.display = 'none';
             pausedFormsList.style.display = 'none';
-            
-            // Remove active from all tabs
             tabAllBtn.classList.remove('active');
-            tabPendingSupervisorBtn.classList.remove('active');
-            tabPendingCouncilBtn.classList.remove('active');
             tabPausedBtn.classList.remove('active');
             
-            // Show selected tab
             if (tab === 'all') {
                 allFormsList.style.display = 'block';
                 tabAllBtn.classList.add('active');
                 document.getElementById('searchForms').style.display = 'block';
-            } else if (tab === 'pending-supervisor') {
-                pendingSupervisorList.style.display = 'block';
-                tabPendingSupervisorBtn.classList.add('active');
-                document.getElementById('searchForms').style.display = 'none';
-                loadPendingForms(); // Refresh the list
-            } else if (tab === 'pending-council') {
-                pendingCouncilList.style.display = 'block';
-                tabPendingCouncilBtn.classList.add('active');
-                document.getElementById('searchForms').style.display = 'none';
-                loadCouncilForms(); // Refresh the list
             } else if (tab === 'paused') {
                 pausedFormsList.style.display = 'block';
                 tabPausedBtn.classList.add('active');
                 document.getElementById('searchForms').style.display = 'none';
-                loadPausedForms(); // Load paused forms list
+                loadPausedForms();
             }
         }
 
@@ -2852,11 +2883,17 @@
             // Store current form globally
             window.currentForm = form;
 
-            // Handle matrix forms (multiple EDPs)
+            // Handle matrix / task-matrix forms
             const edpSection = document.getElementById('edpSelectorSection');
             const taskList = document.getElementById('taskList');
-            
-            if (form.is_matrix && form.edps && form.edps.length > 0) {
+
+            if (form.task_matrix && form.edps && form.edps.length > 0) {
+                // ── New task-matrix: show full asset × task grid ──
+                edpSection.style.display = 'none';
+                window.selectedEDP = null;
+                window.matrixCells = {};  // reset
+                renderTaskMatrix(form);
+            } else if (form.is_matrix && form.edps && form.edps.length > 0) {
                 edpSection.style.display = 'block';
                 
                 // Determine selector type from first item
@@ -2895,15 +2932,15 @@
                 loadTasks(form.tasks);
             }
 
-            // Handle Cross Bore Door selector (Sections 2.24.1 to 2.24.6)
+            // Handle Cross Bore Door selector — only for non-task-matrix 2.24.x forms
             const crossBoreDoorSection = document.getElementById('crossBoreDoorSection');
             const crossBoreDoorSelector = document.getElementById('crossBoreDoorSelector');
             const crossBoreSectionList = ['2.24.1', '2.24.2', '2.24.3', '2.24.4', '2.24.5', '2.24.6'];
             
-            if (crossBoreSectionList.includes(form.section)) {
+            if (crossBoreSectionList.includes(form.section) && !form.task_matrix) {
                 crossBoreDoorSection.style.display = 'block';
                 crossBoreDoorSelector.value = window.selectedCrossBoreDoor || '';
-                window.selectedCrossBoreDoor = crossBoreDoorSelector.value || null;  // Keep in sync with rendered value
+                window.selectedCrossBoreDoor = crossBoreDoorSelector.value || null;
             } else {
                 crossBoreDoorSection.style.display = 'none';
                 window.selectedCrossBoreDoor = null;
@@ -2916,30 +2953,13 @@
             document.getElementById('supervisorDate').value = today;
 
             // Reinitialize signatures
-            setTimeout(() => {
-                initializeSignaturePads();
-            }, 0);
-
-            // Update form status display
-            updateFormStatusDisplay();
-            
-            // Set initial supervisor state (disabled for new forms)
-            setSupervisorState(isPendingFormOpen);
-            setEngineerSectionReadOnly(false); // Enable engineer section for new forms
-            
-            // Setup listeners for supervisor inputs
-            setupSupervisorInputListeners();
+            // Clear status badge and edit tracking for new form selection
+            document.getElementById('formStatusBadge').innerHTML = '';
+            window.editOfFilename = null;
         }
 
-        // Update form status badge
-        function updateFormStatusDisplay() {
-            const badge = document.getElementById('formStatusBadge');
-            if (isPendingFormOpen) {
-                badge.innerHTML = '<div class="form-status-badge pending">📋 PENDING - Awaiting Supervisor</div>';
-            } else {
-                badge.innerHTML = '<div class="form-status-badge pending">✏️ NEW - Engineer Signing</div>';
-            }
-        }
+        // Update form status badge (stub - kept for compatibility)
+        function updateFormStatusDisplay() {}
 
         // Enable/disable supervisor section
         function setSupervisorState(isEnabled) {
@@ -3012,131 +3032,11 @@
         }
 
         // Make engineer section read-only (for pending forms)
-        function setEngineerSectionReadOnly(isReadOnly) {
-            // Disable all fields that the engineer would fill (inspection date, inspector, comments, tasks)
-            // NOTE: photoInput is NOT included - supervisor may add additional photos
-            // NOTE: materialsUsed is NOT included - supervisor can edit materials used
-            const engineerFields = [
-                'inspectionDate', 
-                'inspector', 
-                'engineerComments',
-                'comments',
-                'edpSelector',
-                'engineerName',
-                'engineerInitials', 
-                'engineerDate'
-            ];
-            
-            if (isReadOnly) {
-                engineerFields.forEach(fieldId => {
-                    const element = document.getElementById(fieldId);
-                    if (element) {
-                        element.disabled = true;
-                        element.style.background = '#e8e8e8';
-                        element.style.cursor = 'not-allowed';
-                        element.style.opacity = '0.7';
-                    }
-                });
-                
-                // Also disable engineer signature box styling
-                const engineerBox = document.getElementById('engineerBox');
-                if (engineerBox) {
-                    engineerBox.style.opacity = '0.7';
-                    engineerBox.style.backgroundColor = '#f5f5f5';
-                }
-                
-                // Disable all task checkboxes
-                document.querySelectorAll('#taskList input[type="checkbox"]').forEach(checkbox => {
-                    checkbox.disabled = true;
-                    checkbox.style.cursor = 'not-allowed';
-                });
-                
-                // Keep photo input ENABLED for supervisor to add more photos if needed
-                const photoInput = document.getElementById('photoInput');
-                if (photoInput) {
-                    photoInput.disabled = false;
-                    photoInput.style.cursor = 'pointer';
-                }
-            } else {
-                engineerFields.forEach(fieldId => {
-                    const element = document.getElementById(fieldId);
-                    if (element) {
-                        element.disabled = false;
-                        element.style.background = 'white';
-                        element.style.cursor = element.tagName === 'TEXTAREA' ? 'text' : 'auto';
-                        element.style.opacity = '1';
-                    }
-                });
-                
-                // Restore engineer signature box styling
-                const engineerBox = document.getElementById('engineerBox');
-                if (engineerBox) {
-                    engineerBox.style.opacity = '1';
-                    engineerBox.style.backgroundColor = 'white';
-                }
-                
-                // Enable all task checkboxes
-                document.querySelectorAll('#taskList input[type="checkbox"]').forEach(checkbox => {
-                    checkbox.disabled = false;
-                    checkbox.style.cursor = 'pointer';
-                });
-                
-                // Ensure photo input is enabled for engineer
-                const photoInput = document.getElementById('photoInput');
-                if (photoInput) {
-                    photoInput.disabled = false;
-                    photoInput.style.cursor = 'pointer';
-                }
-            }
-            
-            // Handle supervisor comments separately - greyed out during new form, editable when supervisor pending, visible but read-only for council
-            const supervisorCommentsField = document.getElementById('supervisorComments');
-            if (supervisorCommentsField) {
-                if (isReadOnly && isPendingFormOpen) {
-                    // During pending form (supervisor review): supervisor comments should be ENABLED
-                    supervisorCommentsField.disabled = false;
-                    supervisorCommentsField.style.background = 'white';
-                    supervisorCommentsField.style.cursor = 'text';
-                    supervisorCommentsField.style.opacity = '1';
-                } else if (isReadOnly && isPendingCouncilFormOpen) {
-                    // During council review: supervisor comments should be VISIBLE but READ-ONLY
-                    supervisorCommentsField.disabled = true;
-                    supervisorCommentsField.style.background = '#f5f5f5';
-                    supervisorCommentsField.style.cursor = 'default';
-                    supervisorCommentsField.style.opacity = '1';
-                } else if (isReadOnly && !isPendingFormOpen && !isPendingCouncilFormOpen) {
-                    // During new form creation: supervisor comments should be greyed out
-                    supervisorCommentsField.disabled = true;
-                    supervisorCommentsField.style.background = '#f0f0f0';
-                    supervisorCommentsField.style.cursor = 'not-allowed';
-                    supervisorCommentsField.style.opacity = '0.7';
-                } else {
-                    // Not read-only (engineer creating form): supervisor comments disabled
-                    supervisorCommentsField.disabled = true;
-                    supervisorCommentsField.style.background = '#f0f0f0';
-                    supervisorCommentsField.style.cursor = 'not-allowed';
-                    supervisorCommentsField.style.opacity = '0.7';
-                }
-            }
-            
-            // Handle council comments separately - greyed out during normal use, editable when council form open
-            const councilCommentsField = document.getElementById('councilComments');
-            if (councilCommentsField) {
-                if (isReadOnly && isPendingCouncilFormOpen) {
-                    // During council form (council review): council comments should be ENABLED
-                    councilCommentsField.disabled = false;
-                    councilCommentsField.style.background = 'white';
-                    councilCommentsField.style.cursor = 'text';
-                    councilCommentsField.style.opacity = '1';
-                } else {
-                    // All other cases: council comments disabled
-                    councilCommentsField.disabled = true;
-                    councilCommentsField.style.background = '#f0f0f0';
-                    councilCommentsField.style.cursor = 'not-allowed';
-                    councilCommentsField.style.opacity = '0.7';
-                }
-            }
-        }
+        // With the new simplified workflow, all fields are always editable.
+        // These stubs remain for any residual calls.
+        function setSupervisorState(isEnabled) {}
+        function setCouncilState(isEnabled) {}
+        function setEngineerSectionReadOnly(isReadOnly) {}
 
         // Show supervisor password modal
         function showSupervisorModal() {
@@ -3290,7 +3190,6 @@
                 is_matrix: form.is_matrix || false,
                 edps: form.edps || [],
                 inspectionDate: document.getElementById('inspectionDate').value,
-                inspector: document.getElementById('inspector').value,
                 engineer_comments: document.getElementById('engineerComments').value,
                 supervisor_comments: document.getElementById('supervisorComments').value,
                 council_comments: document.getElementById('councilComments').value,
@@ -3359,33 +3258,6 @@
         }
 
         // Handle Supervisor box input focus to unlock
-        function setupSupervisorInputListeners() {
-            const supervisorBox = document.getElementById('supervisorBox');
-            if (!supervisorBox) return;
-            
-            // Include both input and textarea elements
-            const supervisorElements = supervisorBox.querySelectorAll('input, textarea');
-            supervisorElements.forEach(element => {
-                element.addEventListener('focus', function(e) {
-                    if (!isPendingFormOpen) {
-                        showSupervisorModal();
-                        this.blur();  // Remove focus to prevent text entry
-                    }
-                });
-            });
-            
-            // Also set up supervisor comments field to require unlock
-            const supervisorCommentsField = document.getElementById('supervisorComments');
-            if (supervisorCommentsField) {
-                supervisorCommentsField.addEventListener('focus', function(e) {
-                    if (!isPendingFormOpen) {
-                        showSupervisorModal();
-                        this.blur();  // Remove focus to prevent text entry
-                    }
-                });
-            }
-        }
-
         function updateTasksForEDP(edpId) {
             if (!edpId) {
                 // Determine selector type from first item
@@ -3410,6 +3282,83 @@
             // Load tasks for all EDPs (same tasks for each)
             loadTasks(window.currentForm.tasks);
         }
+
+        function markAllTasksOK() {
+            if (window.currentForm && window.currentForm.task_matrix) {
+                const assets = window.currentForm.edps || [];
+                const tasks  = window.currentForm.tasks || [];
+                assets.forEach(asset => {
+                    if (!window.matrixCells[asset.id]) window.matrixCells[asset.id] = {};
+                    tasks.forEach((t, i) => {
+                        window.matrixCells[asset.id][String(t.step || (i + 1))] = 'ok';
+                    });
+                });
+                renderTaskMatrix(window.currentForm);
+            } else {
+                document.querySelectorAll('#taskList input[type="checkbox"]').forEach(cb => {
+                    cb.checked = true;
+                });
+            }
+        }
+
+        // ── Task Matrix rendering ────────────────────────────────────────────
+        function renderTaskMatrix(form) {
+            const taskList = document.getElementById('taskList');
+            const assets = form.edps || [];
+            const tasks  = form.tasks || [];
+            if (!window.matrixCells) window.matrixCells = {};
+
+            // 1. Readable task list (no checkboxes)
+            let html = '<div style="margin-bottom:20px;">';
+            tasks.forEach((t, i) => {
+                const num  = t.step || (i + 1);
+                const desc = t.description || '';
+                html += `<div class="task-item" style="display:flex;align-items:flex-start;padding:10px 12px;border-bottom:1px solid #eee;">
+                    <span style="font-weight:700;min-width:28px;font-size:14px;">${num}.</span>
+                    <span style="font-size:14px;line-height:1.5;">${desc}</span>
+                </div>`;
+            });
+            html += '</div>';
+
+            // 2. Matrix grid heading
+            html += '<h3 style="font-size:14px;font-weight:700;margin:16px 0 8px;color:#1a1f3a;">Completion Matrix</h3>';
+            html += '<p style="font-size:12px;color:#666;margin-bottom:10px;">Tap a cell: <strong style="color:#155724;">✓</strong> = OK &nbsp; <strong style="color:#721c24;">✗</strong> = Issue &nbsp; (tap again to clear)</p>';
+
+            // 3. Table
+            html += '<div class="matrix-wrapper"><table class="matrix-table"><thead><tr>';
+            html += '<th class="matrix-asset-header">Asset</th>';
+            tasks.forEach((t, i) => {
+                const num = t.step || (i + 1);
+                html += `<th class="matrix-task-header">${num}</th>`;
+            });
+            html += '</tr></thead><tbody>';
+
+            assets.forEach(asset => {
+                if (!window.matrixCells[asset.id]) window.matrixCells[asset.id] = {};
+                html += `<tr><td class="matrix-asset-name">${asset.name}</td>`;
+                tasks.forEach((t, i) => {
+                    const taskNum = String(t.step || (i + 1));
+                    const state   = window.matrixCells[asset.id][taskNum] || '';
+                    const display = state === 'ok' ? '✓' : state === 'fail' ? '✗' : '';
+                    const cls     = state === 'ok' ? ' matrix-ok' : state === 'fail' ? ' matrix-fail' : '';
+                    html += `<td class="matrix-cell${cls}" onclick="cycleMatrixCell('${asset.id}','${taskNum}',this)">${display}</td>`;
+                });
+                html += '</tr>';
+            });
+            html += '</tbody></table></div>';
+
+            taskList.innerHTML = html;
+        }
+
+        function cycleMatrixCell(assetId, taskNum, cell) {
+            if (!window.matrixCells[assetId]) window.matrixCells[assetId] = {};
+            const cur  = window.matrixCells[assetId][taskNum] || '';
+            const next = cur === '' ? 'ok' : cur === 'ok' ? 'fail' : '';
+            window.matrixCells[assetId][taskNum] = next;
+            cell.textContent = next === 'ok' ? '✓' : next === 'fail' ? '✗' : '';
+            cell.className   = 'matrix-cell' + (next === 'ok' ? ' matrix-ok' : next === 'fail' ? ' matrix-fail' : '');
+        }
+        // ────────────────────────────────────────────────────────────────────
 
         function loadTasks(tasks) {
             const taskList = document.getElementById('taskList');
@@ -3624,7 +3573,6 @@
                 timestamp: new Date().toISOString(),
                 section: form.section,
                 inspectionDate: document.getElementById('inspectionDate').value,
-                inspector: document.getElementById('inspector').value,
                 tasks: getCompletedTasks(),
                 comments: document.getElementById('comments').value,
                 engineerName: document.getElementById('engineerName').value,
@@ -3668,9 +3616,7 @@
             // Use source task structure to preserve subtask hierarchy
             const sourceTasks = (window.currentForm && window.currentForm.tasks)
                 ? window.currentForm.tasks
-                : (window.pendingFormData && window.pendingFormData.tasks)
-                    ? window.pendingFormData.tasks
-                    : null;
+                : null;
 
             if (sourceTasks) {
                 return sourceTasks.map(task => {
@@ -3729,13 +3675,8 @@
             // Reset workflow state after save
             isPendingFormOpen = false;
             isPendingCouncilFormOpen = false;
-            formStatus = 'new';
-            window.resumedFormDbId = null;  // Clear any resumed paused form reference
-            updateFormStatusDisplay();
-            setSupervisorState(false);
-            setCouncilState(false);
-            setEngineerSectionReadOnly(false); // Enable engineer fields for next form
-            setupSupervisorInputListeners();
+            window.resumedFormDbId = null;
+            window.editOfFilename = null;
             
             // Hide pause button when form is reset
             updatePauseButtonVisibility();
@@ -3766,119 +3707,51 @@
 
 
         async function saveFormToRepository() {
-            // Check if we're saving a pending form (supervisor completing it), council form, or a new form (engineer creating it)
-            if (!isPendingFormOpen && !isPendingCouncilFormOpen && currentFormIndex === -1) {
+            if (currentFormIndex === -1 && !window.currentForm) {
                 showError('No form selected');
                 return;
             }
 
+            // Use window.currentForm if set (edit/copy/resumed), otherwise use index
             let form;
-            let isCompletingPending = false;
-            
-            if (isPendingCouncilFormOpen) {
-                // We're completing a council form - use the stored council form data
-                form = window.pendingCouncilFormData || {
-                    section: 'Unknown',
-                    equipment: 'Unknown',
-                    drawing_ref: '',
-                    locations: [],
-                    frequencies: [],
-                    tasks: [],
-                    is_matrix: false,
-                    edp: null
-                };
-            } else if (isPendingFormOpen) {
-                // We're completing a pending form - use the stored form data
-                isCompletingPending = true;
-                form = window.pendingFormData || {
-                    section: 'Unknown',
-                    equipment: 'Unknown',
-                    drawing_ref: '',
-                    locations: [],
-                    frequencies: [],
-                    tasks: [],
-                    is_matrix: false,
-                    edp: null
-                };
-            } else if (window.resumedFormDbId && window.currentForm) {
-                // We're saving a resumed paused form - use the restored form metadata
+            if (window.currentForm) {
+                form = window.currentForm;
+            } else if (window.resumedFormDbId) {
                 form = window.currentForm;
             } else {
-                // We're creating a new form (engineer filling it) - use selected form
                 const cleanedForms = allForms.filter(f => f.tasks.length > 0);
                 form = cleanedForms[currentFormIndex];
-                
-                // Validate matrix forms
-                if (form.is_matrix && !window.selectedEDP) {
-                    // Determine selector type for error message
-                    const firstId = window.currentForm.edps[0].id;
-                    let selectorLabel = 'EDP';
-                    if (firstId.startsWith('EP-')) selectorLabel = 'EP';
-                    else if (firstId.startsWith('VP-')) selectorLabel = 'VP';
-                    else if (firstId.startsWith('FAN-')) selectorLabel = 'FAN ID';
-                    else if (firstId.startsWith('EB-') || firstId.startsWith('WB-') || 
-                             firstId.startsWith('CC-') || firstId.startsWith('Leck-')) 
-                        selectorLabel = 'Sign';
-                    showError(`Please select an ${selectorLabel} before saving`);
-                    return;
-                }
             }
 
-            // Validate that Engineer has signed
+            // Validate EDP selection — only for old-style matrix forms, NOT task_matrix
+            if (!form.task_matrix && form.is_matrix && form.edps && form.edps.length > 0 && !window.selectedEDP) {
+                const firstId = (form.edps[0] || {}).id || '';
+                let selectorLabel = 'EDP';
+                if (firstId.startsWith('EP-')) selectorLabel = 'EP';
+                else if (firstId.startsWith('VP-')) selectorLabel = 'VP';
+                else if (firstId.startsWith('FAN-')) selectorLabel = 'FAN ID';
+                showError(`Please select an ${selectorLabel} before saving`);
+                return;
+            }
+
+            // Validate Engineer signature
             const engineerName = document.getElementById('engineerName').value;
             const engineerInitials = document.getElementById('engineerInitials').value;
             const engineerDate = document.getElementById('engineerDate').value;
-            
             if (!engineerName || !engineerInitials || !engineerDate) {
                 showError('Engineer signature (name, initials, date) is required');
                 return;
             }
-            
-            // Collect task completions
-            let tasks = [];
-            
-            if (isPendingFormOpen || isPendingCouncilFormOpen) {
-                // For pending forms (supervisor or council), PRESERVE the original tasks from the engineer
-                // These are stored in the form data that was loaded
-                // Just re-collect the checkbox states in case they viewed them
-                document.querySelectorAll('.task-checkbox').forEach(checkbox => {
-                    checkbox.disabled = true; // Ensure they stay disabled
-                });
-                // Use the tasks that were loaded from the API
-                tasks = window.pendingFormTasks || [];
-            } else {
-                // For new forms, collect task completions using the structured helper
-                tasks = getCompletedTasks();
-            }
 
-            // Determine form status based on who has signed
+            const tasks = getCompletedTasks();
+            const isTaskMatrix = !!(window.currentForm && window.currentForm.task_matrix);
             const supervisorName = document.getElementById('supervisorName').value;
             const supervisorInitials = document.getElementById('supervisorInitials').value;
             const supervisorDate = document.getElementById('supervisorDate').value;
             const councilName = document.getElementById('councilName').value;
             const councilInitials = document.getElementById('councilInitials').value;
             const councilDate = document.getElementById('councilDate').value;
-            
-            let formStatus = 'pending_supervisor'; // Default: Engineer only signed
-            if (supervisorName && supervisorInitials && supervisorDate && !councilName) {
-                formStatus = 'pending_council'; // Engineer + Supervisor signed, awaiting council
-            }
-            if (councilName && councilInitials && councilDate) {
-                formStatus = 'complete'; // All three signed
-            }
 
-            // Validate supervisor signature is filled when supervisor is completing this form
-            if (isPendingFormOpen && (!supervisorName || !supervisorInitials || !supervisorDate)) {
-                showError('Supervisor signature (name, initials and date) is required before saving');
-                return;
-            }
-            // Validate council signature is filled when council is completing this form
-            if (isPendingCouncilFormOpen && (!councilName || !councilInitials || !councilDate)) {
-                showError('Council signature (name, initials and date) is required before saving');
-                return;
-            }
-            
-            // Collect all form data
             const formData = {
                 section: form.section,
                 equipment: form.equipment,
@@ -3886,16 +3759,18 @@
                 locations: form.locations,
                 frequencies: form.frequencies,
                 inspectionDate: document.getElementById('inspectionDate').value,
-                inspector: document.getElementById('inspector').value,
-                comments: document.getElementById('engineerComments').value || document.getElementById('comments').value,
                 engineer_comments: document.getElementById('engineerComments').value,
                 supervisor_comments: document.getElementById('supervisorComments').value,
                 council_comments: document.getElementById('councilComments').value,
                 materials_used: document.getElementById('materialsUsed').value,
                 tasks: tasks,
-                edp: form.edp || (form.is_matrix ? window.selectedEDP : null) || null,
-                cross_bore_door: form.cross_bore_door || window.selectedCrossBoreDoor || null,
-                status: formStatus,
+                edp: (!isTaskMatrix && form.is_matrix) ? (window.selectedEDP || null) : null,
+                cross_bore_door: window.selectedCrossBoreDoor || null,
+                task_matrix: isTaskMatrix || false,
+                matrix_cells: isTaskMatrix ? (window.matrixCells || {}) : undefined,
+                edps: isTaskMatrix ? (form.edps || []) : undefined,
+                status: 'complete',
+                edit_of: window.editOfFilename || null,
                 signatures: {
                     engineer: engineerName,
                     engineerInitials: engineerInitials,
@@ -3910,65 +3785,37 @@
                 beforePhotos: beforePhotos,
                 afterPhotos: afterPhotos,
                 timestamp: new Date().toISOString(),
-                resumed_db_id: window.resumedFormDbId || null,
-                pending_form_id: window.currentFormPendingId || null,
-                pending_council_form_id: window.currentFormCouncilId || null
+                resumed_db_id: window.resumedFormDbId || null
             };
 
-            // Disable save button to prevent double submission
             const saveBtn = document.getElementById('saveBtn');
             if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = 'Saving...'; }
 
             try {
                 const response = await fetch('/api/save-form', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(formData)
                 });
-
-                // Check if response is valid
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                // Check content type
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                 const contentType = response.headers.get('content-type');
                 if (!contentType || !contentType.includes('application/json')) {
                     const text = await response.text();
-                    console.error('Invalid response format:', text);
-                    showError(`Server error: Invalid response format. ${text.substring(0, 100)}`);
+                    showError(`Server error: Invalid response. ${text.substring(0, 100)}`);
                     return;
                 }
-
                 const result = await response.json();
                 if (result.success) {
-                    if (formStatus === 'pending_supervisor') {
-                        showSuccess(`✓ Form saved as PENDING! Ready for Supervisor. Filename: ${result.filename}`);
-                    } else if (formStatus === 'pending_council') {
-                        showSuccess(`✓ Form awaiting Council Approval! Filename: ${result.filename}`);
-                    } else {
-                        showSuccess(`✓ Form COMPLETED and saved! Filename: ${result.filename}`);
-                    }
-                    // Reload pending lists so the completed/advanced form disappears from the sidebar
-                    loadPendingForms();
-                    loadCouncilForms();
-                    // Delay form reset by 2 seconds to allow success message to display
-                    setTimeout(() => {
-                        resetForm();
-                    }, 2000);
+                    showSuccess(`✓ Report saved! Filename: ${result.filename}`);
+                    window.editOfFilename = null;
+                    setTimeout(() => { resetForm(); }, 2000);
                 } else {
                     showError(`Failed to save: ${result.message || 'Unknown error'}`);
                     if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = 'Save'; }
                 }
             } catch (error) {
                 console.error('Save error:', error);
-                if (error.name === 'SyntaxError') {
-                    showError(`Error saving form: Invalid server response (${error.message})`);
-                } else {
-                    showError(`Error saving form: ${error.message}`);
-                }
+                showError(`Error saving form: ${error.message}`);
                 if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = 'Save'; }
             }
         }

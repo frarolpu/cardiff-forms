@@ -89,7 +89,6 @@ def send_completion_email(form_data, pdf_bytes, filename):
         sigs       = form_data.get('signatures', {})
         engineer   = sigs.get('engineer', 'N/A')
         supervisor = sigs.get('supervisor', 'N/A')
-        council    = sigs.get('council', 'N/A')
         insp_date  = form_data.get('inspectionDate', 'N/A')
 
         msg = MIMEMultipart()
@@ -102,8 +101,7 @@ def send_completion_email(form_data, pdf_bytes, filename):
             f'Equipment:      {equipment}\n'
             f'Inspection Date:{insp_date}\n'
             f'Engineer:       {engineer}\n'
-            f'Supervisor:     {supervisor}\n'
-            f'Council:        {council}\n\n'
+            f'Supervisor:     {supervisor}\n\n'
             f'The signed report is attached as a PDF.'
         )
         msg.attach(MIMEText(body, 'plain'))
@@ -303,7 +301,6 @@ def create_pdf(form_data):
         info_items = [
             ("Section:", sanitize_text(form_data.get('section', ''))),
             ("Equipment/System:", sanitize_text(form_data.get('equipment', ''))),
-            ("Inspector:", sanitize_text(form_data.get('inspector', ''))),
             ("Date:", sanitize_text(form_data.get('inspectionDate', ''))),
             ("Drawing Reference:", sanitize_text(form_data.get('drawing_ref', ''))),
         ]
@@ -335,9 +332,90 @@ def create_pdf(form_data):
         
         pdf.ln(5)
         
-        # Tasks
+        # Tasks — task-matrix forms get a table, regular forms get a checkbox list
         tasks = form_data.get('tasks', [])
-        if tasks:
+        is_task_matrix = form_data.get('task_matrix', False)
+        matrix_cells   = form_data.get('matrix_cells', {})
+        edps            = form_data.get('edps', [])
+
+        if is_task_matrix and tasks and edps:
+            # ── 1. Task list (readable, no checkboxes) ────────────────────
+            pdf.set_font(default_font, "B", 12)
+            pdf.cell(0, 10, "Tasks", 0, 1)
+            pdf.set_font(default_font, "", 9)
+            available_width = pdf.epw - 2
+            for t in tasks:
+                step = t.get('step', '')
+                desc = sanitize_text(str(t.get('description', '')))
+                pdf.set_x(pdf.l_margin)
+                pdf.multi_cell(available_width, 6, f"{step}.  {desc}", align='L')
+            pdf.ln(4)
+
+            # ── 2. Completion matrix ───────────────────────────────────────
+            pdf.set_font(default_font, "B", 12)
+            pdf.cell(0, 10, "Completion Matrix", 0, 1)
+            pdf.set_font(default_font, "", 7)
+
+            num_tasks  = len(tasks)
+
+            # Column widths: asset name + one per task
+            usable     = pdf.epw
+            asset_col  = min(38, usable * 0.22)
+            task_col   = max(7, (usable - asset_col) / num_tasks) if num_tasks else 10
+            row_h      = 7
+
+            # Header row — task numbers
+            pdf.set_font(default_font, "B", 8)
+            pdf.set_fill_color(45, 58, 92)
+            pdf.set_text_color(255, 255, 255)
+            pdf.cell(asset_col, row_h, "Asset", border=1, fill=True)
+            for t in tasks:
+                pdf.cell(task_col, row_h, str(t.get('step', '')), border=1, fill=True, align='C')
+            pdf.ln()
+            pdf.set_text_color(0, 0, 0)
+
+            # Asset rows
+            for edp in edps:
+                # Page break if needed
+                if pdf.get_y() + row_h + 2 > pdf.h - pdf.b_margin:
+                    pdf.add_page()
+                    # Re-draw header after page break
+                    pdf.set_font(default_font, "B", 8)
+                    pdf.set_fill_color(45, 58, 92)
+                    pdf.set_text_color(255, 255, 255)
+                    pdf.cell(asset_col, row_h, "Asset", border=1, fill=True)
+                    for t in tasks:
+                        pdf.cell(task_col, row_h, str(t.get('step', '')), border=1, fill=True, align='C')
+                    pdf.ln()
+                    pdf.set_text_color(0, 0, 0)
+                    pdf.set_fill_color(255, 255, 255)
+
+                asset_id    = edp.get('id', '')
+                asset_name  = edp.get('name', asset_id)
+                asset_cells = matrix_cells.get(asset_id, {})
+
+                pdf.set_fill_color(241, 243, 247)
+                pdf.set_font(default_font, "B", 7)
+                pdf.cell(asset_col, row_h, sanitize_text(asset_name), border=1, fill=True)
+
+                pdf.set_font(default_font, "", 10)
+                for t in tasks:
+                    task_num = str(t.get('step', ''))
+                    state    = asset_cells.get(task_num, '')
+                    if state == 'ok':
+                        symbol = 'OK' if default_font == 'Arial' else '\u2713'
+                        pdf.set_fill_color(212, 237, 218)
+                    elif state == 'fail':
+                        symbol = 'X!' if default_font == 'Arial' else '\u2717'
+                        pdf.set_fill_color(248, 215, 218)
+                    else:
+                        symbol = ''
+                        pdf.set_fill_color(255, 255, 255)
+                    pdf.cell(task_col, row_h, symbol, border=1, fill=True, align='C')
+                pdf.ln()
+            pdf.ln(2)
+
+        elif tasks:
             pdf.set_font(default_font, "B", 12)
             pdf.cell(0, 10, "Tasks Performed", 0, 1)
             pdf.set_font(default_font, "", 9)
@@ -369,13 +447,12 @@ def create_pdf(form_data):
             
             pdf.ln(1)
         
-        # Comments - Engineer, Supervisor, and Council sections
+        # Comments - Engineer and Supervisor sections only (Council removed)
         engineer_comments = sanitize_text(form_data.get('engineer_comments') or form_data.get('comments', ''))
         supervisor_comments = sanitize_text(form_data.get('supervisor_comments', ''))
-        council_comments = sanitize_text(form_data.get('council_comments', ''))
         materials_used = sanitize_text(form_data.get('materials_used', ''))
         
-        if engineer_comments or supervisor_comments or council_comments:
+        if engineer_comments or supervisor_comments:
             pdf.ln(3)
             
             # Engineer Comments
@@ -394,15 +471,6 @@ def create_pdf(form_data):
                 pdf.set_font(default_font, "", 9)
                 sup_comments_text = str(supervisor_comments)[:300]
                 pdf.multi_cell(0, 7, sup_comments_text)
-                pdf.ln(3)
-            
-            # Council Comments
-            if council_comments:
-                pdf.set_font(default_font, "B", 12)
-                pdf.cell(0, 10, "Council Approval Comments", 0, 1)
-                pdf.set_font(default_font, "", 9)
-                council_comments_text = str(council_comments)[:300]
-                pdf.multi_cell(0, 7, council_comments_text)
                 pdf.ln(3)
         
         # Materials Used section
@@ -526,39 +594,31 @@ def create_pdf(form_data):
         pdf.cell(0, 10, "Approval", 0, 1)
         pdf.ln(5)
         
-        sig_col_width = (pdf.w - 20) / 3
-        
-        # Names with initials
+        sig_col_width = (pdf.w - 20) / 2
+
+        # Names with initials — Engineer + Supervisor only (Council Approval removed)
         pdf.set_font(default_font, "B", 8)
         eng_name = sanitize_text(form_data.get('signatures', {}).get('engineer', ''))
         eng_initials = sanitize_text(form_data.get('signatures', {}).get('engineerInitials', ''))
         sup_name = sanitize_text(form_data.get('signatures', {}).get('supervisor', ''))
         sup_initials = sanitize_text(form_data.get('signatures', {}).get('supervisorInitials', ''))
-        council_name = sanitize_text(form_data.get('signatures', {}).get('council', ''))
-        council_initials = sanitize_text(form_data.get('signatures', {}).get('councilInitials', ''))
-        
+
         eng_text = f"Engineer: {eng_name}"
         if eng_initials:
             eng_text += f" ({eng_initials})"
         sup_text = f"Supervisor: {sup_name}"
         if sup_initials:
             sup_text += f" ({sup_initials})"
-        council_text = f"Council: {council_name}"
-        if council_initials:
-            council_text += f" ({council_initials})"
-            
+
         pdf.cell(sig_col_width, 6, eng_text, 0, 0)
-        pdf.cell(sig_col_width, 6, sup_text, 0, 0)
-        pdf.cell(sig_col_width, 6, council_text, 0, 1)
-        
+        pdf.cell(sig_col_width, 6, sup_text, 0, 1)
+
         # Dates
         pdf.set_font(default_font, "", 7)
         eng_date = form_data.get('signatures', {}).get('engineerDate', '')
         sup_date = form_data.get('signatures', {}).get('supervisorDate', '')
-        council_date = form_data.get('signatures', {}).get('councilDate', '')
         pdf.cell(sig_col_width, 5, f"Date: {eng_date}", 0, 0)
-        pdf.cell(sig_col_width, 5, f"Date: {sup_date}", 0, 0)
-        pdf.cell(sig_col_width, 5, f"Date: {council_date}", 0, 1)
+        pdf.cell(sig_col_width, 5, f"Date: {sup_date}", 0, 1)
         
         # Footer
         pdf.ln(10)
@@ -600,43 +660,57 @@ def save_form():
                 'message': f'Invalid JSON: {str(e)}'
             }), 400
         
-        # Create filename with timestamp and section number (include EDP if matrix form)
+        # Create filename — new saves get _v01, edits auto-increment version
         section = data.get('section', 'unknown')
         edp = data.get('edp')  # Get EDP if present (matrix forms)
         cross_bore_door = data.get('cross_bore_door')  # Get Cross Bore Door if present (sections 2.24.x)
-        status = data.get('status', 'complete')  # Get status ('pending_supervisor', 'pending_council', or 'complete')
+        status = 'complete'  # Always complete — no more pending workflow
+        edit_of = data.get('edit_of')  # Original filename when editing an existing report
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        
-        # Build filename with status indicator
-        # For filenames: pending_supervisor -> _PENDING_SUPERVISOR, pending_council -> _PENDING_COUNCIL, complete -> no suffix
-        if status == 'complete':
-            status_suffix = ""
-        else:
-            status_suffix = f"_{status.upper()}"
-        
+
         # Sanitize cross_bore_door for use in filename (replace spaces with underscores)
         cbd_slug = cross_bore_door.replace(' ', '_') if cross_bore_door else None
 
-        if edp:
-            filename = f"{section}_{edp}_{timestamp}{status_suffix}.pdf"
-        elif cbd_slug:
-            filename = f"{section}_{cbd_slug}_{timestamp}{status_suffix}.pdf"
+        if edit_of:
+            # Editing an existing report: strip old version suffix and increment
+            import re as _re
+            base = _re.sub(r'_v(\d+)\.pdf$', '', edit_of)  # strip _vNN.pdf
+            # Find highest existing version for this base
+            saved_forms_dir_check = Path('saved_forms')
+            existing = list(saved_forms_dir_check.glob(f'{base}_v*.pdf')) if saved_forms_dir_check.exists() else []
+            if USE_DATABASE:
+                try:
+                    _conn = get_db_connection()
+                    if _conn:
+                        _cur = _conn.cursor()
+                        _cur.execute("SELECT filename FROM saved_forms WHERE filename LIKE %s", (f'{base}_v%.pdf',))
+                        existing = [type('F', (), {'stem': r[0][:-4]})() for r in _cur.fetchall()]
+                        _cur.close(); _conn.close()
+                except Exception: pass
+            max_v = 0
+            for f_ in existing:
+                m = _re.search(r'_v(\d+)$', f_.stem)
+                if m: max_v = max(max_v, int(m.group(1)))
+            next_v = max(max_v + 1, 2)  # at least v02
+            filename = f"{base}_v{next_v:02d}.pdf"
         else:
-            filename = f"{section}_{timestamp}{status_suffix}.pdf"
+            # New report: build base name + _v01
+            if edp:
+                base_name = f"{section}_{edp}_{timestamp}"
+            elif cbd_slug:
+                base_name = f"{section}_{cbd_slug}_{timestamp}"
+            else:
+                base_name = f"{section}_{timestamp}"
+            filename = f"{base_name}_v01.pdf"
         
         # Generate PDF
         pdf_buffer = create_pdf(data)
         pdf_data = pdf_buffer.getvalue()
         del pdf_buffer  # free BytesIO immediately — we have the bytes
 
-        # Strip photo blobs from form_data before storing as JSONB only for complete forms.
-        # For pending forms, photos must be preserved so they survive into the final signed PDF.
+        # Keep photos in form_data so Edit can recover them.
         import copy as _copy
         data_for_json = _copy.copy(data)
-        if status == 'complete':
-            data_for_json.pop('beforePhotos', None)
-            data_for_json.pop('afterPhotos', None)
-            data_for_json.pop('photos', None)
         
         # Always save JSON file for form recovery (works with both DB and filesystem)
         try:
@@ -1198,6 +1272,43 @@ def download_form(form_identifier):
             'message': str(e)
         }), 500
 
+
+@app.route('/api/load-form/<identifier>', methods=['GET'])
+def load_form(identifier):
+    """Load any saved form by DB id or filename, for Edit or Copy."""
+    try:
+        if USE_DATABASE:
+            conn = get_db_connection()
+            if conn:
+                try:
+                    cursor = conn.cursor(cursor_factory=RealDictCursor)
+                    if identifier.isdigit():
+                        cursor.execute('SELECT form_data, filename FROM saved_forms WHERE id = %s', (int(identifier),))
+                    else:
+                        cursor.execute('SELECT form_data, filename FROM saved_forms WHERE filename = %s', (identifier,))
+                    row = cursor.fetchone()
+                    cursor.close(); conn.close()
+                    if row:
+                        raw = row['form_data']
+                        form_data = json.loads(raw) if isinstance(raw, str) else raw
+                        return jsonify({'success': True, 'data': form_data, 'filename': row['filename']}), 200
+                except Exception as db_err:
+                    log_error(f"load-form DB error: {db_err}")
+
+        # Filesystem fallback
+        saved_forms_dir = Path('saved_forms')
+        json_path = saved_forms_dir / identifier.replace('.pdf', '.json')
+        if json_path.exists():
+            with open(json_path, 'r') as f:
+                form_data = json.load(f)
+            return jsonify({'success': True, 'data': form_data, 'filename': identifier}), 200
+
+        return jsonify({'success': False, 'message': 'Form not found'}), 404
+    except Exception as e:
+        log_error(f"load-form error: {str(e)}")
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+
 @app.route('/api/pause-form', methods=['POST'])
 def pause_form():
     """Save a paused form with PIN for later resumption"""
@@ -1511,6 +1622,72 @@ def delete_paused_form(identifier):
         return jsonify({'success': False, 'message': 'Paused form not found'}), 404
     except Exception as e:
         log_error(f"Delete paused form error: {str(e)}")
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+
+@app.route('/api/merge-pdfs', methods=['POST'])
+def merge_pdfs():
+    """Merge multiple saved PDFs into one and return for download."""
+    try:
+        from pypdf import PdfWriter, PdfReader
+        data = request.json or {}
+        identifiers = data.get('identifiers', [])  # list of DB ids (int as str) or filenames
+        if not identifiers:
+            return jsonify({'success': False, 'message': 'No forms selected'}), 400
+
+        writer = PdfWriter()
+        merged_count = 0
+
+        for ident in identifiers:
+            pdf_bytes = None
+
+            # Try DB first
+            if USE_DATABASE:
+                conn = get_db_connection()
+                if conn:
+                    try:
+                        cursor = conn.cursor(cursor_factory=RealDictCursor)
+                        if str(ident).isdigit():
+                            cursor.execute('SELECT pdf_data, filename FROM saved_forms WHERE id = %s', (int(ident),))
+                        else:
+                            cursor.execute('SELECT pdf_data, filename FROM saved_forms WHERE filename = %s', (str(ident),))
+                        row = cursor.fetchone()
+                        cursor.close(); conn.close()
+                        if row and row['pdf_data']:
+                            pdf_bytes = bytes(row['pdf_data'])
+                    except Exception as e:
+                        log_error(f"merge-pdfs DB error for {ident}: {e}")
+
+            # Filesystem fallback
+            if not pdf_bytes:
+                saved_dir = Path('saved_forms')
+                fname = str(ident) if str(ident).endswith('.pdf') else f"{ident}.pdf"
+                pdf_path = saved_dir / fname
+                if pdf_path.exists():
+                    pdf_bytes = pdf_path.read_bytes()
+
+            if pdf_bytes:
+                try:
+                    reader = PdfReader(BytesIO(pdf_bytes))
+                    for page in reader.pages:
+                        writer.add_page(page)
+                    merged_count += 1
+                except Exception as e:
+                    log_error(f"merge-pdfs page error for {ident}: {e}")
+
+        if merged_count == 0:
+            return jsonify({'success': False, 'message': 'No valid PDFs found for selected forms'}), 404
+
+        out = BytesIO()
+        writer.write(out)
+        out.seek(0)
+        from datetime import datetime as _dt
+        ts = _dt.now().strftime('%Y%m%d_%H%M%S')
+        return send_file(out, as_attachment=True,
+                         download_name=f'Cardiff_Forms_Merged_{ts}.pdf',
+                         mimetype='application/pdf')
+    except Exception as e:
+        log_error(f"merge-pdfs error: {str(e)}")
         return jsonify({'success': False, 'message': str(e)}), 500
 
 
