@@ -902,26 +902,29 @@ def get_saved_forms():
             if conn:
                 try:
                     cursor = conn.cursor(cursor_factory=RealDictCursor)
+                    # Only select needed columns, NOT form_data (contains large photos)
                     cursor.execute(
-                        "SELECT id, filename, section, status, created_at, form_data FROM saved_forms ORDER BY created_at DESC"
+                        "SELECT id, filename, section, created_at FROM saved_forms ORDER BY created_at DESC LIMIT 500"
                     )
                     rows = cursor.fetchall()
                     cursor.close()
                     conn.close()
                     
                     for row in rows:
-                        # Extract engineer and supervisor names from form_data JSON
                         engineer_name = 'N/A'
                         supervisor_name = 'N/A'
                         council_name = 'N/A'
                         
-                        if row['form_data']:
+                        # Try to load small JSON file separately if needed
+                        json_file = Path('saved_forms') / row['filename'].replace('.pdf', '.json')
+                        if json_file.exists():
                             try:
-                                form_data = json.loads(row['form_data']) if isinstance(row['form_data'], str) else row['form_data']
-                                if 'signatures' in form_data:
-                                    engineer_name = form_data['signatures'].get('engineer', 'N/A')
-                                    supervisor_name = form_data['signatures'].get('supervisor', 'N/A')
-                                    council_name = form_data['signatures'].get('council', 'N/A')
+                                with open(json_file, 'r') as f:
+                                    form_data = json.load(f)
+                                    if 'signatures' in form_data:
+                                        engineer_name = form_data['signatures'].get('engineer', 'N/A')
+                                        supervisor_name = form_data['signatures'].get('supervisor', 'N/A')
+                                        council_name = form_data['signatures'].get('council', 'N/A')
                             except:
                                 pass
                         
@@ -943,11 +946,13 @@ def get_saved_forms():
                 except Exception as db_err:
                     log_error(f"Database query error: {str(db_err)}")
         
-        # Fallback: read from filesystem
+        # Fallback: read from filesystem (limit to 500 most recent)
         saved_forms_dir = Path('saved_forms')
         if saved_forms_dir.exists():
             for idx, pdf_file in enumerate(sorted(saved_forms_dir.glob('*.pdf'), reverse=True)):
-                # Try to load JSON data for engineer/supervisor/council names
+                if idx >= 500:  # Safety limit
+                    break
+                    
                 engineer_name = 'N/A'
                 supervisor_name = 'N/A'
                 council_name = 'N/A'
