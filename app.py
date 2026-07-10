@@ -894,6 +894,11 @@ def save_form():
 @app.route('/get-saved-forms', methods=['GET'])
 def get_saved_forms():
     try:
+        page = request.args.get('page', 1, type=int)
+        per_page = 50
+        offset = (page - 1) * per_page
+        
+        total_count = 0
         saved_forms = []
         
         # Try database first if configured
@@ -902,9 +907,15 @@ def get_saved_forms():
             if conn:
                 try:
                     cursor = conn.cursor(cursor_factory=RealDictCursor)
-                    # Only select needed columns, NOT form_data (contains large photos)
+                    
+                    # Get total count
+                    cursor.execute("SELECT COUNT(*) as count FROM saved_forms")
+                    total_count = cursor.fetchone()['count']
+                    
+                    # Get paginated results
                     cursor.execute(
-                        "SELECT id, filename, section, created_at FROM saved_forms ORDER BY created_at DESC LIMIT 500"
+                        "SELECT id, filename, section, created_at FROM saved_forms ORDER BY created_at DESC LIMIT %s OFFSET %s",
+                        (per_page, offset)
                     )
                     rows = cursor.fetchall()
                     cursor.close()
@@ -938,21 +949,28 @@ def get_saved_forms():
                             'council': council_name
                         })
                     
+                    total_pages = (total_count + per_page - 1) // per_page
                     return jsonify({
                         'success': True,
                         'forms': saved_forms,
-                        'count': len(saved_forms)
+                        'page': page,
+                        'per_page': per_page,
+                        'total_count': total_count,
+                        'total_pages': total_pages
                     }), 200
                 except Exception as db_err:
                     log_error(f"Database query error: {str(db_err)}")
         
-        # Fallback: read from filesystem (limit to 500 most recent)
+        # Fallback: read from filesystem with pagination
         saved_forms_dir = Path('saved_forms')
         if saved_forms_dir.exists():
-            for idx, pdf_file in enumerate(sorted(saved_forms_dir.glob('*.pdf'), reverse=True)):
-                if idx >= 500:  # Safety limit
-                    break
-                    
+            all_files = sorted(saved_forms_dir.glob('*.pdf'), reverse=True)
+            total_count = len(all_files)
+            
+            # Get paginated files
+            paginated_files = all_files[offset:offset + per_page]
+            
+            for idx, pdf_file in enumerate(paginated_files):
                 engineer_name = 'N/A'
                 supervisor_name = 'N/A'
                 council_name = 'N/A'
@@ -970,7 +988,7 @@ def get_saved_forms():
                         pass
                 
                 saved_forms.append({
-                    'id': idx + 1,
+                    'id': offset + idx + 1,
                     'filename': pdf_file.name,
                     'section': pdf_file.stem.split('_')[0] if '_' in pdf_file.stem else 'N/A',
                     'created_at': datetime.fromtimestamp(pdf_file.stat().st_mtime).isoformat(),
@@ -979,10 +997,14 @@ def get_saved_forms():
                     'council': council_name
                 })
         
+        total_pages = (total_count + per_page - 1) // per_page
         return jsonify({
             'success': True,
             'forms': saved_forms,
-            'count': len(saved_forms)
+            'page': page,
+            'per_page': per_page,
+            'total_count': total_count,
+            'total_pages': total_pages
         }), 200
     
     except Exception as e:

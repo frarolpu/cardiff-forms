@@ -620,6 +620,12 @@
         let allSavedForms = [];
         let dateSortAsc = null; // null=unsorted, true=asc, false=desc
         const selectedIds = new Set();
+        
+        // Pagination state
+        let currentPage = 1;
+        let totalPages = 1;
+        let totalCount = 0;
+        let perPage = 50;
 
         function updateMergeBar() {
             const bar = document.getElementById('mergeBar');
@@ -692,20 +698,62 @@
             displayForms(sorted);
         }
 
-        async function loadSavedForms() {
+        async function loadSavedForms(page = 1) {
             try {
-                const response = await fetch('/get-saved-forms');
+                const response = await fetch(`/get-saved-forms?page=${page}`);
                 const result = await response.json();
                 
                 if (result.success) {
-                    allSavedForms = result.forms;
+                    // Store pagination info
+                    currentPage = result.page;
+                    totalPages = result.total_pages;
+                    totalCount = result.total_count;
+                    perPage = result.per_page;
+                    
+                    // If loading first page, reset the list
+                    if (page === 1) {
+                        allSavedForms = result.forms;
+                    } else {
+                        // Otherwise append new forms
+                        allSavedForms.push(...result.forms);
+                    }
+                    
                     displayForms(allSavedForms);
                     updateStats(allSavedForms);
+                    updatePaginationButton();
                 } else {
                     displayError('Failed to load saved forms');
                 }
             } catch (error) {
                 displayError(`Error loading forms: ${error.message}`);
+            }
+        }
+
+        function updatePaginationButton() {
+            const tbody = document.getElementById('formsBody');
+            const existing = document.getElementById('loadMoreRow');
+            if (existing) existing.remove();
+            
+            // Add Load More button if there are more pages
+            if (currentPage < totalPages) {
+                const row = document.createElement('tr');
+                row.id = 'loadMoreRow';
+                row.innerHTML = `
+                    <td colspan="7" style="text-align:center; padding:20px;">
+                        <button onclick="loadSavedForms(${currentPage + 1})" style="
+                            background: #0084ff;
+                            color: white;
+                            padding: 12px 30px;
+                            border: none;
+                            border-radius: 6px;
+                            cursor: pointer;
+                            font-weight: 600;
+                            font-size: 14px;
+                        ">Load More (${currentPage}/${totalPages})</button>
+                    </td>
+                </tr>
+                `;
+                tbody.appendChild(row);
             }
         }
 
