@@ -913,6 +913,7 @@ def get_saved_forms():
                         # Extract engineer and supervisor names from form_data JSON
                         engineer_name = 'N/A'
                         supervisor_name = 'N/A'
+                        council_name = 'N/A'
                         
                         if row['form_data']:
                             try:
@@ -922,7 +923,7 @@ def get_saved_forms():
                                     supervisor_name = form_data['signatures'].get('supervisor', 'N/A')
                                     council_name = form_data['signatures'].get('council', 'N/A')
                             except:
-                                council_name = 'N/A'
+                                pass
                         
                         saved_forms.append({
                             'id': row['id'],
