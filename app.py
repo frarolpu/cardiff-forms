@@ -895,7 +895,7 @@ def save_form():
 def get_saved_forms():
     try:
         page = request.args.get('page', 1, type=int)
-        per_page = 50
+        per_page = 75
         offset = (page - 1) * per_page
         
         total_count = 0
