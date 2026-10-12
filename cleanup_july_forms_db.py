@@ -68,8 +68,7 @@ def find_july_forms_db(conn):
         with conn.cursor(cursor_factory=RealDictCursor) as cur:
             cur.execute("""
                 SELECT id, filename, section, status, created_at, 
-                       octet_length(pdf_data) as pdf_size,
-                       octet_length(form_data) as json_size
+                       octet_length(pdf_data) as pdf_size
                 FROM saved_forms
                 WHERE filename LIKE '%202607%'
                 ORDER BY created_at DESC
@@ -77,6 +76,7 @@ def find_july_forms_db(conn):
             return cur.fetchall()
     except Exception as e:
         print(f"❌ Error buscando registros: {str(e)}")
+        print(f"   Query: SELECT id, filename, section, status, created_at, octet_length(pdf_data) as pdf_size FROM saved_forms WHERE filename LIKE '%202607%'")
         return []
 
 def analyze_cleanup_db(db_url):
@@ -120,8 +120,7 @@ def analyze_cleanup_db(db_url):
                 forms_dict[section] = []
             
             pdf_size = record['pdf_size'] or 0
-            json_size = record['json_size'] or 0
-            record_size = pdf_size + json_size
+            record_size = pdf_size
             
             forms_dict[section].append({
                 'id': record['id'],
@@ -129,7 +128,6 @@ def analyze_cleanup_db(db_url):
                 'status': record['status'],
                 'created_at': record['created_at'],
                 'pdf_size': pdf_size,
-                'json_size': json_size,
                 'total_size': record_size
             })
             total_size += record_size
@@ -142,7 +140,7 @@ def analyze_cleanup_db(db_url):
             print(f"  Sección: {section} ({len(records)} registros)")
             for rec in records:
                 print(f"    ID {rec['id']}: {rec['filename']}")
-                print(f"              PDF: {format_size(rec['pdf_size'])} | JSON: {format_size(rec['json_size'])} | Total: {format_size(rec['total_size'])}")
+                print(f"              Tamaño PDF: {format_size(rec['pdf_size'])}")
                 print(f"              Estado: {rec['status']} | Fecha: {rec['created_at']}")
         
         print()
