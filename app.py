@@ -929,7 +929,7 @@ def get_saved_forms():
                     
                     # Get paginated results
                     cursor.execute(
-                        "SELECT id, filename, section, created_at FROM saved_forms ORDER BY created_at DESC LIMIT %s OFFSET %s",
+                        "SELECT id, filename, section, created_at, form_data FROM saved_forms ORDER BY created_at DESC LIMIT %s OFFSET %s",
                         (per_page, offset)
                     )
                     rows = cursor.fetchall()
@@ -940,10 +940,22 @@ def get_saved_forms():
                         engineer_name = 'N/A'
                         supervisor_name = 'N/A'
                         council_name = 'N/A'
+
+                        form_data = row.get('form_data') or {}
+                        if isinstance(form_data, str):
+                            try:
+                                form_data = json.loads(form_data)
+                            except (json.JSONDecodeError, TypeError):
+                                form_data = {}
+                        signatures = form_data.get('signatures') or {} if isinstance(form_data, dict) else {}
+                        if isinstance(signatures, dict):
+                            engineer_name = signatures.get('engineer') or 'N/A'
+                            supervisor_name = signatures.get('supervisor') or 'N/A'
+                            council_name = signatures.get('council') or 'N/A'
                         
-                        # Try to load small JSON file separately if needed
+                        # Older records may have no form_data in the database.
                         json_file = Path('saved_forms') / row['filename'].replace('.pdf', '.json')
-                        if json_file.exists():
+                        if (engineer_name == 'N/A' or supervisor_name == 'N/A' or council_name == 'N/A') and json_file.exists():
                             try:
                                 with open(json_file, 'r') as f:
                                     form_data = json.load(f)
