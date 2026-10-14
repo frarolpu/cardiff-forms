@@ -79,9 +79,56 @@
 
         .form-row {
             display: grid;
-            grid-template-columns: 150px 1fr 100px;
+            grid-template-columns: 110px 160px 1fr 100px;
             gap: 12px;
             align-items: flex-end;
+        }
+
+        .shift-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #cbd5e0;
+        }
+
+        .shift-bar select {
+            padding: 8px 10px;
+            background: rgba(30, 30, 46, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 6px;
+            color: #f5f5f5;
+            font-size: 14px;
+        }
+
+        .shift-label strong {
+            color: #34d399;
+        }
+
+        .sync-status {
+            font-size: 12px;
+            color: #8b94a5;
+        }
+
+        .sync-status.error {
+            color: #ef4444;
+        }
+
+        .readonly-note {
+            display: none;
+            font-size: 13px;
+            color: #fbbf24;
+            margin-top: 10px;
+        }
+
+        .entry-author {
+            display: block;
+            font-size: 12px;
+            color: #8b94a5;
+            margin-top: 4px;
         }
 
         .form-group {
@@ -321,10 +368,19 @@
     <div class="container">
         <div class="header">
             <h1>📋 Tunnel Logbook</h1>
-            <p>Minute-by-minute log of all events during tunnel closure</p>
+            <p>Minute-by-minute log of all events during tunnel closure — shared by all users. A new logbook starts every day at 17:00.</p>
         </div>
 
-        <div class="input-section">
+        <div class="shift-bar">
+            <div class="shift-label">Shift: <strong id="shiftLabel">—</strong></div>
+            <div>
+                <label for="shiftSelect">View shift:</label>
+                <select id="shiftSelect" onchange="changeShift(this.value)"></select>
+            </div>
+            <div class="sync-status" id="syncStatus">Loading…</div>
+        </div>
+
+        <div class="input-section" id="inputSection">
             <h3>Add Log Entry</h3>
             <div class="form-row">
                 <div class="form-group">
@@ -332,12 +388,17 @@
                     <input type="time" id="entryTime" placeholder="HH:MM">
                 </div>
                 <div class="form-group">
-                    <label for="entryText">Event Description</label>
-                    <textarea id="entryText" placeholder="e.g., Team entering into the tunnel"></textarea>
+                    <label for="entryAuthor">Your name</label>
+                    <input type="text" id="entryAuthor" maxlength="100" placeholder="e.g., J. Smith">
                 </div>
-                <button type="button" class="btn-add" onclick="addLogEntry()">Add</button>
+                <div class="form-group">
+                    <label for="entryText">Event Description</label>
+                    <textarea id="entryText" maxlength="2000" placeholder="e.g., Team entering into the tunnel"></textarea>
+                </div>
+                <button type="button" class="btn-add" id="btnAdd" onclick="addLogEntry()">Add</button>
             </div>
         </div>
+        <div class="readonly-note" id="readonlyNote">You are viewing a past shift. New entries are always added to the current shift.</div>
 
         <div class="logbook-entries" id="logbookContainer">
             <div class="no-entries">
@@ -363,12 +424,79 @@
         <div class="action-buttons">
             <button type="button" class="btn-secondary" onclick="exportLogbook()">📥 Export CSV</button>
             <button type="button" class="btn-secondary" onclick="printLogbook()">🖨️ Print</button>
-            <button type="button" class="btn-secondary" onclick="clearLogbook()" style="margin-left: auto;">🗑️ Clear All</button>
+            <button type="button" class="btn-secondary" onclick="clearLogbook()" style="margin-left: auto;">🗑️ Clear Shift</button>
         </div>
     </div>
 
     <script>
-        let logbook = JSON.parse(localStorage.getItem('tunnelLogbook')) || [];
+        const REFRESH_MS = 15000;
+        let logbook = [];
+        let currentShift = null;   // shift that is open for new entries
+        let viewedShift = null;    // shift being displayed
+        let isDragging = false;
+
+        async function api(method, url, body) {
+            const res = await fetch(url, {
+                method,
+                headers: body ? { 'Content-Type': 'application/json' } : {},
+                body: body ? JSON.stringify(body) : undefined
+            });
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok || data.success === false) {
+                throw new Error(data.message || `Request failed (${res.status})`);
+            }
+            return data;
+        }
+
+        function setStatus(text, isError) {
+            const el = document.getElementById('syncStatus');
+            el.textContent = text;
+            el.className = 'sync-status' + (isError ? ' error' : '');
+        }
+
+        function formatShift(shiftDate) {
+            const [y, m, d] = shiftDate.split('-').map(Number);
+            const start = new Date(y, m - 1, d);
+            const end = new Date(y, m - 1, d + 1);
+            const fmt = dt => dt.toLocaleDateString('en-GB', { weekday: 'short', day: '2-digit', month: 'short' });
+            return `${fmt(start)} 17:00 → ${fmt(end)} 17:00`;
+        }
+
+        async function loadLogbook() {
+            if (isDragging) return;
+            try {
+                // Follow the current shift across the 17:00 cutover unless a past shift was chosen
+                const followCurrent = !viewedShift || viewedShift === currentShift;
+                const qs = followCurrent ? '' : `?shift=${encodeURIComponent(viewedShift)}`;
+                const data = await api('GET', `/api/logbook${qs}`);
+                currentShift = data.current_shift;
+                viewedShift = data.shift_date;
+                logbook = data.entries;
+                renderShiftSelector(data.shifts);
+                renderLogbook();
+                setStatus(`Synced ${new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}`);
+            } catch (err) {
+                setStatus(`Not synced: ${err.message}`, true);
+            }
+        }
+
+        function renderShiftSelector(shifts) {
+            const select = document.getElementById('shiftSelect');
+            const all = Array.from(new Set([currentShift, viewedShift, ...shifts])).sort().reverse();
+            select.innerHTML = all.map(s =>
+                `<option value="${s}" ${s === viewedShift ? 'selected' : ''}>${formatShift(s)}${s === currentShift ? ' (current)' : ''}</option>`
+            ).join('');
+
+            document.getElementById('shiftLabel').textContent = formatShift(viewedShift);
+            const isCurrent = viewedShift === currentShift;
+            document.getElementById('inputSection').style.display = isCurrent ? '' : 'none';
+            document.getElementById('readonlyNote').style.display = isCurrent ? 'none' : 'block';
+        }
+
+        function changeShift(shift) {
+            viewedShift = shift;
+            loadLogbook();
+        }
 
         function renderLogbook() {
             const container = document.getElementById('logbookContainer');
@@ -384,8 +512,8 @@
             container.innerHTML = logbook.map((entry, index) => `
                 <div class="entry" draggable="true" data-index="${index}" ondragstart="handleDragStart(event)" ondragend="handleDragEnd(event)" ondragover="handleDragOver(event)" ondrop="handleDrop(event)" ondragleave="handleDragLeave(event)">
                     <div class="entry-drag-handle">⋮</div>
-                    <div class="entry-time">${entry.time}</div>
-                    <div class="entry-text">${escapeHtml(entry.text)}</div>
+                    <div class="entry-time">${escapeHtml(entry.time)}</div>
+                    <div class="entry-text">${escapeHtml(entry.text)}${entry.author ? `<span class="entry-author">— ${escapeHtml(entry.author)}</span>` : ''}</div>
                     <button type="button" class="entry-delete" onclick="deleteEntry(${index})" title="Delete entry">✕</button>
                 </div>
             `).join('');
@@ -398,39 +526,51 @@
             document.getElementById('statLast').textContent = logbook[logbook.length - 1].time;
         }
 
-        function addLogEntry() {
+        async function addLogEntry() {
             const timeInput = document.getElementById('entryTime');
             const textInput = document.getElementById('entryText');
+            const authorInput = document.getElementById('entryAuthor');
             const time = timeInput.value.trim();
             const text = textInput.value.trim();
+            const author = authorInput.value.trim();
 
             if (!time || !text) {
                 alert('Please fill in both time and event description');
                 return;
             }
 
-            logbook.push({ time, text, timestamp: new Date().toISOString() });
-
-            localStorage.setItem('tunnelLogbook', JSON.stringify(logbook));
-            
-            timeInput.value = '';
-            textInput.value = '';
-            textInput.focus();
-
-            renderLogbook();
+            const btn = document.getElementById('btnAdd');
+            btn.disabled = true;
+            try {
+                await api('POST', '/api/logbook', { time, text, author });
+                localStorage.setItem('tunnelLogbookAuthor', author);
+                textInput.value = '';
+                setDefaultTime();
+                textInput.focus();
+                viewedShift = null; // jump to the current shift
+                await loadLogbook();
+            } catch (err) {
+                alert(`Entry could not be saved: ${err.message}`);
+            } finally {
+                btn.disabled = false;
+            }
         }
 
-        function deleteEntry(index) {
-            if (confirm('Delete this entry?')) {
-                logbook.splice(index, 1);
-                localStorage.setItem('tunnelLogbook', JSON.stringify(logbook));
-                renderLogbook();
+        async function deleteEntry(index) {
+            const entry = logbook[index];
+            if (!entry || !confirm('Delete this entry? It will be removed for all users.')) return;
+            try {
+                await api('DELETE', `/api/logbook/${entry.id}`);
+            } catch (err) {
+                alert(`Could not delete entry: ${err.message}`);
             }
+            loadLogbook();
         }
 
         let draggedIndex = null;
 
         function handleDragStart(event) {
+            isDragging = true;
             draggedIndex = parseInt(event.target.closest('.entry').getAttribute('data-index'));
             event.target.closest('.entry').classList.add('dragging');
             event.dataTransfer.effectAllowed = 'move';
@@ -440,6 +580,7 @@
             event.target.closest('.entry').classList.remove('dragging');
             document.querySelectorAll('.entry').forEach(entry => entry.classList.remove('drag-over'));
             draggedIndex = null;
+            isDragging = false;
         }
 
         function handleDragOver(event) {
@@ -455,7 +596,7 @@
             event.target.closest('.entry').classList.remove('drag-over');
         }
 
-        function handleDrop(event) {
+        async function handleDrop(event) {
             event.preventDefault();
             const entry = event.target.closest('.entry');
             const dropIndex = parseInt(entry.getAttribute('data-index'));
@@ -471,8 +612,17 @@
                     logbook.splice(dropIndex, 0, draggedItem);
                 }
                 
-                localStorage.setItem('tunnelLogbook', JSON.stringify(logbook));
                 renderLogbook();
+                try {
+                    await api('PUT', '/api/logbook/reorder', {
+                        shift_date: viewedShift,
+                        ids: logbook.map(e => e.id)
+                    });
+                } catch (err) {
+                    alert(`Could not save new order: ${err.message}`);
+                }
+                isDragging = false;
+                loadLogbook();
             }
         }
 
@@ -482,16 +632,17 @@
                 return;
             }
 
-            let csv = 'Time,Event\n';
+            const q = s => `"${String(s || '').replace(/"/g, '""')}"`;
+            let csv = 'Shift,Time,Event,Logged by\n';
             logbook.forEach(entry => {
-                csv += `"${entry.time}","${entry.text.replace(/"/g, '""')}"\n`;
+                csv += `${q(entry.shift_date)},${q(entry.time)},${q(entry.text)},${q(entry.author)}\n`;
             });
 
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement('a');
             const url = URL.createObjectURL(blob);
             link.setAttribute('href', url);
-            link.setAttribute('download', `tunnel_logbook_${new Date().toISOString().split('T')[0]}.csv`);
+            link.setAttribute('download', `tunnel_logbook_${viewedShift}.csv`);
             link.style.visibility = 'hidden';
             document.body.appendChild(link);
             link.click();
@@ -502,14 +653,22 @@
             window.print();
         }
 
-        function clearLogbook() {
-            if (confirm('Clear all log entries? This cannot be undone.')) {
-                logbook = [];
-                localStorage.setItem('tunnelLogbook', JSON.stringify(logbook));
-                renderLogbook();
-                document.getElementById('entryTime').value = '';
-                document.getElementById('entryText').value = '';
+        async function clearLogbook() {
+            if (!viewedShift || logbook.length === 0) return;
+            if (!confirm(`Delete ALL ${logbook.length} entries of shift ${formatShift(viewedShift)} for all users? This cannot be undone.`)) return;
+            try {
+                await api('DELETE', `/api/logbook?shift=${encodeURIComponent(viewedShift)}`);
+            } catch (err) {
+                alert(`Could not clear shift: ${err.message}`);
             }
+            loadLogbook();
+        }
+
+        function setDefaultTime() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('entryTime').value = `${hours}:${minutes}`;
         }
 
         function escapeHtml(text) {
@@ -527,12 +686,10 @@
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
-            renderLogbook();
-            // Set current time as default
-            const now = new Date();
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            document.getElementById('entryTime').value = `${hours}:${minutes}`;
+            document.getElementById('entryAuthor').value = localStorage.getItem('tunnelLogbookAuthor') || '';
+            setDefaultTime();
+            loadLogbook();
+            setInterval(loadLogbook, REFRESH_MS);
         });
     </script>
 </body>

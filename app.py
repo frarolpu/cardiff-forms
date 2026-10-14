@@ -176,6 +176,21 @@ def init_db():
         cursor.execute('''
             ALTER TABLE spare_parts ADD COLUMN IF NOT EXISTS photos JSONB DEFAULT '[]'::jsonb
         ''')
+        # Shared tunnel logbook (one logbook per shift, shift starts at 17:00)
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS logbook_entries (
+                id SERIAL PRIMARY KEY,
+                shift_date DATE NOT NULL,
+                entry_time VARCHAR(5) NOT NULL,
+                text TEXT NOT NULL,
+                author VARCHAR(100) DEFAULT '',
+                position INTEGER NOT NULL DEFAULT 0,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
+        cursor.execute('''
+            CREATE INDEX IF NOT EXISTS idx_logbook_shift ON logbook_entries (shift_date)
+        ''')
         conn.commit()
         cursor.close()
         conn.close()
@@ -2277,6 +2292,236 @@ def add_part_movement(part_id):
     except Exception as e:
         log_error(f"Add movement error: {e}")
         return jsonify({'success': False, 'message': str(e)}), 500
+
+# ── Shared Tunnel Logbook ────────────────────────────────────────────────────
+# One logbook per shift. A shift runs from 17:00 to 17:00 the next day (UK time),
+# identified by the date on which it started. The logbook is created implicitly
+# when the first entry of the shift is added.
+import re
+from datetime import timedelta, timezone
+try:
+    from zoneinfo import ZoneInfo
+    LOGBOOK_TZ = ZoneInfo('Europe/London')
+except Exception:
+    LOGBOOK_TZ = timezone.utc
+LOGBOOK_CUTOVER_HOUR = 17
+LOGBOOK_STORE = Path('logbook_store.json')
+_SHIFT_RE = re.compile(r'^\d{4}-\d{2}-\d{2}$')
+_TIME_RE = re.compile(r'^([01]\d|2[0-3]):[0-5]\d$')
+
+
+def current_shift_date():
+    now = datetime.now(LOGBOOK_TZ)
+    if now.hour < LOGBOOK_CUTOVER_HOUR:
+        now -= timedelta(days=1)
+    return now.date().isoformat()
+
+
+def _lb_serialize(row):
+    created = row.get('created_at')
+    return {
+        'id': row['id'],
+        'shift_date': str(row['shift_date']),
+        'time': row['entry_time'],
+        'text': row['text'],
+        'author': row.get('author') or '',
+        'position': row['position'],
+        'created_at': created.isoformat() if hasattr(created, 'isoformat') else created,
+    }
+
+
+def _lb_load_store():
+    if LOGBOOK_STORE.exists():
+        try:
+            return json.loads(LOGBOOK_STORE.read_text(encoding='utf-8'))
+        except Exception:
+            pass
+    return {'next_id': 1, 'entries': []}
+
+
+def _lb_save_store(store):
+    LOGBOOK_STORE.write_text(json.dumps(store, indent=2), encoding='utf-8')
+
+
+def _lb_db():
+    """Return a DB connection, or None when running without a database (local dev).
+    Raises if a database is configured but unreachable, so entries are never split
+    between the DB and the local filesystem."""
+    if not USE_DATABASE:
+        return None
+    conn = get_db_connection()
+    if not conn:
+        raise RuntimeError('Database unavailable')
+    return conn
+
+
+@app.route('/api/logbook', methods=['GET'])
+def get_logbook():
+    current = current_shift_date()
+    shift = request.args.get('shift') or current
+    if not _SHIFT_RE.match(shift):
+        return jsonify({'success': False, 'message': 'Invalid shift date'}), 400
+
+    conn = _lb_db()
+    if conn:
+        try:
+            cur = conn.cursor(cursor_factory=RealDictCursor)
+            cur.execute(
+                "SELECT * FROM logbook_entries WHERE shift_date = %s ORDER BY position, id",
+                (shift,)
+            )
+            entries = [_lb_serialize(r) for r in cur.fetchall()]
+            cur.execute(
+                "SELECT DISTINCT shift_date FROM logbook_entries ORDER BY shift_date DESC LIMIT 60"
+            )
+            shifts = [str(r['shift_date']) for r in cur.fetchall()]
+        finally:
+            conn.close()
+    else:
+        store = _lb_load_store()
+        entries = sorted(
+            (e for e in store['entries'] if e['shift_date'] == shift),
+            key=lambda e: (e['position'], e['id'])
+        )
+        shifts = sorted({e['shift_date'] for e in store['entries']}, reverse=True)[:60]
+
+    return jsonify({
+        'success': True,
+        'current_shift': current,
+        'shift_date': shift,
+        'cutover_hour': LOGBOOK_CUTOVER_HOUR,
+        'entries': entries,
+        'shifts': shifts,
+    })
+
+
+@app.route('/api/logbook', methods=['POST'])
+def add_logbook_entry():
+    data = request.json or {}
+    entry_time = str(data.get('time', '')).strip()
+    text = str(data.get('text', '')).strip()
+    author = str(data.get('author', '')).strip()[:100]
+    if not _TIME_RE.match(entry_time):
+        return jsonify({'success': False, 'message': 'Invalid time (HH:MM)'}), 400
+    if not text or len(text) > 2000:
+        return jsonify({'success': False, 'message': 'Description is required (max 2000 characters)'}), 400
+
+    # Entries always go into the current shift (logbook is created on first entry)
+    shift = current_shift_date()
+
+    conn = _lb_db()
+    if conn:
+        try:
+            cur = conn.cursor(cursor_factory=RealDictCursor)
+            cur.execute("""
+                INSERT INTO logbook_entries (shift_date, entry_time, text, author, position)
+                VALUES (%s, %s, %s, %s,
+                        (SELECT COALESCE(MAX(position), 0) + 1 FROM logbook_entries WHERE shift_date = %s))
+                RETURNING *
+            """, (shift, entry_time, text, author, shift))
+            entry = _lb_serialize(cur.fetchone())
+            conn.commit()
+        except Exception:
+            conn.rollback()
+            raise
+        finally:
+            conn.close()
+    else:
+        store = _lb_load_store()
+        positions = [e['position'] for e in store['entries'] if e['shift_date'] == shift]
+        entry = {
+            'id': store['next_id'],
+            'shift_date': shift,
+            'time': entry_time,
+            'text': text,
+            'author': author,
+            'position': (max(positions) if positions else 0) + 1,
+            'created_at': datetime.now().isoformat(),
+        }
+        store['next_id'] += 1
+        store['entries'].append(entry)
+        _lb_save_store(store)
+
+    return jsonify({'success': True, 'entry': entry}), 201
+
+
+@app.route('/api/logbook/<int:entry_id>', methods=['DELETE'])
+def delete_logbook_entry(entry_id):
+    conn = _lb_db()
+    if conn:
+        try:
+            cur = conn.cursor()
+            cur.execute("DELETE FROM logbook_entries WHERE id = %s", (entry_id,))
+            deleted = cur.rowcount
+            conn.commit()
+        finally:
+            conn.close()
+    else:
+        store = _lb_load_store()
+        before = len(store['entries'])
+        store['entries'] = [e for e in store['entries'] if e['id'] != entry_id]
+        deleted = before - len(store['entries'])
+        _lb_save_store(store)
+
+    if not deleted:
+        return jsonify({'success': False, 'message': 'Entry not found'}), 404
+    return jsonify({'success': True})
+
+
+@app.route('/api/logbook/reorder', methods=['PUT'])
+def reorder_logbook():
+    data = request.json or {}
+    shift = str(data.get('shift_date', ''))
+    ids = data.get('ids', [])
+    if not _SHIFT_RE.match(shift) or not isinstance(ids, list) or not all(isinstance(i, int) for i in ids):
+        return jsonify({'success': False, 'message': 'Invalid request'}), 400
+
+    conn = _lb_db()
+    if conn:
+        try:
+            cur = conn.cursor()
+            for pos, entry_id in enumerate(ids, start=1):
+                cur.execute(
+                    "UPDATE logbook_entries SET position = %s WHERE id = %s AND shift_date = %s",
+                    (pos, entry_id, shift)
+                )
+            conn.commit()
+        except Exception:
+            conn.rollback()
+            raise
+        finally:
+            conn.close()
+    else:
+        store = _lb_load_store()
+        order = {entry_id: pos for pos, entry_id in enumerate(ids, start=1)}
+        for e in store['entries']:
+            if e['shift_date'] == shift and e['id'] in order:
+                e['position'] = order[e['id']]
+        _lb_save_store(store)
+
+    return jsonify({'success': True})
+
+
+@app.route('/api/logbook', methods=['DELETE'])
+def clear_logbook_shift():
+    shift = request.args.get('shift', '')
+    if not _SHIFT_RE.match(shift):
+        return jsonify({'success': False, 'message': 'Invalid shift date'}), 400
+
+    conn = _lb_db()
+    if conn:
+        try:
+            cur = conn.cursor()
+            cur.execute("DELETE FROM logbook_entries WHERE shift_date = %s", (shift,))
+            conn.commit()
+        finally:
+            conn.close()
+    else:
+        store = _lb_load_store()
+        store['entries'] = [e for e in store['entries'] if e['shift_date'] != shift]
+        _lb_save_store(store)
+
+    return jsonify({'success': True})
 
 # ─────────────────────────────────────────────────────────────────────────────
 
