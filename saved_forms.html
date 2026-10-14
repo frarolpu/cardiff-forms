@@ -618,6 +618,7 @@
 
     <script>
         let allSavedForms = [];
+        let filteredSavedForms = [];
         let dateSortAsc = null; // null=unsorted, true=asc, false=desc
         const selectedIds = new Set();
         
@@ -637,12 +638,17 @@
                 bar.style.display = 'none';
             }
             const allCb = document.getElementById('selectAllCb');
-            if (allCb) allCb.checked = allSavedForms.length > 0 && selectedIds.size === allSavedForms.length;
+            if (allCb) {
+                const selectedVisibleCount = filteredSavedForms.filter(f => selectedIds.has(f.filename)).length;
+                allCb.checked = filteredSavedForms.length > 0 && selectedVisibleCount === filteredSavedForms.length;
+                allCb.indeterminate = selectedVisibleCount > 0 && selectedVisibleCount < filteredSavedForms.length;
+                allCb.disabled = filteredSavedForms.length === 0;
+            }
         }
 
         function toggleSelectAll(checked) {
             selectedIds.clear();
-            if (checked) allSavedForms.forEach(f => selectedIds.add(f.filename));
+            if (checked) filteredSavedForms.forEach(f => selectedIds.add(f.filename));
             document.querySelectorAll('.row-cb').forEach(cb => { cb.checked = checked; });
             updateMergeBar();
         }
@@ -690,12 +696,7 @@
             else dateSortAsc = false;
             const icon = document.getElementById('dateSortIcon');
             icon.textContent = dateSortAsc ? '\u25B2' : '\u25BC';
-            const sorted = [...allSavedForms].sort((a, b) => {
-                const da = new Date(a.created_at || 0);
-                const db = new Date(b.created_at || 0);
-                return dateSortAsc ? da - db : db - da;
-            });
-            displayForms(sorted);
+            renderFilteredForms();
         }
 
         async function loadSavedForms(page = 1) {
@@ -718,7 +719,7 @@
                         allSavedForms.push(...result.forms);
                     }
                     
-                    displayForms(allSavedForms);
+                    renderFilteredForms();
                     updateStats(allSavedForms);
                     updatePaginationButton();
                 } else {
@@ -768,6 +769,7 @@
                         </td>
                     </tr>
                 `;
+                updateMergeBar();
                 return;
             }
 
@@ -797,6 +799,26 @@
                 </tr>
             `;
             }).join('');
+            updateMergeBar();
+        }
+
+        function renderFilteredForms() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            let filtered = allSavedForms.filter(form =>
+                form.section.toLowerCase().includes(query) ||
+                form.engineer?.toLowerCase().includes(query) ||
+                form.supervisor?.toLowerCase().includes(query)
+            );
+            if (dateSortAsc !== null) {
+                filtered.sort((a, b) => {
+                    const da = new Date(a.created_at || 0);
+                    const db = new Date(b.created_at || 0);
+                    return dateSortAsc ? da - db : db - da;
+                });
+            }
+            filteredSavedForms = filtered;
+            displayForms(filteredSavedForms);
+            updatePaginationButton();
         }
 
         function updateStats(forms) {
@@ -919,15 +941,7 @@
         }
 
         // Search functionality
-        document.getElementById('searchInput').addEventListener('keyup', (e) => {
-            const query = e.target.value.toLowerCase();
-            const filtered = allSavedForms.filter(form =>
-                form.section.toLowerCase().includes(query) ||
-                form.engineer?.toLowerCase().includes(query) ||
-                form.supervisor?.toLowerCase().includes(query)
-            );
-            displayForms(filtered);
-        });
+        document.getElementById('searchInput').addEventListener('input', renderFilteredForms);
 
         // Close modals when clicking outside
         window.onclick = (event) => {
