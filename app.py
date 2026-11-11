@@ -929,7 +929,15 @@ def get_saved_forms():
                     
                     # Get paginated results
                     cursor.execute(
-                        "SELECT id, filename, section, created_at, form_data FROM saved_forms ORDER BY created_at DESC LIMIT %s OFFSET %s",
+                        """
+                        SELECT id, filename, section, created_at,
+                               form_data #>> '{signatures,engineer}' AS engineer,
+                               form_data #>> '{signatures,supervisor}' AS supervisor,
+                               form_data #>> '{signatures,council}' AS council
+                        FROM saved_forms
+                        ORDER BY created_at DESC
+                        LIMIT %s OFFSET %s
+                        """,
                         (per_page, offset)
                     )
                     rows = cursor.fetchall()
@@ -937,21 +945,9 @@ def get_saved_forms():
                     conn.close()
                     
                     for row in rows:
-                        engineer_name = 'N/A'
-                        supervisor_name = 'N/A'
-                        council_name = 'N/A'
-
-                        form_data = row.get('form_data') or {}
-                        if isinstance(form_data, str):
-                            try:
-                                form_data = json.loads(form_data)
-                            except (json.JSONDecodeError, TypeError):
-                                form_data = {}
-                        signatures = form_data.get('signatures') or {} if isinstance(form_data, dict) else {}
-                        if isinstance(signatures, dict):
-                            engineer_name = signatures.get('engineer') or 'N/A'
-                            supervisor_name = signatures.get('supervisor') or 'N/A'
-                            council_name = signatures.get('council') or 'N/A'
+                        engineer_name = row.get('engineer') or 'N/A'
+                        supervisor_name = row.get('supervisor') or 'N/A'
+                        council_name = row.get('council') or 'N/A'
                         
                         # Older records may have no form_data in the database.
                         json_file = Path('saved_forms') / row['filename'].replace('.pdf', '.json')
