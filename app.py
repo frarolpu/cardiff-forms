@@ -462,6 +462,53 @@ def create_pdf(form_data):
             
             pdf.ln(1)
         
+        # Battery cell voltages table (2.22.x / 2.23.x) — all readings optional
+        cell_voltages = form_data.get('cell_voltages')
+        if isinstance(cell_voltages, dict) and cell_voltages.get('cells'):
+            values = cell_voltages.get('values') or {}
+            total_cells = int(cell_voltages.get('cells') or 0)
+            per_column = 35
+            columns = -(-total_cells // per_column)
+            row_h = 4.5
+            pair_w = pdf.epw / columns
+            cell_w = min(14, pair_w * 0.35)
+            volt_w = pair_w - cell_w
+            needed = row_h * (per_column + 3) + 4
+            if pdf.get_y() + needed > pdf.h - pdf.b_margin:
+                pdf.add_page()
+            pdf.ln(2)
+            pdf.set_font(default_font, "B", 9)
+            pdf.set_fill_color(26, 31, 58)
+            pdf.set_text_color(255, 255, 255)
+            pdf.cell(0, row_h + 1, sanitize_text(cell_voltages.get('title') or 'BATTERY VOLTAGES'), border=1, fill=True, new_x="LMARGIN", new_y="NEXT")
+            pdf.set_text_color(0, 0, 0)
+            pdf.set_font(default_font, "", 8)
+            meta = f"Date: {sanitize_text(cell_voltages.get('date') or '')}     Time: {sanitize_text(cell_voltages.get('time') or '')}"
+            pdf.cell(0, row_h, meta, border=1, new_x="LMARGIN", new_y="NEXT")
+            pdf.set_font(default_font, "B", 7)
+            pdf.set_fill_color(45, 58, 92)
+            pdf.set_text_color(255, 255, 255)
+            for _ in range(columns):
+                pdf.cell(cell_w, row_h, "CELL", border=1, fill=True, align='C')
+                pdf.cell(volt_w, row_h, "VOLTS (V)", border=1, fill=True, align='C')
+            pdf.ln()
+            pdf.set_text_color(0, 0, 0)
+            for r in range(1, per_column + 1):
+                for c in range(columns):
+                    n = c * per_column + r
+                    if n > total_cells:
+                        pdf.cell(cell_w, row_h, "", border=1)
+                        pdf.cell(volt_w, row_h, "", border=1)
+                        continue
+                    pdf.set_font(default_font, "B", 7)
+                    pdf.set_fill_color(241, 243, 247)
+                    pdf.cell(cell_w, row_h, str(n), border=1, fill=True, align='C')
+                    pdf.set_font(default_font, "", 8)
+                    reading = sanitize_text(str(values.get(str(n), '')))[:20]
+                    pdf.cell(volt_w, row_h, reading, border=1, align='C')
+                pdf.ln()
+            pdf.ln(2)
+
         # Comments - Engineer and Supervisor sections only (Council removed)
         engineer_comments = sanitize_text(form_data.get('engineer_comments') or form_data.get('comments', ''))
         supervisor_comments = sanitize_text(form_data.get('supervisor_comments', ''))

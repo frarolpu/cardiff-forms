@@ -443,6 +443,18 @@
         .matrix-ok   { background: #d4edda; color: #155724; font-weight: 700; }
         .matrix-fail { background: #f8d7da; color: #721c24; font-weight: 700; }
 
+        /* ── Battery cell voltages table (2.22.x / 2.23.x) ── */
+        .cv-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; margin-top: 8px; }
+        .cv-table { border-collapse: collapse; width: 100%; min-width: 560px; font-size: 12px; }
+        .cv-table th, .cv-table td { border: 1px solid #c8cdd5; text-align: center; padding: 0; }
+        .cv-table th { background: #2d3a5c; color: #fff; padding: 6px 4px; font-weight: 700; }
+        .cv-table .cv-title { background: #1a1f3a; text-align: left; padding: 8px; }
+        .cv-table .cv-meta { background: #f1f3f7; color: #1a1f3a; text-align: left; padding: 4px 8px; }
+        .cv-table .cv-cell-no { background: #f1f3f7; font-weight: 600; width: 44px; }
+        .cv-table input { width: 100%; box-sizing: border-box; border: none; padding: 6px 4px; font-size: 13px; text-align: center; background: transparent; }
+        .cv-table .cv-meta input { width: auto; text-align: left; border: 1px solid #c8cdd5; border-radius: 4px; background: #fff; }
+        .cv-table input:focus { outline: 2px solid #3b82f6; background: #e8f4ff; }
+
         .task-item:last-child {
             border-bottom: none;
         }
@@ -1645,6 +1657,7 @@
                                     <button type="button" id="allOkBtn" onclick="markAllTasksOK()" style="background: #2e7d32; color: #fff; border: none; border-radius: 6px; padding: 8px 18px; font-size: 14px; font-weight: 600; cursor: pointer; letter-spacing: 0.5px;">&#10003; All OK</button>
                                 </div>
                                 <div class="task-list" id="taskList"></div>
+                                <div id="cellVoltageSection" style="display: none;"></div>
                             </div>
 
                             <!-- COMMENTS -->
@@ -2083,6 +2096,9 @@
                     loadTasks(formData.tasks || form.tasks || []);
                 }
 
+                // Restore battery cell voltages (Copy = blank readings)
+                restoreCellVoltages(form.cell_voltages, isCopy ? null : formData.cell_voltages);
+
                 // Restore date (Copy = today, Edit = original date)
                 const today = new Date().toISOString().split('T')[0];
                 document.getElementById('inspectionDate').value = isCopy ? today : (formData.inspectionDate || today);
@@ -2228,7 +2244,10 @@
                     const formData = result.data;
                     currentFormIndex = 0;
 
-                    const syntheticForm = {
+                    // Rebuild from the current form definition so a resumed report keeps the
+                    // same layout (task matrix, cell voltages, tasks) as a freshly opened one.
+                    const template = allForms.find(f => f.section === formData.section);
+                    const syntheticForm = template ? { ...template } : {
                         section:     formData.section     || '',
                         equipment:   formData.equipment   || '',
                         drawing_ref: formData.drawing_ref || '',
@@ -2236,7 +2255,11 @@
                         frequencies: formData.frequencies || [],
                         tasks:       formData.tasks       || [],
                         is_matrix:   formData.is_matrix   || false,
-                        edps:        formData.edps        || []
+                        edps:        formData.edps        || [],
+                        task_matrix: formData.task_matrix || false,
+                        cell_voltages: formData.cell_voltages
+                            ? { title: formData.cell_voltages.title, cells: formData.cell_voltages.cells }
+                            : undefined
                     };
 
                     document.getElementById('noFormSelected').style.display = 'none';
@@ -2245,10 +2268,24 @@
                     isPendingCouncilFormOpen = false;
 
                     loadFormData(syntheticForm);
+                    restoreCellVoltages(syntheticForm.cell_voltages, formData.cell_voltages);
 
-                    // Restore EDP selection if one was chosen before pausing:
-                    // freeze the dropdown and render the saved tasks immediately
-                    if (formData.is_matrix && formData.edp) {
+                    if (syntheticForm.task_matrix) {
+                        let cells = formData.matrix_cells;
+                        if (!cells && formData.edp) {
+                            // Report paused under the old dropdown layout: carry its ticks into the grid
+                            cells = { [formData.edp]: {} };
+                            (formData.tasks || []).forEach(t => {
+                                const done = t.subtasks && t.subtasks.length
+                                    ? t.subtasks.every(s => s.completed) : t.completed;
+                                if (done) cells[formData.edp][String(t.step)] = 'ok';
+                            });
+                        }
+                        window.matrixCells = cells || {};
+                        renderTaskMatrix(syntheticForm);
+                    } else if (syntheticForm.is_matrix && formData.edp) {
+                        // Restore EDP selection if one was chosen before pausing:
+                        // freeze the dropdown and render the saved tasks immediately
                         const edpSel = document.getElementById('edpSelector');
                         edpSel.value = formData.edp;
                         edpSel.disabled = true;
@@ -2933,6 +2970,8 @@
                 loadTasks(form.tasks);
             }
 
+            restoreCellVoltages(form.cell_voltages, null);
+
             // Handle Cross Bore Door selector — only for non-task-matrix 2.24.x forms
             const crossBoreDoorSection = document.getElementById('crossBoreDoorSection');
             const crossBoreDoorSelector = document.getElementById('crossBoreDoorSelector');
@@ -3190,6 +3229,8 @@
                 frequencies: form.frequencies,
                 is_matrix: form.is_matrix || false,
                 edps: form.edps || [],
+                task_matrix: form.task_matrix || false,
+                matrix_cells: form.task_matrix ? (window.matrixCells || {}) : undefined,
                 inspectionDate: document.getElementById('inspectionDate').value,
                 engineer_comments: document.getElementById('engineerComments').value,
                 supervisor_comments: document.getElementById('supervisorComments').value,
@@ -3200,6 +3241,7 @@
                 tasks: tasks,
                 edp: window.selectedEDP || null,
                 cross_bore_door: window.selectedCrossBoreDoor || null,
+                cell_voltages: window.cellVoltages || undefined,
                 status: 'paused',
                 pin: pin,
                 resumed_db_id: window.resumedFormDbId || null,
@@ -3358,6 +3400,68 @@
             window.matrixCells[assetId][taskNum] = next;
             cell.textContent = next === 'ok' ? '✓' : next === 'fail' ? '✗' : '';
             cell.className   = 'matrix-cell' + (next === 'ok' ? ' matrix-ok' : next === 'fail' ? ' matrix-fail' : '');
+        }
+        // ────────────────────────────────────────────────────────────────────
+
+        // ── Battery cell voltages (free-text readings, all optional) ────────
+        function escapeAttr(v) {
+            return String(v == null ? '' : v).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+        }
+
+        function renderCellVoltages(config) {
+            const section = document.getElementById('cellVoltageSection');
+            if (!config) {
+                window.cellVoltages = null;
+                section.style.display = 'none';
+                section.innerHTML = '';
+                return;
+            }
+            if (!window.cellVoltages) window.cellVoltages = { date: '', time: '', values: {} };
+            const cv = window.cellVoltages;
+            cv.title = config.title;
+            cv.cells = config.cells;
+
+            const perColumn = 35;
+            const columns = Math.ceil(config.cells / perColumn);
+            let html = '<div class="cv-wrapper"><table class="cv-table"><thead>';
+            html += `<tr><th class="cv-title" colspan="${columns * 2}">${escapeAttr(config.title)}</th></tr>`;
+            html += `<tr><td class="cv-meta" colspan="${columns * 2}">
+                Date <input type="date" value="${escapeAttr(cv.date)}" oninput="window.cellVoltages.date=this.value">
+                &nbsp; Time <input type="time" value="${escapeAttr(cv.time)}" oninput="window.cellVoltages.time=this.value">
+            </td></tr><tr>`;
+            for (let c = 0; c < columns; c++) html += '<th>CELL</th><th>VOLTS (V)</th>';
+            html += '</tr></thead><tbody>';
+            for (let r = 1; r <= perColumn; r++) {
+                html += '<tr>';
+                for (let c = 0; c < columns; c++) {
+                    const n = c * perColumn + r;
+                    if (n > config.cells) { html += '<td></td><td></td>'; continue; }
+                    html += `<td class="cv-cell-no">${n}</td><td><input type="text" autocomplete="off" data-cell="${n}" aria-label="Cell ${n} volts" value="${escapeAttr(cv.values[n])}" oninput="updateCellVoltage(this)"></td>`;
+                }
+                html += '</tr>';
+            }
+            html += '</tbody></table></div>';
+            section.innerHTML = html;
+            section.style.display = 'block';
+        }
+
+        function updateCellVoltage(input) {
+            // Decimals must use a point: convert any comma as it is typed
+            if (input.value.includes(',')) {
+                const pos = input.selectionStart;
+                input.value = input.value.replace(/,/g, '.');
+                input.setSelectionRange(pos, pos);
+            }
+            const v = input.value.trim();
+            if (v) window.cellVoltages.values[input.dataset.cell] = v;
+            else delete window.cellVoltages.values[input.dataset.cell];
+        }
+
+        function restoreCellVoltages(config, saved) {
+            window.cellVoltages = saved
+                ? { date: saved.date || '', time: saved.time || '', values: { ...(saved.values || {}) } }
+                : null;
+            renderCellVoltages(config);
         }
         // ────────────────────────────────────────────────────────────────────
 
@@ -3672,6 +3776,7 @@
             document.getElementById('materialsUsed').value = '';
             document.getElementById('crossBoreDoorSelector').value = '';
             window.selectedCrossBoreDoor = null;
+            restoreCellVoltages(null, null);
             
             // Reset workflow state after save
             isPendingFormOpen = false;
@@ -3770,6 +3875,7 @@
                 task_matrix: isTaskMatrix || false,
                 matrix_cells: isTaskMatrix ? (window.matrixCells || {}) : undefined,
                 edps: isTaskMatrix ? (form.edps || []) : undefined,
+                cell_voltages: window.cellVoltages || undefined,
                 status: 'complete',
                 edit_of: window.editOfFilename || null,
                 signatures: {
